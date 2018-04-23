@@ -10,8 +10,18 @@
  *
  * @flow
  */
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, ipcMain } from 'electron';
 import MenuBuilder from './menu';
+import fs from 'fs';
+import os from 'os';
+import D from './models/directory.js';
+import F from './models/file.js';
+import store from './persistence/store.js';
+import { RELOAD_DIRECTORY } from './actions/homedir.js';
+
+const allowedExts = [
+  "zip",
+];
 
 let mainWindow = null;
 
@@ -83,4 +93,46 @@ app.on('ready', async () => {
 
   const menuBuilder = new MenuBuilder(mainWindow);
   menuBuilder.buildMenu();
+
+  const homedir = parseDir(os.homedir());
+  store.set("state", { homedir, directories: [] });
+});
+
+function parseDir(path, parent = null) {
+  let dir = D.create(path, parent);
+  const files = fs.readdirSync(path);
+
+  files.forEach((f) => {
+    const _path = `${dir.path}/${f}`;
+    const stat = fs.statSync(_path);
+
+    if (!f.startsWith(".")) {
+      if (stat.isDirectory()) {
+        dir = D.upsertChildDirectory(dir, D.create(_path));
+      } else if (allowedExts.includes(require('path').extname(f))) {
+        dir = D.upsertFile(dir, F.create(_path));
+      }
+    }
+  })
+
+  return dir;
+}
+
+ipcMain.on(RELOAD_DIRECTORY, (event, path, parent) => {
+  console.log("EVENT", event);
+  const state = store.get("state", {});
+  const dir = parseDir(path, parent);
+  if (os.homedir() === dir.path) {
+    store.set("state", { homedir: dir });
+  } else {
+    store.set(
+      "state",
+      {
+        ...state,
+        directories:
+        state.directories.
+          filter((e) => !D.isEqual(e, dir)).concat([dir]),
+      }
+    );
+  }
 });
