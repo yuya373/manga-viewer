@@ -58,6 +58,7 @@ class Directory extends Component {
     const {
       classes, path, directory,
       goBack, onClickDirectory,
+      onClickFile,
       error,
     } = this.props;
 
@@ -123,8 +124,15 @@ class Directory extends Component {
       </ListItem>
     );
 
+    const handleClickFile = (file, directory) => {
+      onClickFile(file, directory);
+    }
+
     const renderFile = (file, i) => (
-      <ListItem key={i}>
+      <ListItem
+        key={i}
+        onClick={() => handleClickFile(file, directory)}
+        >
         <ListItemText>
           {file.name}
         </ListItemText>

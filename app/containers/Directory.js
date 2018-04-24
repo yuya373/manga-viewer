@@ -19,6 +19,8 @@ function mapDispatchToProps(dispatch, props) {
     goBack: () => dispatch(goBack()),
     onClickDirectory: (path) =>
       dispatch(push(`/directories/${path.slice(1, path.length)}`)),
+    onClickFile: (file, directory) =>
+      dispatch(push(`/files/${file.name}?path=${directory.path}`))
   };
 }
 

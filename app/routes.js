@@ -5,6 +5,7 @@ import App from './containers/App';
 import Home from './containers/Home.js';
 import CounterPage from './containers/CounterPage';
 import Directory from './containers/Directory.js';
+import File from './containers/File.js';
 
 const homedir = require('os').homedir();
 
@@ -12,6 +13,10 @@ export default () => (
   <App>
     <Switch>
       <Route path="/counter" component={CounterPage} />
+      <Route
+        path="/files/:name"
+        component={File}
+        />
       <Route
         path="/directories/:path*"
         component={Directory}
