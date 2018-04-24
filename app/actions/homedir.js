@@ -16,5 +16,4 @@ export function reloadDirectory(path, parent) {
     ipcRenderer.send(RELOAD_DIRECTORY, path, parent);
     dispatch(reloadingDirectory(path));
   };
-
 }

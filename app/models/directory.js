@@ -54,4 +54,5 @@ export default {
   create,
   upsertFile,
   upsertChildDirectory,
+  isEqual,
 }

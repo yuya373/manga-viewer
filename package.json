@@ -177,7 +177,6 @@
     "devtron": "^1.4.0",
     "electron-debug": "^1.5.0",
     "electron-store": "^1.3.0",
-    "font-awesome": "^4.7.0",
     "history": "^4.7.2",
     "jszip": "^3.1.5",
     "material-ui": "^1.0.0-beta.43",
@@ -191,7 +190,8 @@
     "redux": "^3.7.2",
     "redux-actions": "^2.3.0",
     "redux-thunk": "^2.2.0",
-    "source-map-support": "^0.5.3"
+    "source-map-support": "^0.5.3",
+    "typeface-roboto": "^0.0.54"
   },
   "devEngines": {
     "node": ">=7.x",

@@ -1,6 +1,9 @@
 export function create(path) {
+  const splitted = path.split("/");
+  const name = splitted[splitted.length - 1];
   return {
     path,
+    name,
   };
 }
 
