@@ -126,7 +126,7 @@ function parseDir(path, parent = null) {
     const files = fs.readdirSync(path);
     files.forEach((f) => {
       const _path = `${path === "/" ? "" : dir.path}/${f}`;
-      const stat = fs.statSync(_path);
+      const stat = fs.lstatSync(_path);
 
       if (!f.startsWith(".")) {
         console.log(require('path').extname(f));
