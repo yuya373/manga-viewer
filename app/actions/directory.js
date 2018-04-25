@@ -32,22 +32,18 @@ export function loadDirectory(path) {
 
     dispatch(directoryLoading());
 
-    const promise = new Promise((resolve, reject) => {
-      worker.onmessage = (e) => {
-        console.log("worker end", e);
-        const data = e.data;
-        if (data.success) {
-          resolve(data.directory);
-        } else {
-          reject(data);
-        }
+    worker.onmessage = (e) => {
+      const data = e.data;
+
+      if (data.success) {
+        const {directory} = data;
+        dispatch(directoryLoaded(directory))
+      } else {
+        const {error, message} = data;
+        console.warn("Error in worker", error);
+        dispatch(directoryLoadError(error, message))
       }
-    }).then(
-      (directory) => dispatch(directoryLoaded(directory))
-    ).catch(({error, message}) => {
-      console.warn("Error in worker", error);
-      dispatch(directoryLoadError(error, message))
-    });
+    }
 
     worker.postMessage(path);
   }
