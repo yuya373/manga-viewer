@@ -34,11 +34,19 @@ export function isEqual(a, b) {
 }
 
 export function upsertFile(directory, file) {
-  const removed = removeFile(directory, file);
+  let found = false;
+  const newFiles = directory.files.map((e) => {
+    if (F.isEqual(e, file)) {
+      found = true;
+      return file;
+    }
+    return e;
+  });
+
 
   return {
-    ...removed,
-    files: removed.files.concat([file]),
+    ...directory,
+    files: found ? newFiles : newFiles.concat([file]),
   };
 }
 
