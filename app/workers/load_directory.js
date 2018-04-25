@@ -1,5 +1,4 @@
 import fs from 'fs';
-import os from 'os';
 import D from './../models/directory.js';
 import F from './../models/file.js';
 
@@ -18,7 +17,7 @@ onmessage = (e) => {
       const stat = fs.lstatSync(_path);
 
       if (!f.startsWith(".")) {
-        console.log(require('path').extname(f));
+        // console.log(require('path').extname(f));
         if (stat.isDirectory()) {
           dir = D.upsertChildDirectory(dir, D.create(_path));
         } else if (allowedExts.includes(require('path').extname(f))) {
@@ -29,7 +28,7 @@ onmessage = (e) => {
 
     postMessage({success: true, directory: dir});
   } catch(e) {
-    console.log("ERROR", e.message, e);
+    // console.log("ERROR", e.message, e);
     postMessage({success: false, error: e, message: e.message});
   }
 }

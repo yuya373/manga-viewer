@@ -4,6 +4,9 @@ import {
   DIRECTORY_LOADED,
   DIRECTORY_LOAD_ERROR,
 } from './../actions/directory.js';
+import {
+  FILE_LOADED,
+} from './../actions/file.js';
 import D from './../models/directory.js';
 
 const defaultState = {
@@ -38,6 +41,12 @@ export default handleActions(
         filter((e) => !D.isEqual(e, payload.directory)).
         concat([payload.directory]),
     }),
+    [FILE_LOADED]: (state, {payload}) => ({
+      ...state,
+      directories: state.directories.
+        filter((e) => !D.isEqual(e, payload.directory)).
+        concat([payload.directory])
+    })
   },
   defaultState,
 );
