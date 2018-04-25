@@ -4,6 +4,7 @@ export function create(path) {
   return {
     path,
     name,
+    images: [],
   };
 }
 
@@ -11,7 +12,15 @@ export function isEqual(a, b) {
   return a.path === b.path;
 }
 
+export function setImages(file, images) {
+  return {
+    ...file,
+    images,
+  };
+}
+
 export default {
   create,
   isEqual,
+  setImages,
 }
