@@ -192,7 +192,8 @@
     "redux-actions": "^2.3.0",
     "redux-thunk": "^2.2.0",
     "source-map-support": "^0.5.3",
-    "typeface-roboto": "^0.0.54"
+    "typeface-roboto": "^0.0.54",
+    "worker-loader": "^1.1.1"
   },
   "devEngines": {
     "node": ">=7.x",

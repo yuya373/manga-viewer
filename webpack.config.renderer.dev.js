@@ -232,6 +232,17 @@ export default merge.smart(baseConfig, {
     new ExtractTextPlugin({
       filename: '[name].css'
     }),
+
+    new webpack.LoaderOptionsPlugin({
+      options: {
+        worker: {
+          output: {
+            publicPath: `http://localhost:${port}/dist/`,
+            filename: "worker.[id].js",
+          }
+        }
+      }
+    })
   ],
 
   node: {

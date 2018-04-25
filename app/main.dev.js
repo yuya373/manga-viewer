@@ -12,28 +12,6 @@
  */
 import { app, BrowserWindow, ipcMain } from 'electron';
 import MenuBuilder from './menu';
-import fs from 'fs';
-import os from 'os';
-import D from './models/directory.js';
-import F from './models/file.js';
-import { RELOAD_DIRECTORY } from './actions/homedir.js';
-import { LOAD_DIRECTORY } from './actions/directory.js';
-import {
-  STATE_CHANGED,
-  STATE_LOADED,
-  PARSE_DIR_ERROR,
-  parseDirError,
-} from './actions/ipc_renderer.js';
-import Store from 'electron-store';
-
-const store = new Store();
-if (process.env.NODE_ENV === 'development') {
-  store.clear();
-}
-
-const allowedExts = [
-  ".zip",
-];
 
 let mainWindow = null;
 
@@ -84,9 +62,12 @@ app.on('ready', async () => {
   mainWindow = new BrowserWindow({
     show: false,
     width: 1024,
-    height: 728
+    height: 728,
+    webPreferences: {
+      nodeIntegrationInWorker: true,
+      sandbox: false,
+    },
   });
-
   mainWindow.loadURL(`file://${__dirname}/app.html`);
 
   // @TODO: Use 'ready-to-show' event
@@ -108,81 +89,4 @@ app.on('ready', async () => {
 
   const menuBuilder = new MenuBuilder(mainWindow);
   menuBuilder.buildMenu();
-
-  const homedir = parseDir(os.homedir());
-  store.set("state", { homedir, directories: [] });
-
-  mainWindow.webContents.send(STATE_LOADED, store.get("state"));
-
-  store.onDidChange("state", (newValue, oldValue) => {
-    mainWindow.webContents.send(STATE_CHANGED, newValue);
-    // console.log(STATE_CHANGED, newValue);
-  })
-});
-
-function parseDir(path, parent = null) {
-  let dir = D.create(path, parent);
-  try {
-    const files = fs.readdirSync(path);
-    files.forEach((f) => {
-      const _path = `${path === "/" ? "" : dir.path}/${f}`;
-      const stat = fs.lstatSync(_path);
-
-      if (!f.startsWith(".")) {
-        console.log(require('path').extname(f));
-        if (stat.isDirectory()) {
-          dir = D.upsertChildDirectory(dir, D.create(_path));
-        } else if (allowedExts.includes(require('path').extname(f))) {
-          dir = D.upsertFile(dir, F.create(_path));
-        }
-      }
-    })
-
-    return dir;
-  } catch(e) {
-    const action = parseDirError({error: e, message: e.message});
-
-    console.log("ERROR", e.message, e);
-    mainWindow.webContents.send(action.type, action);
-  }
-}
-
-ipcMain.on(RELOAD_DIRECTORY, (event, path, parent) => {
-  console.log("EVENT", event);
-  const state = store.get("state", {});
-  const dir = parseDir(path, parent);
-
-  if (dir) {
-    if (os.homedir() === dir.path) {
-      store.set("state", { homedir: dir });
-    } else {
-      store.set(
-        "state",
-        {
-          ...state,
-          directories: state.directories.
-            filter((e) => !D.isEqual(e, dir)).concat([dir]),
-        }
-      );
-    }
-  }
-});
-
-ipcMain.on(LOAD_DIRECTORY, (event, path) => {
-  console.log("PATH", path);
-  const state = store.get("state", {});
-  const dir = parseDir(path);
-
-  console.log("DIR", dir);
-
-  if (dir) {
-    store.set(
-      "state",
-      {
-        ...state,
-        directories: state.directories.
-          filter((e) => !D.isEqual(e, dir)).concat([dir]),
-      }
-    );
-  }
 });

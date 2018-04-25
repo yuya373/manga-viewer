@@ -42,15 +42,12 @@ class Directory extends Component {
   }
 
   loadDirectoryIfNeed({path, directory}) {
-    if (directory) {
-      this.props.directoryLoaded();
-    } else {
+    if (!directory) {
       this.loadDirectory(`/${path}`);
     }
   }
 
   loadDirectory(path) {
-    this.props.directoryLoading();
     this.props.loadDirectory(path);
   }
 

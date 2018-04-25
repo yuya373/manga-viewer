@@ -175,5 +175,16 @@ export default merge.smart(baseConfig, {
       analyzerMode: process.env.OPEN_ANALYZER === 'true' ? 'server' : 'disabled',
       openAnalyzer: process.env.OPEN_ANALYZER === 'true'
     }),
+
+    new webpack.LoaderOptionsPlugin({
+      options: {
+        worker: {
+          output: {
+            publicPath: './dist/',
+            filename: "worker.[id].js",
+          }
+        }
+      }
+    })
   ],
 });

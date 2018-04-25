@@ -1,25 +1,24 @@
 import { handleActions } from 'redux-actions';
 import {
-  STATE_LOADED,
-  STATE_CHANGED,
-  PARSE_DIR_ERROR,
-} from './../actions/ipc_renderer.js';
-import {
   DIRECTORY_LOADING,
-} from './directory.js';
+  DIRECTORY_LOADED,
+  DIRECTORY_LOAD_ERROR,
+} from './../actions/directory.js';
+import D from './../models/directory.js';
+
+const defaultState = {
+  loading: false,
+  directories: [],
+  error: {
+    message: "",
+  }
+};
 
 export default handleActions(
   {
-    [STATE_LOADED]: (state, {payload}) => ({
+    [DIRECTORY_LOAD_ERROR]: (state, {payload}) => ({
       ...state,
-      directories: payload.directories,
-    }),
-    [STATE_CHANGED]: (state, {payload}) => ({
-      ...state,
-      directories: payload.directories,
-    }),
-    [PARSE_DIR_ERROR]: (state, {payload}) => ({
-      ...state,
+      loading: false,
       error: {
         ...state.error,
         message: payload.message,
@@ -27,15 +26,18 @@ export default handleActions(
     }),
     [DIRECTORY_LOADING]: (state) => ({
       ...state,
+      loading: true,
       error: {
         message: "",
       },
     }),
+    [DIRECTORY_LOADED]: (state, {payload}) => ({
+      ...state,
+      loading: false,
+      directories: state.directories.
+        filter((e) => !D.isEqual(e, payload.directory)).
+        concat([payload.directory]),
+    }),
   },
-  {
-    directories: [],
-    error: {
-      message: "",
-    }
-  }
+  defaultState,
 );
