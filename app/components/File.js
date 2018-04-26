@@ -5,12 +5,38 @@ import { withStyles } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
 import Typography from 'material-ui/Typography';
 import Button from 'material-ui/Button';
+import AppBar from 'material-ui/AppBar';
+import Toolbar from 'material-ui/Toolbar';
+import IconButton from 'material-ui/IconButton';
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import Slide from 'material-ui/transitions/Slide';
+import Menu, { MenuItem } from 'material-ui/Menu';
+import SettingIcon from '@material-ui/icons/Settings';
+import Switch from 'material-ui/Switch';
+import List, {
+  ListItemSecondaryAction,
+  ListItemText,
+} from 'material-ui/List';
+import { FormGroup, FormControlLabel } from 'material-ui/Form';
 import Canvas from './Canvas.js';
 
 const styles = theme => ({
   root: {
     flexGrow: 1,
   },
+  title: {
+    flex: 1,
+  },
+  backButton: {
+    color: "inherit",
+    marginLeft: -(theme.spacing.unit * 1),
+    marginRight: theme.spacing.unit * 2,
+    menuAnchor: null,
+  },
+  menuItemControl: {
+    paddingRight: theme.spacing.unit * 2,
+    marginRight: 0,
+  }
 });
 
 class File extends Component {
@@ -21,9 +47,13 @@ class File extends Component {
       perPage: 1,
       index: 0,
       width: null,
+      displayAppBar: true,
     };
     this.handleKeyUp = this.handleKeyUp.bind(this);
     this.updateWidth = this.updateWidth.bind(this);
+
+    this.displayAppBarTimer = null;
+    this.hideAppBarTimer = null;
   }
 
   componentDidMount() {
@@ -37,11 +67,7 @@ class File extends Component {
   }
 
   updateWidth() {
-    if (this.gridRef) {
-      const el = ReactDOM.findDOMNode(this.gridRef);
-      const {width} = el.getBoundingClientRect();
-      this.setState({width});
-    }
+    this.setState({width: window.innerWidth});
   }
 
   componentWillReceiveProps() {
@@ -49,7 +75,9 @@ class File extends Component {
   }
 
   componentWillUnmount() {
-    document.removeEventListener("keyup", this.handleKeyUp)
+    document.removeEventListener("keyup", this.handleKeyUp);
+    window.removeEventListener("resize", this.updateWidth);
+    this.clearTimers();
   }
 
   handleKeyUp(event) {
@@ -92,7 +120,7 @@ class File extends Component {
 
     const images = file.images.slice(index, index + perPage).reverse();
     const imageWidth = width / perPage
-    const canvases = images.map((e, i) => (
+    return images.map((e, i) => (
       <Grid item xs={12 / perPage} key={i} >
         <Canvas
           base64={e.base64}
@@ -102,12 +130,83 @@ class File extends Component {
           />
       </Grid>
     ))
+  }
+
+  renderAppBar() {
+    const {displayAppBar, menuAnchor, perPage} = this.state;
+    const {classes, file, directory} = this.props;
+    const handleClickBack = () =>
+          this.props.gotoDirectory(directory);
+    const handleMenuOpen = (e) =>
+          this.setState({menuAnchor: e.currentTarget});
+    const handleMenuClose = (e) =>
+          this.setState({menuAnchor: null});
+    const handlePerPageSwitch = (e) => {
+      e.stopPropagation();
+      e.preventDefault();
+      this.setState(
+        (s) => ({perPage: s.perPage === 2 ? 1 : 2}),
+        () => this.setState({menuAnchor: null})
+      );
+    }
+
+    const perPageSwitch = (
+      <Switch checked={perPage == 2}/>
+    );
 
     return (
-      <Grid container className={classes.root} spacing={0}>
-        {canvases}
-      </Grid>
+      <Slide direction="down" in={displayAppBar} >
+        <AppBar>
+          <Toolbar >
+            <IconButton
+              onClick={handleClickBack}
+              className={classes.backButton}
+              aria-label="Back"
+              >
+              <ArrowBackIcon />
+            </IconButton>
+            <Typography
+              className={classes.title}
+              variant="title"
+              color="inherit"
+              >
+              {file.name}
+            </Typography>
+            <IconButton
+              aria-owns={open ? 'menu-appbar' : null}
+              aria-haspopup="true"
+              onClick={handleMenuOpen}
+              color="inherit"
+              >
+              <SettingIcon />
+            </IconButton>
+            <Menu
+              id="simple-menu"
+              anchorEl={menuAnchor}
+              open={Boolean(menuAnchor)}
+              onClick={handleMenuClose}
+              >
+              <MenuItem onClick={handlePerPageSwitch} >
+                <FormControlLabel
+                  className={classes.menuItemControl}
+                  control={perPageSwitch}
+                  label="Spread"
+                  />
+              </MenuItem>
+            </Menu>
+          </Toolbar>
+        </AppBar>
+      </Slide>
     )
+  }
+
+  clearTimers() {
+    if (this.displayAppBarTimer) {
+      window.clearTimeout(this.displayAppBarTimer);
+    }
+    if (this.hideAppBarTimer) {
+      window.clearTimeout(this.hideAppBarTimer);
+    }
   }
 
   render() {
@@ -123,31 +222,35 @@ class File extends Component {
       return <Redirect to="/" />
     }
 
-    const handleClickBack = () => {
-      this.props.gotoDirectory(directory);
+    const handleMouseEnter = () => {
+      this.clearTimers();
+      this.hideAppBarTimer = window.setTimeout(
+        () => this.setState({displayAppBar: false}),
+        500
+      );
+
     }
 
-    const handleRef = (ref) => this.gridRef = ref;
+    const handleMouseLeave = () => {
+      this.clearTimers();
+      this.displayAppBarTimer = window.setTimeout(
+        () =>this.setState({displayAppBar: true}),
+        500
+      );
+    }
 
     return (
       <React.Fragment>
-        <Grid container className={classes.root} ref={handleRef}>
-          <Grid item xs={12} >
-            <Button
-              color="primary"
-              onClick={handleClickBack}
-              >
-              Back
-            </Button>
-          </Grid>
-          <Grid item xs={12}>
-            {directory.path}
-          </Grid>
-          <Grid item xs={12}>
-            {file.name}
-          </Grid>
+        {this.renderAppBar()}
+        <Grid
+          container
+          className={classes.root}
+          spacing={0}
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+          >
+          {this.renderImages()}
         </Grid>
-        {this.renderImages()}
       </React.Fragment>
     )
   }
