@@ -5,6 +5,7 @@ import { withStyles } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
 import Typography from 'material-ui/Typography';
 import Button from 'material-ui/Button';
+import Canvas from './Canvas.js';
 
 const styles = theme => ({
 });
@@ -27,7 +28,6 @@ class File extends Component {
     if (file && directory) {
       loadFile(file, directory);
     }
-    console.log("componentDidMount")
     document.addEventListener("keyup", this.handleKeyUp);
     window.addEventListener("resize", this.updateWidth);
     this.updateWidth();
@@ -37,7 +37,6 @@ class File extends Component {
     if (this.gridRef) {
       const el = ReactDOM.findDOMNode(this.gridRef);
       const {width} = el.getBoundingClientRect();
-      console.log("width", width);
       this.setState({width});
     }
   }
@@ -86,25 +85,26 @@ class File extends Component {
 
   renderImages() {
     const {index, width, perPage} = this.state;
-    const {file} = this.props;
-
-    const extname = require('path').
-          extname(file.path).substring(1);
-    const buildSrc = (base64) =>
-          `data:image/${extname};base64,${base64}`;
+    const {classes, file} = this.props;
 
     const images = file.images.slice(index, index + perPage).reverse();
-    const imageWidth = width / images.length;
-    return images.map((e, i) => (
-      <Grid item xs={6} key={i} >
-        <img
-          src={buildSrc(e.base64)}
+    const imageWidth = width / perPage
+    const canvases = images.map((e, i) => (
+      <Grid item xs={12 / perPage} key={i} >
+        <Canvas
+          base64={e.base64}
+          name={e.name}
           width={imageWidth}
           height={window.innerHeight}
-          alt={e.name}
           />
       </Grid>
     ))
+
+    return (
+      <Grid container className={classes.root} spacing={0}>
+        {canvases}
+      </Grid>
+    )
   }
 
   render() {
