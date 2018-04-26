@@ -17,6 +17,9 @@ import Typography from 'material-ui/Typography';
 import Button from 'material-ui/Button';
 
 const styles = theme => ({
+  root: {
+    flexGrow: 1,
+  },
   title: {
     padding: theme.spacing.unit,
   },
@@ -60,6 +63,7 @@ class Directory extends Component {
     } = this.props;
 
     if (error.message.length > 0) return (
+
       <React.Fragment>
         <Grid item xs={12} >
           <Typography variant="title">
@@ -142,7 +146,7 @@ class Directory extends Component {
     );
 
     return (
-      <React.Fragment>
+      <Grid container className={classes.root} spacing={16}>
         <Grid item xs={8}>
           <Typography variant="title">
             {path}
@@ -168,7 +172,7 @@ class Directory extends Component {
             {directory && directory.childDirectories.map(renderDirectory)}
           </List>
         </Grid>
-      </React.Fragment>
+      </Grid>
     );
   }
 }

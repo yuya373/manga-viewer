@@ -8,6 +8,9 @@ import Button from 'material-ui/Button';
 import Canvas from './Canvas.js';
 
 const styles = theme => ({
+  root: {
+    flexGrow: 1,
+  },
 });
 
 class File extends Component {
@@ -108,7 +111,7 @@ class File extends Component {
   }
 
   render() {
-    const {file, directory} = this.props;
+    const {classes, file, directory} = this.props;
 
     if (!file && directory) {
       return (
@@ -128,20 +131,21 @@ class File extends Component {
 
     return (
       <React.Fragment>
-        <Grid item xs={12} ref={handleRef} />
-        <Grid item xs={12} >
-          <Button
-            color="primary"
-            onClick={handleClickBack}
-            >
-            Back
-          </Button>
-        </Grid>
-        <Grid item xs={12}>
-          {directory.path}
-        </Grid>
-        <Grid item xs={12}>
-          {file.name}
+        <Grid container className={classes.root} ref={handleRef}>
+          <Grid item xs={12} >
+            <Button
+              color="primary"
+              onClick={handleClickBack}
+              >
+              Back
+            </Button>
+          </Grid>
+          <Grid item xs={12}>
+            {directory.path}
+          </Grid>
+          <Grid item xs={12}>
+            {file.name}
+          </Grid>
         </Grid>
         {this.renderImages()}
       </React.Fragment>
