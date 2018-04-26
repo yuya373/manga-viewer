@@ -43,14 +43,12 @@ class File extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      // perPage: 2,
-      perPage: 1,
+      perPage: 2,
       index: 0,
       width: null,
       displayAppBar: true,
     };
     this.handleKeyUp = this.handleKeyUp.bind(this);
-    this.updateWidth = this.updateWidth.bind(this);
 
     this.displayAppBarTimer = null;
     this.hideAppBarTimer = null;
@@ -62,12 +60,6 @@ class File extends Component {
       loadFile(file, directory);
     }
     document.addEventListener("keyup", this.handleKeyUp);
-    window.addEventListener("resize", this.updateWidth);
-    this.updateWidth();
-  }
-
-  updateWidth() {
-    this.setState({width: window.innerWidth});
   }
 
   componentWillReceiveProps() {
@@ -76,7 +68,6 @@ class File extends Component {
 
   componentWillUnmount() {
     document.removeEventListener("keyup", this.handleKeyUp);
-    window.removeEventListener("resize", this.updateWidth);
     this.clearTimers();
   }
 
@@ -115,19 +106,31 @@ class File extends Component {
   }
 
   renderImages() {
-    const {index, width, perPage} = this.state;
+    const {index, perPage} = this.state;
     const {classes, file} = this.props;
 
     const images = file.images.slice(index, index + perPage).reverse();
-    const imageWidth = width / perPage
+    const innerGridProps = perPage !== 1 ?
+          (i) =>  ({
+            justify: i === 0 ? "flex-end" : "flex-start",
+          }) : () => ({
+            justify: "center",
+          });
     return images.map((e, i) => (
       <Grid item xs={12 / perPage} key={i} >
-        <Canvas
-          base64={e.base64}
-          name={e.name}
-          width={imageWidth}
-          height={window.innerHeight}
-          />
+        <Grid
+          container
+          direction="row"
+          alignItems="center"
+          {...innerGridProps(i)}
+          >
+          <Canvas
+            base64={e.base64}
+            name={e.name}
+            width={window.innerWidth / perPage}
+            height={window.innerHeight}
+            />
+        </Grid>
       </Grid>
     ))
   }
