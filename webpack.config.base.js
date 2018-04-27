@@ -23,7 +23,10 @@ export default {
       },
       {
         test: /\.worker\.js$/,
-        use: { loader: 'worker-loader' }
+        exclude: /node_modules/,
+        use: {
+          loader: 'worker-loader',
+        },
       },
     ]
   },
