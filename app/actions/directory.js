@@ -1,5 +1,6 @@
 import { createAction } from 'redux-actions';
 import { ipcRenderer } from 'electron';
+import Worker from './../workers/load_directory.worker.js'
 
 export const LOAD_DIRECTORY = "LOAD_DIRECTORY";
 export const DIRECTORY_LOADING = "DIRECTORY_LOADING";
@@ -23,7 +24,6 @@ const directoryLoadError = createAction(
 )
 
 export function loadDirectory(path) {
-  const Worker = require("worker-loader?inline!workers/load_directory.js");
   const worker = new Worker();
 
   return (dispatch, getState) => {

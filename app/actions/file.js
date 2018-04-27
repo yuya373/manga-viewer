@@ -1,6 +1,7 @@
 import { createAction } from 'redux-actions';
 import F from './../models/file.js';
 import D from './../models/directory.js';
+import Worker from './../workers/load_file.worker.js'
 
 export const LOAD_FILE = "LOAD_FILE";
 export const FILE_LOADING = "FILE_LOADING";
@@ -27,7 +28,6 @@ const fileLoadError = createAction(
 )
 
 export function loadFile(file, directory) {
-  const Worker = require("worker-loader?inline!workers/load_file.js");
   const worker = new Worker();
 
   return (dispatch, getState) => {

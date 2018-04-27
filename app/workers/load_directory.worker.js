@@ -4,6 +4,7 @@ import F from './../models/file.js';
 
 const allowedExts = [
   ".zip",
+  ".pdf",
 ];
 
 onmessage = (e) => {
