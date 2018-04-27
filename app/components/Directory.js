@@ -19,6 +19,8 @@ import Button from 'material-ui/Button';
 const styles = theme => ({
   root: {
     flexGrow: 1,
+    width: "100%",
+    margin: 0,
   },
   title: {
     padding: theme.spacing.unit,
