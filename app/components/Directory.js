@@ -145,6 +145,8 @@ class Directory extends Component {
       </ListItem>
     );
 
+    const handleClickReload = () => this.loadDirectory(`/${path}`);
+
     return (
       <Grid container className={classes.root} spacing={16}>
         <Grid item xs={8}>
@@ -153,6 +155,11 @@ class Directory extends Component {
           </Typography>
         </Grid>
         <Grid item container justify="flex-end" xs={4} >
+          <Button
+            onClick={handleClickReload}
+            >
+            reload
+          </Button>
           <Button
             color="primary"
             onClick={handleClickBack}
