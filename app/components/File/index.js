@@ -2,65 +2,25 @@ import React, { Component } from 'react';
 import { Redirect } from 'react-router';
 import { withStyles } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
-import Typography from 'material-ui/Typography';
-import Button from 'material-ui/Button';
-import AppBar from 'material-ui/AppBar';
-import Toolbar from 'material-ui/Toolbar';
-import IconButton from 'material-ui/IconButton';
-import ArrowBackIcon from '@material-ui/icons/ArrowBack';
-import Slide from 'material-ui/transitions/Slide';
-import Menu, { MenuItem } from 'material-ui/Menu';
-import SettingIcon from '@material-ui/icons/Settings';
-import Switch from 'material-ui/Switch';
-import List, {
-  ListItemSecondaryAction,
-  ListItemText,
-} from 'material-ui/List';
-import { FormGroup, FormControlLabel } from 'material-ui/Form';
 import ImageFile from './ImageFile.js';
 import PdfFile from './PdfFile.js';
+import NavBar from './../NavBar/index.js';
+import FileMenu from './../../containers/NavBar/FileMenu.js';
 
 const styles = theme => ({
   root: {
     flexGrow: 1,
   },
-  title: {
-    flex: 1,
-  },
-  backButton: {
-    color: "inherit",
-    marginLeft: -(theme.spacing.unit * 1),
-    marginRight: theme.spacing.unit * 2,
-    menuAnchor: null,
-  },
-  menuItemControl: {
-    paddingRight: theme.spacing.unit * 2,
-    marginRight: 0,
-  }
 });
 
 class File extends Component {
   state = {
     displayAppBar: true,
-    menuAnchor: null
   };
   handleClickBack = () => {
     const {gotoDirectory, directory} = this.props;
     gotoDirectory(directory);
   }
-
-  handleMenuOpen = (e) => this.setState({menuAnchor: e.currentTarget});
-
-  handleMenuClose = (e) => this.setState({menuAnchor: null});
-
-  handlePerPageSwitch = (e) => {
-    const {perPage, filePerPageChanged} = this.props;
-    e.stopPropagation();
-    e.preventDefault();
-    filePerPageChanged(perPage === 2 ? 1 : 2);
-    this.setState({menuAnchor: null});
-  }
-
   handleMouseEnter = () => {
     this.clearTimers();
     this.hideAppBarTimer = window.setTimeout(
@@ -104,59 +64,20 @@ class File extends Component {
   }
 
   renderAppBar() {
-    const {displayAppBar, menuAnchor} = this.state;
-    const {
-      classes, file, directory, perPage,
-    } = this.props;
+    const {displayAppBar} = this.state;
+    const {file} = this.props;
 
-    const perPageSwitch = (
-      <Switch checked={perPage == 2}/>
-    );
+    const menu = file.ext === "zip" ?
+          (<FileMenu />) : null;
 
     return (
-      <Slide direction="down" in={displayAppBar} >
-        <AppBar>
-          <Toolbar >
-            <IconButton
-              onClick={this.handleClickBack}
-              className={classes.backButton}
-              aria-label="Back"
-              >
-              <ArrowBackIcon />
-            </IconButton>
-            <Typography
-              className={classes.title}
-              variant="title"
-              color="inherit"
-              >
-              {file.name}
-            </Typography>
-            <IconButton
-              aria-owns={open ? 'menu-appbar' : null}
-              aria-haspopup="true"
-              onClick={this.handleMenuOpen}
-              color="inherit"
-              >
-              <SettingIcon />
-            </IconButton>
-            <Menu
-              id="simple-menu"
-              anchorEl={menuAnchor}
-              open={Boolean(menuAnchor)}
-              onClick={this.handleMenuClose}
-              >
-              <MenuItem onClick={this.handlePerPageSwitch} >
-                <FormControlLabel
-                  className={classes.menuItemControl}
-                  control={perPageSwitch}
-                  label="Spread"
-                  />
-              </MenuItem>
-            </Menu>
-          </Toolbar>
-        </AppBar>
-      </Slide>
-    )
+      <NavBar
+        visible={displayAppBar}
+        title={file.name}
+        handleClickBack={this.handleClickBack}
+        menu={menu}
+        />
+    );
   }
 
   renderFile() {
