@@ -2,9 +2,9 @@ import React, { Component } from 'react';
 import { Redirect } from 'react-router';
 import { withStyles } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
-import ImageFile from './ImageFile.js';
+import ImageFile from './../../containers/File/ImageFile.js';
 import PdfFile from './PdfFile.js';
-import NavBar from './../NavBar/index.js';
+import NavBar from './../NavBar/Index.js';
 import FileMenu from './../../containers/NavBar/FileMenu.js';
 
 const styles = theme => ({
@@ -92,7 +92,7 @@ class File extends Component {
 
     switch(file.ext) {
     case "zip":
-      return (<ImageFile file={file} perPage={perPage} />);
+      return (<ImageFile file={file} />);
     case "pdf":
       return (<PdfFile file={file} />);
     default:

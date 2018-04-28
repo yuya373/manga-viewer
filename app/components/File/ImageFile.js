@@ -22,11 +22,30 @@ class ImageFile extends Component {
       "keyCode", keyCode,
     );
     if (!altKey && !ctrlKey && !metaKey && !shiftKey) {
-      if (keyCode === 37) {
+      switch(keyCode) {
+      case 37:
+      case 32:
         this.nextPage();
-      }
-      if (keyCode === 39) {
+        return;
+      case 39:
         this.prevPage();
+        return;
+      }
+    }
+    if (shiftKey) {
+      switch(keyCode) {
+      case 32:
+        this.prevPage();
+        return;
+      }
+    }
+    if (ctrlKey) {
+      switch(keyCode) {
+      case 83: // S
+        this.props.filePerPageChanged(
+          this.props.perPage === 2 ? 1 : 2
+        )
+        return;
       }
     }
   }
