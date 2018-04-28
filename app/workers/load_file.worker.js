@@ -33,7 +33,7 @@ function readZipFile({path}) {
             if (allowedExts.includes(ext.toLowerCase())) {
               results.push(
                 entry.async("base64").
-                  then((base64) => ({name, base64})).
+                  then((base64) => (F.createImage({name, ext, base64}))).
                   catch((error) => ({message: error.message, error}))
               )
             }
@@ -60,9 +60,10 @@ function readZipFile({path}) {
 
 onmessage = (e) => {
   const file = e.data;
-  const ext = require('path').extname(file.path);
+  const ext = file.ext
+
   switch(ext) {
-  case ".zip":
+  case "zip":
     readZipFile(file).then(({images}) => {
       postMessage({
         success: true,
