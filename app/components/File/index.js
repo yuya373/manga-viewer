@@ -17,25 +17,31 @@ class File extends Component {
   state = {
     displayAppBar: true,
   };
+  hideAppBar = () => {
+    this.hideAppBarTimer = window.setTimeout(
+      () => this.setState({displayAppBar: false}),
+      500
+    );
+  }
+  displayAppBar = () => {
+    this.displayAppBarTimer = window.setTimeout(
+      () =>this.setState({displayAppBar: true}),
+      500
+    );
+  }
   handleClickBack = () => {
     const {gotoDirectory, directory} = this.props;
     gotoDirectory(directory);
   }
   handleMouseEnter = () => {
     this.clearTimers();
-    this.hideAppBarTimer = window.setTimeout(
-      () => this.setState({displayAppBar: false}),
-      500
-    );
+    this.hideAppBar();
   }
-
   handleMouseLeave = () => {
     this.clearTimers();
-    this.displayAppBarTimer = window.setTimeout(
-      () =>this.setState({displayAppBar: true}),
-      500
-    );
+    this.displayAppBar();
   }
+
   displayAppBarTimer = null;
   hideAppBarTimer = null;
 
@@ -44,6 +50,7 @@ class File extends Component {
     if (file && directory) {
       loadFile(file, directory);
     }
+    setTimeout(this.hideAppBar, 1000);
   }
 
   componentWillReceiveProps() {
