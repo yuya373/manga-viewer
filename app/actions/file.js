@@ -7,8 +7,10 @@ export const LOAD_FILE = "LOAD_FILE";
 export const FILE_LOADING = "FILE_LOADING";
 export const FILE_LOADED = "FILE_LOADED";
 export const FILE_LOAD_ERROR = "FILE_LOAD_ERROR";
+export const FILE_PER_PAGE_CHANGED= "FILE_PER_PAGE_CHANGED";
 
 export const fileLoading = createAction(FILE_LOADING);
+export const filePerPageChanged = createAction(FILE_PER_PAGE_CHANGED);
 
 
 export const fileLoaded = createAction(

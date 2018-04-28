@@ -3,6 +3,7 @@ import {
   FILE_LOADING,
   FILE_LOADED,
   FILE_LOAD_ERROR,
+  FILE_PER_PAGE_CHANGED,
 } from './../actions/file.js';
 
 export default handleActions(
@@ -18,10 +19,15 @@ export default handleActions(
         ...state.error,
         message: "",
       },
+    }),
+    [FILE_PER_PAGE_CHANGED]: (state, {payload}) => ({
+      ...state,
+      perPage: payload,
     })
   },
   {
     loading: false,
+    perPage: 2,
     error: {
       message: "",
     },

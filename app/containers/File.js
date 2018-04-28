@@ -1,7 +1,7 @@
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import queryString from 'query-string';
-import File from './../components/File.js';
+import File from './../components/File/index.js';
 import { push } from 'react-router-redux';
 import * as actions from './../actions/file.js';
 
@@ -18,6 +18,8 @@ function mapStateToProps(state, {match, location}) {
   return {
     directory,
     file,
+    perPage: state.file.perPage,
+    loading: state.file.loading,
   }
 }
 
