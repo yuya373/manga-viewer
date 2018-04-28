@@ -26,6 +26,9 @@ export default {
         exclude: /node_modules/,
         use: {
           loader: 'worker-loader',
+          options: {
+            inline: true,
+          },
         },
       },
     ]
