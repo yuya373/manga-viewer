@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { withStyles } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
 import Canvas from './Canvas.js';
 
@@ -6,6 +7,7 @@ class ImageFile extends Component {
   state = {
     index: 0,
     width: null,
+    height: null,
   };
 
   handleKeyUp = (event) => {
@@ -29,12 +31,25 @@ class ImageFile extends Component {
     }
   }
 
+  handleResize = () => {
+    this.setState((state) => {
+      const {innerWidth, innerHeight} = window;
+      return {
+        ...(state.width !== innerWidth ? {width: innerWidth} : {}),
+        ...(state.height !== innerHeight ? {height: innerHeight} : {}),
+      };
+    });
+  }
+
   componentDidMount() {
     document.addEventListener("keyup", this.handleKeyUp);
+    this.handleResize();
+    document.addEventListener("resize", this.handleResize);
   }
 
   componentWillUnmount() {
     document.removeEventListener("keyup", this.handleKeyUp);
+    document.removeEventListener("resize", this.handleResize);
   }
 
   nextPage() {
@@ -56,7 +71,7 @@ class ImageFile extends Component {
   }
 
   render() {
-    const {index} = this.state;
+    const {index, width, height} = this.state;
     const {file, perPage} = this.props;
 
     const images = file.images.slice(index, index + perPage).reverse();
@@ -65,7 +80,7 @@ class ImageFile extends Component {
         (i === 0 ? "flex-end" : "flex-start") :
         "center",
     })
-    return images.map((e, i) => (
+    const canvases = images.map((e, i) => (
       <Grid item xs={12 / perPage} key={i} >
         <Grid
           container
@@ -82,6 +97,16 @@ class ImageFile extends Component {
         </Grid>
       </Grid>
     ))
+
+    return (
+      <Grid
+        container
+        alignItems="center"
+        style={{height}}
+        >
+        {canvases}
+      </Grid>
+    )
   }
 }
 
