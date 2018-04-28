@@ -79,6 +79,13 @@ onmessage = (e) => {
         error,
       })
     });
+    return;
+  case "pdf":
+    postMessage({
+      success: true,
+      images: [],
+    });
+    return;
   }
 
 }
