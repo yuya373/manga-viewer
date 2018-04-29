@@ -3,6 +3,7 @@ import { bindActionCreators } from 'redux';
 import { push, goBack } from 'react-router-redux';
 import Directory from './../components/Directory.js';
 import * as actions from './../actions/directory.js';
+import { fileFavoriteChanged } from './../actions/file.js';
 
 function mapStateToProps(state, { match }) {
   return {
@@ -15,7 +16,13 @@ function mapStateToProps(state, { match }) {
 
 function mapDispatchToProps(dispatch, props) {
   return {
-    ...bindActionCreators(actions, dispatch),
+    ...bindActionCreators(
+      {
+        ...actions,
+        fileFavoriteChanged,
+      },
+      dispatch
+    ),
     goBack: () => dispatch(goBack()),
     onClickDirectory: (path) =>
       dispatch(push(`/directories/${path.slice(1, path.length)}`)),

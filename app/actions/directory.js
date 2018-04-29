@@ -6,11 +6,21 @@ export const LOAD_DIRECTORY = "LOAD_DIRECTORY";
 export const DIRECTORY_LOADING = "DIRECTORY_LOADING";
 export const DIRECTORY_LOADED = "DIRECTORY_LOADED";
 export const DIRECTORY_LOAD_ERROR = "DIRECTORY_LOAD_ERROR";
+export const DIRECTORY_FAVORITE_CHANGED = "DIRECTORY_FAVORITE_CHANGED";
 
 export const directoryLoading = createAction(DIRECTORY_LOADING);
 export const directoryLoaded = createAction(
   DIRECTORY_LOADED,
   (directory) => ({
+    directory,
+  })
+);
+
+export const directoryFavoriteChanged = createAction(
+  DIRECTORY_FAVORITE_CHANGED,
+  (parent, directory, favorite) => ({
+    parent,
+    favorite,
     directory,
   })
 );

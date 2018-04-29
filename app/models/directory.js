@@ -10,15 +10,23 @@ export function create(path, parent = null, files = [], childDirectories = []) {
     parent,
     files,
     childDirectories,
+    favorite: false,
   };
 }
 
 export function upsertChildDirectory(directory, dir) {
-  const removed = removeChildDirectory(directory, dir);
+  let found = false;
+  const newDirectories = directory.childDirectories.map((e) => {
+    if (isEqual(e, dir)) {
+      found = true;
+      return dir;
+    }
+    return e;
+  });
 
   return {
-    ...removed,
-    childDirectories: removed.childDirectories.concat([dir]),
+    ...directory,
+    childDirectories: found ? newDirectories : newDirectories.concat([dir]),
   };
 }
 
@@ -57,10 +65,18 @@ export function removeFile(directory, file) {
   };
 }
 
+export function favorite(directory, favorite = true) {
+  return {
+    ...directory,
+    favorite,
+  };
+}
+
 
 export default {
   create,
   upsertFile,
   upsertChildDirectory,
   isEqual,
+  favorite,
 }

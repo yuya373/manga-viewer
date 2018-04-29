@@ -17,6 +17,8 @@ import Typography from 'material-ui/Typography';
 import Button from 'material-ui/Button';
 import NavBar from './NavBar/Index.js';
 import DirectoryMenu from './NavBar/DirectoryMenu.js';
+import FavoriteIcon from '@material-ui/icons/Favorite';
+import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
 
 const styles = theme => ({
   root: {
@@ -70,6 +72,24 @@ class Directory extends Component {
       onClickDirectory("/");
     }
   };
+  toggleFavorite = (parent, target, isFile = false) => () => {
+    if (isFile) {
+      this.props.fileFavoriteChanged(
+        parent,
+        target,
+        !target.favorite
+      );
+    } else {
+      this.props.directoryFavoriteChanged(
+        parent,
+        target,
+        !target.favorite
+      );
+    }
+  }
+  favoriteIcon = ({favorite}) => favorite ?
+    (<FavoriteIcon />) :
+    (<FavoriteBorderIcon />)
   renderFile = (file, i) => {
     const { directory } = this.props;
 
@@ -82,6 +102,12 @@ class Directory extends Component {
           {file.name}
         </ListItemText>
         <ListItemSecondaryAction>
+          <IconButton
+            onClick={this.toggleFavorite(directory, file, true)}
+            aria-label="Favorite"
+            >
+            {this.favoriteIcon(file)}
+          </IconButton>
           <IconButton aria-label="More">
             <MoreIcon />
           </IconButton>
@@ -90,7 +116,8 @@ class Directory extends Component {
     );
   }
   renderDirectory = (dir, i) => {
-    const { classes } = this.props;
+    const { classes, directory } = this.props;
+    const parent = directory;
 
     return (
       <ListItem
@@ -107,6 +134,12 @@ class Directory extends Component {
           {dir.name}
         </ListItemText>
         <ListItemSecondaryAction>
+          <IconButton
+            aria-label="Favorite"
+            onClick={this.toggleFavorite(parent, dir)}
+            >
+            {this.favoriteIcon(dir)}
+          </IconButton>
           <IconButton aria-label="More">
             <MoreIcon />
           </IconButton>

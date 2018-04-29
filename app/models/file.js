@@ -8,6 +8,7 @@ export function create(path) {
     name,
     images: [],
     ext,
+    favorite: false,
   };
 }
 
@@ -30,9 +31,17 @@ export function setImages(file, images) {
   };
 }
 
+export function favorite(file, favorite = true) {
+  return {
+    ...file,
+    favorite,
+  };
+}
+
 export default {
   create,
   isEqual,
   setImages,
   createImage,
+  favorite,
 }
