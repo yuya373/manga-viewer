@@ -1,43 +1,19 @@
 import React, { Component } from 'react';
 import { withStyles } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
-import List, {
-  ListItem,
-  ListItemAvatar,
-  ListItemIcon,
-  ListItemSecondaryAction,
-  ListItemText,
-} from 'material-ui/List';
+import List from 'material-ui/List';
 import ListSubheader from 'material-ui/List/ListSubheader';
-import Avatar from 'material-ui/Avatar';
-import IconButton from 'material-ui/IconButton';
-import FolderIcon from '@material-ui/icons/Folder';
-import MoreIcon from '@material-ui/icons/MoreVert';
 import Typography from 'material-ui/Typography';
 import Button from 'material-ui/Button';
 import NavBar from './../containers/NavBar/Index.js';
 import DirectoryMenu from './NavBar/DirectoryMenu.js';
-import FavoriteIcon from '@material-ui/icons/Favorite';
-import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
+import ListItem from './ListItem.js';
 
 const styles = theme => ({
   root: {
     flexGrow: 1,
     width: "100%",
     margin: 0,
-  },
-  title: {
-    padding: theme.spacing.unit,
-  },
-  link: {
-    textDecoration: "none",
-    color: "inherit",
-  },
-  listItem: {
-    cursor: "pointer",
-  },
-  demo: {
-    backgroundColor: theme.palette.background.paper,
   },
 });
 
@@ -55,7 +31,11 @@ class Directory extends Component {
     this.loadDirectory(`/${path}`);
   };
   handleClickBack = () => {
-    const { directory, onClickDirectory } = this.props;
+    const { goBack, directory, onClickDirectory } = this.props;
+    if (goBack) {
+      goBack();
+      return;
+    }
 
     if (directory) {
       const splitted = directory.path.split("/");
@@ -87,64 +67,37 @@ class Directory extends Component {
       );
     }
   }
-  favoriteIcon = ({favorite}) => favorite ?
-    (<FavoriteIcon />) :
-    (<FavoriteBorderIcon />)
   renderFile = (file, i) => {
     const { directory } = this.props;
-
     return (
-      <ListItem
+      <React.Fragment
         key={i}
-        onClick={() => this.handleClickFile(file, directory)}
         >
-        <ListItemText>
-          {file.name}
-        </ListItemText>
-        <ListItemSecondaryAction>
-          <IconButton
-            onClick={this.toggleFavorite(directory, file, true)}
-            aria-label="Favorite"
-            >
-            {this.favoriteIcon(file)}
-          </IconButton>
-          <IconButton aria-label="More">
-            <MoreIcon />
-          </IconButton>
-        </ListItemSecondaryAction>
-      </ListItem>
+        <ListItem
+          text={file.name}
+          favorite={file.favorite}
+          onClick={() => this.handleClickFile(file, directory)}
+          onClickFavorite={this.toggleFavorite(directory, file, true)}
+          />
+      </React.Fragment>
     );
   }
   renderDirectory = (dir, i) => {
-    const { classes, directory } = this.props;
+    const { directory } = this.props;
     const parent = directory;
 
     return (
-      <ListItem
-        className={classes.listItem}
+      <React.Fragment
         key={i}
-        onClick={() => this.handleClickDirectory(dir)}
         >
-        <ListItemAvatar>
-          <Avatar>
-            <FolderIcon />
-          </Avatar>
-        </ListItemAvatar>
-        <ListItemText>
-          {dir.name}
-        </ListItemText>
-        <ListItemSecondaryAction>
-          <IconButton
-            aria-label="Favorite"
-            onClick={this.toggleFavorite(parent, dir)}
-            >
-            {this.favoriteIcon(dir)}
-          </IconButton>
-          <IconButton aria-label="More">
-            <MoreIcon />
-          </IconButton>
-        </ListItemSecondaryAction>
-      </ListItem>
+        <ListItem
+          text={dir.name}
+          favorite={dir.favorite}
+          isDirectory={true}
+          onClick={() => this.handleClickDirectory(dir)}
+          onClickFavorite={this.toggleFavorite(parent, dir)}
+          />
+      </React.Fragment>
     );
   };
 

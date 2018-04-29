@@ -30,8 +30,12 @@ class File extends Component {
     );
   }
   handleClickBack = () => {
-    const {gotoDirectory, directory} = this.props;
-    gotoDirectory(directory);
+    const {goBack, gotoDirectory, directory} = this.props;
+    if (goBack) {
+      goBack();
+    } else {
+      gotoDirectory(directory);
+    }
   }
   handleMouseEnter = () => {
     this.clearTimers();

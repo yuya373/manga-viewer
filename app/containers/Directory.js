@@ -4,6 +4,7 @@ import { push, goBack } from 'react-router-redux';
 import Directory from './../components/Directory.js';
 import * as actions from './../actions/directory.js';
 import { fileFavoriteChanged } from './../actions/file.js';
+import queryString from 'query-string';
 
 function mapStateToProps(state, { match }) {
   return {
@@ -14,7 +15,9 @@ function mapStateToProps(state, { match }) {
   };
 }
 
-function mapDispatchToProps(dispatch, props) {
+function mapDispatchToProps(dispatch, {location}) {
+  const qs = queryString.parse(location.search);
+  const backTo = qs.backTo;
   return {
     ...bindActionCreators(
       {
@@ -23,7 +26,7 @@ function mapDispatchToProps(dispatch, props) {
       },
       dispatch
     ),
-    goBack: () => dispatch(goBack()),
+    ...(backTo ? {goBack: () => dispatch(push(backTo))} : {}),
     onClickDirectory: (path) =>
       dispatch(push(`/directories/${path.slice(1, path.length)}`)),
     onClickFile: (file, directory) =>

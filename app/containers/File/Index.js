@@ -23,11 +23,14 @@ function mapStateToProps(state, {match, location}) {
   }
 }
 
-function mapDispatchToProps(dispatch) {
+function mapDispatchToProps(dispatch, {location}) {
+  const qs = queryString.parse(location.search);
+  const backTo = qs.backTo;
   return {
     ...bindActionCreators(actions, dispatch),
     gotoDirectory: (directory) =>
-      dispatch(push(`/directories${directory.path}`))
+      dispatch(push(`/directories${directory.path}`)),
+    ...(backTo ? {goBack: () => dispatch(push(backTo))} : {}),
   }
 }
 
