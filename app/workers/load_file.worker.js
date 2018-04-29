@@ -42,6 +42,18 @@ function readZipFile({path}) {
 
         Promise.all(results).
           then((images) => resolve({images: images.sort((a, b) => {
+            const ANumStr = a.name.match(/\d+/)[0];
+            const BNumStr = b.name.match(/\d+/)[0];
+            if ((typeof ANumStr) !== 'undefined' && (typeof BNumStr) !== 'undefined') {
+              const ANum = Number.parseInt(ANumStr, 10);
+              const BNum = Number.parseInt(BNumStr, 10);
+              if (!Number.isNaN(ANum) && !Number.isNaN(BNum)) {
+                if (ANum < BNum) return -1;
+                if (ANum > BNum) return 1;
+                return 0;
+              }
+            }
+
             const A = a.name.toLowerCase();
             const B = b.name.toLowerCase();
             if (A < B) return -1;
