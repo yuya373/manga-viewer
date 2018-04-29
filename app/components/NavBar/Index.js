@@ -24,10 +24,11 @@ function NavBar({
   classes, title, visible,
   handleClickBack,
   menu,
+  position,
 }) {
   return (
     <Slide direction="down" in={visible} >
-      <AppBar>
+      <AppBar position={position}>
         <Toolbar >
           <IconButton
             onClick={handleClickBack}

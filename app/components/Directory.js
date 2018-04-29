@@ -15,6 +15,8 @@ import FolderIcon from '@material-ui/icons/Folder';
 import MoreIcon from '@material-ui/icons/MoreVert';
 import Typography from 'material-ui/Typography';
 import Button from 'material-ui/Button';
+import NavBar from './NavBar/Index.js';
+import DirectoryMenu from './NavBar/DirectoryMenu.js';
 
 const styles = theme => ({
   root: {
@@ -38,6 +40,81 @@ const styles = theme => ({
 });
 
 class Directory extends Component {
+  handleClickFile = (file, directory) => {
+    const { onClickFile } = this.props;
+    onClickFile(file, directory);
+  };
+  handleClickDirectory = (dir) => {
+    const { onClickDirectory } = this.props;
+    onClickDirectory(dir.path);
+  };
+  handleClickReload = () => {
+    const { path } = this.props;
+    this.loadDirectory(`/${path}`);
+  };
+  handleClickBack = () => {
+    const { directory, onClickDirectory } = this.props;
+
+    if (directory) {
+      const splitted = directory.path.split("/");
+      const parent = splitted.reduce((a, e) => {
+        if (e === directory.name) {
+          return a;
+        } else {
+          return a.concat([e]);
+        }
+      }, []).join("/");
+      console.log("PARENT", parent);
+      onClickDirectory(parent);
+    } else {
+      onClickDirectory("/");
+    }
+  };
+  renderFile = (file, i) => {
+    const { directory } = this.props;
+
+    return (
+      <ListItem
+        key={i}
+        onClick={() => this.handleClickFile(file, directory)}
+        >
+        <ListItemText>
+          {file.name}
+        </ListItemText>
+        <ListItemSecondaryAction>
+          <IconButton aria-label="More">
+            <MoreIcon />
+          </IconButton>
+        </ListItemSecondaryAction>
+      </ListItem>
+    );
+  }
+  renderDirectory = (dir, i) => {
+    const { classes } = this.props;
+
+    return (
+      <ListItem
+        className={classes.listItem}
+        key={i}
+        onClick={() => this.handleClickDirectory(dir)}
+        >
+        <ListItemAvatar>
+          <Avatar>
+            <FolderIcon />
+          </Avatar>
+        </ListItemAvatar>
+        <ListItemText>
+          {dir.name}
+        </ListItemText>
+        <ListItemSecondaryAction>
+          <IconButton aria-label="More">
+            <MoreIcon />
+          </IconButton>
+        </ListItemSecondaryAction>
+      </ListItem>
+    );
+  };
+
   componentDidMount() {
     this.loadDirectoryIfNeed(this.props);
   }
@@ -59,13 +136,11 @@ class Directory extends Component {
   render() {
     const {
       classes, path, directory,
-      goBack, onClickDirectory,
-      onClickFile,
+      onClickDirectory,
       error,
     } = this.props;
 
     if (error.message.length > 0) return (
-
       <React.Fragment>
         <Grid item xs={12} >
           <Typography variant="title">
@@ -83,105 +158,30 @@ class Directory extends Component {
       </React.Fragment>
     );
 
-    const handleClickDirectory = (dir) => {
-      console.log("Clicked", dir);
-      onClickDirectory(dir.path);
-    };
-
-    const handleClickBack = () => {
-      if (directory) {
-        const splitted = directory.path.split("/");
-        const parent = splitted.reduce((a, e) => {
-          if (e === directory.name) {
-            return a;
-          } else {
-            return a.concat([e]);
-          }
-        }, []).join("/");
-        console.log("PARENT", parent);
-        onClickDirectory(parent);
-      } else {
-        onClickDirectory("/");
-      }
-    }
-
-    const renderDirectory = (dir, i) => (
-      <ListItem
-        className={classes.listItem}
-        key={i}
-        onClick={() => handleClickDirectory(dir)}
-        >
-        <ListItemAvatar>
-          <Avatar>
-            <FolderIcon />
-          </Avatar>
-        </ListItemAvatar>
-        <ListItemText>
-          {dir.name}
-        </ListItemText>
-        <ListItemSecondaryAction>
-          <IconButton aria-label="More">
-            <MoreIcon />
-          </IconButton>
-        </ListItemSecondaryAction>
-      </ListItem>
-    );
-
-    const handleClickFile = (file, directory) => {
-      onClickFile(file, directory);
-    }
-
-    const renderFile = (file, i) => (
-      <ListItem
-        key={i}
-        onClick={() => handleClickFile(file, directory)}
-        >
-        <ListItemText>
-          {file.name}
-        </ListItemText>
-        <ListItemSecondaryAction>
-          <IconButton aria-label="More">
-            <MoreIcon />
-          </IconButton>
-        </ListItemSecondaryAction>
-      </ListItem>
-    );
-
-    const handleClickReload = () => this.loadDirectory(`/${path}`);
-
     return (
-      <Grid container className={classes.root} spacing={16}>
-        <Grid item xs={8}>
-          <Typography variant="title">
-            {path}
-          </Typography>
+      <React.Fragment>
+        <NavBar
+          title={directory.path}
+          visible={true}
+          handleClickBack={this.handleClickBack}
+          position="sticky"
+          menu={<DirectoryMenu onClickReload={this.handleClickReload} />}
+          />
+        <Grid container className={classes.root} spacing={16}>
+          <Grid item xs={12}>
+            <List >
+              <ListSubheader disableSticky={true} >
+                Files
+              </ListSubheader>
+              {directory && directory.files.map(this.renderFile)}
+              <ListSubheader disableSticky={true} >
+                Directories
+              </ListSubheader>
+              {directory && directory.childDirectories.map(this.renderDirectory)}
+            </List>
+          </Grid>
         </Grid>
-        <Grid item container justify="flex-end" xs={4} >
-          <Button
-            onClick={handleClickReload}
-            >
-            reload
-          </Button>
-          <Button
-            color="primary"
-            onClick={handleClickBack}
-            >
-            Back
-          </Button>
-        </Grid>
-        <Grid item xs={12}>
-          <List >
-            <ListSubheader disableSticky={true} >
-              Files
-            </ListSubheader>
-            {directory && directory.files.map(renderFile)}
-            <ListSubheader disableSticky={true} >
-              Directories
-            </ListSubheader>
-            {directory && directory.childDirectories.map(renderDirectory)}
-          </List>
-        </Grid>
-      </Grid>
+      </React.Fragment>
     );
   }
 }
