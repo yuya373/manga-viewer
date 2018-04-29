@@ -9,7 +9,9 @@ import List, {
   ListItemText,
 } from 'material-ui/List';
 import { FormGroup, FormControlLabel } from 'material-ui/Form';
-
+import HelpIcon from '@material-ui/icons/HelpOutline';
+import Tooltip from 'material-ui/Tooltip';
+import Typography from 'material-ui/Typography';
 
 const styles = theme => ({
   menuItemControl: {
@@ -43,8 +45,25 @@ class FileMenu extends Component {
       <Switch checked={perPage == 2}/>
     );
 
+    const toolTipText = (
+      <React.Fragment>
+        <Typography color="inherit">
+          <kbd>→</kbd>aaa
+        </Typography>
+      </React.Fragment>
+    );
+
     return (
       <React.Fragment>
+        <Tooltip
+          title={toolTipText}
+          >
+          <IconButton
+            color="inherit"
+            >
+            <HelpIcon />
+          </IconButton>
+        </Tooltip>
         <IconButton
           aria-owns={open ? 'menu-appbar' : null}
           aria-haspopup="true"
