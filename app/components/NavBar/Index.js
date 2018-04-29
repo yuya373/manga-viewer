@@ -8,7 +8,6 @@ import IconButton from 'material-ui/IconButton';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import Slide from 'material-ui/transitions/Slide';
 import MenuIcon from '@material-ui/icons/Menu';
-import Drawer from './../Drawer.js';
 
 const styles = theme => ({
   title: {
@@ -22,26 +21,18 @@ const styles = theme => ({
 });
 
 class NavBar extends Component {
-  state = {
-    isDrawerOpen: false,
-  };
-
-  modifyDrawer = (isOpen) => () => this.setState((state) => ({
-    isDrawerOpen: isOpen,
-  }));
-
   renderBackButton = () => {
     const {
       classes,
-      handleClickBack,
+      onClickBack,
     } = this.props;
 
-    if ((typeof handleClickBack) !== 'function')
+    if ((typeof onClickBack) !== 'function')
       return null;
 
     return (
       <IconButton
-        onClick={handleClickBack}
+        onClick={onClickBack}
         className={classes.menuButton}
         aria-label="Back"
         >
@@ -53,12 +44,11 @@ class NavBar extends Component {
   render() {
     const {
       classes, title, visible,
-      handleClickBack,
       menu,
       position,
+      isDrawerOpen,
+      drawerOpen,
     } = this.props;
-
-    const {isDrawerOpen} = this.state;
 
     return (
       <React.Fragment>
@@ -76,7 +66,7 @@ class NavBar extends Component {
               {menu}
               <IconButton
                 color="inherit"
-                onClick={this.modifyDrawer(true)}
+                onClick={drawerOpen}
                 aria-label="Menu"
                 >
                 <MenuIcon />
@@ -84,10 +74,6 @@ class NavBar extends Component {
             </Toolbar>
           </AppBar>
         </Slide>
-        <Drawer
-          isOpen={isDrawerOpen}
-          onClose={this.modifyDrawer(false)}
-          />
       </React.Fragment>
     )
   }

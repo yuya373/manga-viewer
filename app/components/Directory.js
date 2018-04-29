@@ -15,7 +15,7 @@ import FolderIcon from '@material-ui/icons/Folder';
 import MoreIcon from '@material-ui/icons/MoreVert';
 import Typography from 'material-ui/Typography';
 import Button from 'material-ui/Button';
-import NavBar from './NavBar/Index.js';
+import NavBar from './../containers/NavBar/Index.js';
 import DirectoryMenu from './NavBar/DirectoryMenu.js';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
@@ -196,7 +196,7 @@ class Directory extends Component {
         <NavBar
           title={directory.path}
           visible={true}
-          handleClickBack={this.handleClickBack}
+          onClickBack={this.handleClickBack}
           position="sticky"
           menu={<DirectoryMenu onClickReload={this.handleClickReload} />}
           />

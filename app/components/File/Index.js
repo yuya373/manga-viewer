@@ -4,7 +4,7 @@ import { withStyles } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
 import ImageFile from './../../containers/File/ImageFile.js';
 import PdfFile from './PdfFile.js';
-import NavBar from './../NavBar/Index.js';
+import NavBar from './../../containers/NavBar/Index.js';
 import FileMenu from './../../containers/NavBar/FileMenu.js';
 
 const styles = theme => ({
@@ -94,7 +94,7 @@ class File extends Component {
       <NavBar
         visible={displayAppBar}
         title={file.name}
-        handleClickBack={this.handleClickBack}
+        onClickBack={this.handleClickBack}
         menu={menu}
         />
     );

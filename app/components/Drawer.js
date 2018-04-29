@@ -15,13 +15,24 @@ const styles = theme => ({
 function Drawer({
   classes,
   isOpen,
-  onClose,
+  drawerClose,
+  gotoBrowse,
+  gotoFavorite,
 }) {
+  const handleClickBrowse = () => {
+    gotoBrowse();
+    drawerClose();
+  };
+  const handleClickFavorite = () => {
+    gotoFavorite();
+    drawerClose();
+  };
+
   return (
     <MuiDrawer
       anchor="right"
       open={isOpen}
-      onClose={onClose}
+      onClose={drawerClose}
       >
       <List
         component="nav"
@@ -29,6 +40,7 @@ function Drawer({
         >
         <ListItem
           button={true}
+          onClick={handleClickBrowse}
           >
           <ListItemIcon>
             <FolderIcon />
@@ -39,6 +51,7 @@ function Drawer({
         </ListItem>
         <ListItem
           button={true}
+          onClick={handleClickFavorite}
           >
           <ListItemIcon>
             <FavoriteIcon />
