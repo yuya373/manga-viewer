@@ -41,6 +41,17 @@ class File extends Component {
     this.clearTimers();
     this.displayAppBar();
   }
+  handleKeyUp = (event) => {
+    const {shiftKey, keyCode} = event;
+    const {gotoDirectory, directory} = this.props;
+    if (shiftKey) {
+      switch(keyCode) {
+      case 72:
+        gotoDirectory(directory);
+        return;
+      }
+    }
+  }
 
   displayAppBarTimer = null;
   hideAppBarTimer = null;
@@ -49,6 +60,7 @@ class File extends Component {
     const {file, directory, loadFile} = this.props;
     if (file && directory) {
       loadFile(file, directory);
+      document.addEventListener("keyup", this.handleKeyUp);
     }
     setTimeout(this.hideAppBar, 1000);
   }
@@ -59,6 +71,7 @@ class File extends Component {
 
   componentWillUnmount() {
     this.clearTimers();
+    document.removeEventListener("keyup", this.handleKeyUp);
   }
 
   clearTimers() {
