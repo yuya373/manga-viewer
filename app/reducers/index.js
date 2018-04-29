@@ -6,6 +6,7 @@ import homedir from './homedir.js';
 import directory from './directory.js';
 import file from './file.js';
 import drawer from './drawer.js';
+import favorite from './favorite.js';
 
 const rootReducer = combineReducers({
   counter,
@@ -14,6 +15,7 @@ const rootReducer = combineReducers({
   directory,
   file,
   drawer,
+  favorite,
 });
 
 export default rootReducer;

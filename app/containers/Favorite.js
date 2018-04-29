@@ -10,31 +10,39 @@ import {
 } from './../actions/directory.js';
 
 function mapStateToProps(state) {
-  const files = [];
-  const directories = [];
+  const files = state.favorite.files.reduce((a, e) => {
+    let parent = null;
+    let file = null;
 
-  state.directory.directories.sort((a, b) => {
-    if (a.path < b.path) return -1;
-    if (a.path > b.path) return 1;
-    return 0
-  }).forEach((e) => {
-    e.childDirectories.forEach((f) => {
-      if (f.favorite) {
-        directories.push({
-          ...f,
-          parent: e,
-        });
+    state.directory.directories.some((f) => {
+      const found = f.files.find((g) => g.path === e);
+      if (found) {
+        parent = f;
+        file = found;
+        return true;
       }
-    })
-    e.files.forEach((f) => {
-      if (f.favorite) {
-        files.push({
-          ...f,
-          parent: e,
-        });
+      return false;
+    });
+    if (parent && file) return a.concat([{...file, parent}]);
+    return a;
+  }, []);
+  const directories = state.favorite.directories.reduce((a, e) => {
+    let parent = null;
+    let dir = null;
+
+    const fav = state.directory.directories.some((f) => {
+      const found = f.childDirectories.find((g) => g.path === e);
+      if (found) {
+        parent = f;
+        dir = found;
+        return true;
       }
-    })
-  });
+      return false;
+    });
+
+    if (parent && dir) return a.concat([{...dir, parent}]);
+    return a;
+  }, []);
 
   return {
     files,

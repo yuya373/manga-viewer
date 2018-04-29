@@ -18,10 +18,9 @@ export const directoryLoaded = createAction(
 
 export const directoryFavoriteChanged = createAction(
   DIRECTORY_FAVORITE_CHANGED,
-  (parent, directory, favorite) => ({
-    parent,
-    favorite,
-    directory,
+  ({ path, favorite }) => ({
+    path,
+    favorite
   })
 );
 

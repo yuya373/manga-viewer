@@ -52,50 +52,47 @@ class Directory extends Component {
       onClickDirectory("/");
     }
   };
-  toggleFavorite = (parent, target, isFile = false) => () => {
+  toggleFavorite = ({path, favorite}, isFile = false) => () => {
     if (isFile) {
-      this.props.fileFavoriteChanged(
-        parent,
-        target,
-        !target.favorite
-      );
+      this.props.fileFavoriteChanged({path, favorite});
     } else {
-      this.props.directoryFavoriteChanged(
-        parent,
-        target,
-        !target.favorite
-      );
+      this.props.directoryFavoriteChanged({path, favorite});
     }
   }
   renderFile = (file, i) => {
-    const { directory } = this.props;
-    return (
-      <React.Fragment
-        key={i}
-        >
-        <ListItem
-          text={file.name}
-          favorite={file.favorite}
-          onClick={() => this.handleClickFile(file, directory)}
-          onClickFavorite={this.toggleFavorite(directory, file, true)}
-          />
-      </React.Fragment>
-    );
-  }
-  renderDirectory = (dir, i) => {
-    const { directory } = this.props;
-    const parent = directory;
+    const { directory, favoriteFiles } = this.props;
+    const { name, path } = file;
+    const favorite = favoriteFiles.includes(path);
 
     return (
       <React.Fragment
         key={i}
         >
         <ListItem
-          text={dir.name}
-          favorite={dir.favorite}
+          text={name}
+          favorite={favorite}
+          onClick={() => this.handleClickFile(file, directory)}
+          onClickFavorite={this.toggleFavorite({path, favorite: !favorite}, true)}
+          />
+      </React.Fragment>
+    );
+  }
+  renderDirectory = (dir, i) => {
+    const { directory, favoriteDirectories } = this.props;
+    const parent = directory;
+    const { name, path } = dir;
+    const favorite = favoriteDirectories.includes(path);
+
+    return (
+      <React.Fragment
+        key={i}
+        >
+        <ListItem
+          text={name}
+          favorite={favorite}
           isDirectory={true}
           onClick={() => this.handleClickDirectory(dir)}
-          onClickFavorite={this.toggleFavorite(parent, dir)}
+          onClickFavorite={this.toggleFavorite({path, favorite: !favorite})}
           />
       </React.Fragment>
     );

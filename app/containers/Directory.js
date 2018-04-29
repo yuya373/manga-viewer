@@ -12,6 +12,8 @@ function mapStateToProps(state, { match }) {
     directory: state.directory.directories.
       find((e) => e.path === `/${match.params.path || ""}`),
     error: state.directory.error,
+    favoriteDirectories: state.favorite.directories,
+    favoriteFiles: state.favorite.files,
   };
 }
 

@@ -15,28 +15,25 @@ const styles = theme => ({
 });
 
 class Favorite extends Component {
-  toggleFavorite = (target, isFile) => () => {
+  toggleFavorite = (path, isFile) => () => {
     if (isFile) {
-      this.props.fileFavoriteChanged(
-        target.parent, target, false
-      );
+      this.props.fileFavoriteChanged({path, favorite: false});
     } else {
-      this.props.directoryFavoriteChanged(
-        target.parent, target, false
-      );
+      this.props.directoryFavoriteChanged({path, favorite: false});
     }
   }
   gotoFile = (file) => () => {
     this.props.gotoFile(file, file.parent);
   }
   renderFile = (file, i) => {
+    const { name, path } = file;
     return (
       <React.Fragment key={i}>
         <ListItem
-          text={file.name}
-          favorite={file.favorite}
+          text={name}
+          favorite={true}
           onClick={this.gotoFile(file)}
-          onClickFavorite={this.toggleFavorite(file, true)}
+          onClickFavorite={this.toggleFavorite(path, true)}
           />
       </React.Fragment>
     );
@@ -45,14 +42,15 @@ class Favorite extends Component {
     this.props.gotoDirectory(directory);
   }
   renderDirectory = (directory, i) => {
+    const { name, path } = directory;
     return (
       <React.Fragment key={i}>
         <ListItem
-          text={directory.name}
-          favorite={directory.favorite}
+          text={name}
+          favorite={true}
           isDirectory={true}
           onClick={this.gotoDirectory(directory)}
-          onClickFavorite={this.toggleFavorite(directory)}
+          onClickFavorite={this.toggleFavorite(path)}
           />
       </React.Fragment>
     );

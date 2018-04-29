@@ -10,7 +10,6 @@ export function create(path, parent = null, files = [], childDirectories = []) {
     parent,
     files,
     childDirectories,
-    favorite: false,
   };
 }
 
@@ -65,18 +64,9 @@ export function removeFile(directory, file) {
   };
 }
 
-export function favorite(directory, favorite = true) {
-  return {
-    ...directory,
-    favorite,
-  };
-}
-
-
 export default {
   create,
   upsertFile,
   upsertChildDirectory,
   isEqual,
-  favorite,
 }

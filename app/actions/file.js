@@ -15,9 +15,8 @@ export const filePerPageChanged = createAction(FILE_PER_PAGE_CHANGED);
 
 export const fileFavoriteChanged = createAction(
   FILE_FAVORITE_CHANGED,
-  (parentDir, file, favorite) => ({
-    parentDir,
-    file,
+  ({ path, favorite }) => ({
+    path,
     favorite,
   })
 );
