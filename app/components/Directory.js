@@ -91,20 +91,30 @@ class Directory extends Component {
       </React.Fragment>
     );
   };
+  redirectIfDirectoryNotExists = ({path, directory, loading, gotoDirectory}) => {
+    if (loading) return;
+    if (!directory) {
+      const paths = `/${path}`.split("/");
+      const parent = paths.slice(0, paths.length - 1).join("/");
+      gotoDirectory(parent);
+    }
+  }
+
+  componentWillMount() {
+    this.redirectIfDirectoryNotExists(this.props);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.redirectIfDirectoryNotExists(nextProps);
+  }
 
   render() {
     const {
       classes, path, directory,
       loading, gotoDirectory,
     } = this.props;
-    if (loading) return null;
 
-    if (!directory) {
-      const paths = path.split("/");
-      const parent = paths.slice(0, paths.length - 1).join("/");
-      gotoDirectory(parent);
-      return null;
-    }
+    if (loading || !directory) return null;
 
     return (
       <React.Fragment>
