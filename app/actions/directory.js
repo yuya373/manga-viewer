@@ -28,9 +28,9 @@ export const directoryFavoriteChanged = createAction(
 
 const directoryLoadError = createAction(
   DIRECTORY_LOAD_ERROR,
-  (error, message) => ({
+  (error, path) => ({
     error,
-    message,
+    path
   })
 )
 
@@ -62,9 +62,9 @@ export function loadDirectory(path) {
         const {directory} = data;
         dispatch(directoryLoaded(directory))
       } else {
-        const {error, message} = data;
+        const {error} = data;
         console.warn("Error in worker", error);
-        dispatch(directoryLoadError(error, message))
+        dispatch(directoryLoadError(error, path))
       }
     }
 

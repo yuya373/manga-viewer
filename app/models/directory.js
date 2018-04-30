@@ -32,7 +32,13 @@ export function upsertChildDirectory(directory, dir) {
 export function removeChildDirectory(directory, dir) {
   return {
     ...directory,
-    childDirectories: directory.childDirectories.filter((e) => !isEqual(e, dir)),
+    childDirectories: directory.childDirectories.filter((e) => {
+      if (dir.path) {
+        return !isEqual(e, dir)
+      } else {
+        return e.path !== dir;
+      }
+    }),
   }
 }
 
@@ -68,5 +74,7 @@ export default {
   create,
   upsertFile,
   upsertChildDirectory,
+  removeFile,
+  removeChildDirectory,
   isEqual,
 }

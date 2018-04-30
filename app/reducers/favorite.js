@@ -1,6 +1,7 @@
 import { handleActions } from 'redux-actions';
 import {
   DIRECTORY_FAVORITE_CHANGED,
+  DIRECTORY_LOAD_ERROR,
 } from './../actions/directory.js';
 import {
   FILE_FAVORITE_CHANGED,
@@ -27,7 +28,11 @@ export default handleActions(
     [FILE_LOAD_ERROR]: (state, {payload}) => ({
       ...state,
       files: state.files.filter((e) => e !== payload.path),
-    })
+    }),
+    [DIRECTORY_LOAD_ERROR]: (state, {payload}) => ({
+      ...state,
+      directories: state.directories.filter((e) => e !== payload.path),
+    }),
   },
   initialState
 );

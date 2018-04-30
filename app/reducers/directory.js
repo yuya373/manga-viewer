@@ -6,33 +6,39 @@ import {
 } from './../actions/directory.js';
 import {
   FILE_LOADED,
+  FILE_LOAD_ERROR,
 } from './../actions/file.js';
 import D from './../models/directory.js';
 
 const defaultState = {
   loading: false,
   directories: [],
-  error: {
-    message: "",
-  }
 };
+
+const modifyParentDirectory = (directories, childPath, modify) => {
+  const paths = childPath.split("/");
+  const parentPath = paths.slice(0, paths.length - 1).join("/");
+
+  return directories.map((e) => {
+    if (e.path === parentPath) return modify(e);
+    return e;
+  });
+}
 
 export default handleActions(
   {
     [DIRECTORY_LOAD_ERROR]: (state, {payload}) => ({
       ...state,
       loading: false,
-      error: {
-        ...state.error,
-        message: payload.message,
-      }
+      directories: modifyParentDirectory(
+        state.directories.filter((e) => e.path !== payload.path),
+        payload.path,
+        (parentDir) => D.removeChildDirectory(parentDir, payload.path),
+      ),
     }),
     [DIRECTORY_LOADING]: (state) => ({
       ...state,
       loading: true,
-      error: {
-        message: "",
-      },
     }),
     [DIRECTORY_LOADED]: (state, {payload}) => ({
       ...state,

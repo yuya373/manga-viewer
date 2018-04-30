@@ -30,6 +30,12 @@ onmessage = (e) => {
     postMessage({success: true, directory: dir});
   } catch(e) {
     // console.log("ERROR", e.message, e);
-    postMessage({success: false, error: e, message: e.message});
+    postMessage({
+      success: false,
+      error: {
+        message: e.message,
+        code: e.code,
+      },
+    });
   }
 }
