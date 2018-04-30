@@ -47,6 +47,12 @@ export default handleActions(
         filter((e) => !D.isEqual(e, payload.directory)).
         concat([payload.directory])
     }),
+    [FILE_LOAD_ERROR]: (state, {payload}) => ({
+      ...state,
+      directories: state.directories.
+        filter((e) => !D.isEqual(e, payload.directory)).
+        concat([payload.directory]),
+    }),
   },
   defaultState,
 );

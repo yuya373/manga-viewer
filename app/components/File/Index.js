@@ -14,18 +14,19 @@ const styles = theme => ({
 });
 
 class File extends Component {
+  mounted = false
   state = {
     displayAppBar: true,
   };
   hideAppBar = () => {
     this.hideAppBarTimer = window.setTimeout(
-      () => this.setState({displayAppBar: false}),
+      () => this.mounted && this.setState({displayAppBar: false}),
       500
     );
   }
   displayAppBar = () => {
     this.displayAppBarTimer = window.setTimeout(
-      () =>this.setState({displayAppBar: true}),
+      () => this.mounted && this.setState({displayAppBar: true}),
       500
     );
   }
@@ -61,19 +62,17 @@ class File extends Component {
   hideAppBarTimer = null;
 
   componentDidMount() {
+    this.mounted = true
     const {file, directory, loadFile} = this.props;
     if (file && directory) {
       loadFile(file, directory);
       document.addEventListener("keyup", this.handleKeyUp);
+      setTimeout(this.hideAppBar, 1000);
     }
-    setTimeout(this.hideAppBar, 1000);
-  }
-
-  componentWillReceiveProps() {
-    console.log("componentWillReceiveProps")
   }
 
   componentWillUnmount() {
+    this.mounted = false
     this.clearTimers();
     document.removeEventListener("keyup", this.handleKeyUp);
   }

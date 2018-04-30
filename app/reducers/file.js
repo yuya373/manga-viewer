@@ -15,21 +15,18 @@ export default handleActions(
     [FILE_LOADED]: (state) => ({
       ...state,
       loading: false,
-      error: {
-        ...state.error,
-        message: "",
-      },
     }),
     [FILE_PER_PAGE_CHANGED]: (state, {payload}) => ({
       ...state,
       perPage: payload,
+    }),
+    [FILE_LOAD_ERROR] : (state, {payload}) => ({
+      ...state,
+      loading: false,
     })
   },
   {
     loading: false,
     perPage: 2,
-    error: {
-      message: "",
-    },
   }
 )

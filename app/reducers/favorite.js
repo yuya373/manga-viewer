@@ -4,6 +4,7 @@ import {
 } from './../actions/directory.js';
 import {
   FILE_FAVORITE_CHANGED,
+  FILE_LOAD_ERROR,
 } from './../actions/file.js';
 
 const initialState = {
@@ -23,6 +24,10 @@ export default handleActions(
       files: state.files.filter((e) => e !== payload.path).
         concat(payload.favorite ? [payload.path] : []),
     }),
+    [FILE_LOAD_ERROR]: (state, {payload}) => ({
+      ...state,
+      files: state.files.filter((e) => e !== payload.path),
+    })
   },
   initialState
 );
