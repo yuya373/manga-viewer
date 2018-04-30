@@ -7,6 +7,7 @@ import directory from './directory.js';
 import file from './file.js';
 import drawer from './drawer.js';
 import favorite from './favorite.js';
+import snackbar from './snackbar.js';
 
 const rootReducer = combineReducers({
   counter,
@@ -16,6 +17,7 @@ const rootReducer = combineReducers({
   file,
   drawer,
   favorite,
+  snackbar,
 });
 
 export default rootReducer;
