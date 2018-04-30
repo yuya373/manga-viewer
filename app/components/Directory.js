@@ -23,33 +23,27 @@ class Directory extends Component {
     onClickFile(file, directory);
   };
   handleClickDirectory = (dir) => {
-    const { onClickDirectory } = this.props;
-    onClickDirectory(dir.path);
+    const { gotoDirectory } = this.props;
+    gotoDirectory(dir.path);
   };
   handleClickReload = () => {
-    const { path } = this.props;
-    this.loadDirectory(`/${path}`);
+    const { directory, gotoDirectory } = this.props;
+    gotoDirectory(directory.path, {}, true);
   };
   handleClickBack = () => {
-    const { goBack, directory, onClickDirectory } = this.props;
+    const { goBack, directory, gotoDirectory } = this.props;
     if (goBack) {
       goBack();
       return;
     }
 
     if (directory) {
-      const splitted = directory.path.split("/");
-      const parent = splitted.reduce((a, e) => {
-        if (e === directory.name) {
-          return a;
-        } else {
-          return a.concat([e]);
-        }
-      }, []).join("/");
+      const paths = directory.path.split("/");
+      const parent = paths.slice(0, paths.length - 1).join("/");
       console.log("PARENT", parent);
-      onClickDirectory(parent);
+      gotoDirectory(parent);
     } else {
-      onClickDirectory("/");
+      gotoDirectory("/");
     }
   };
   toggleFavorite = ({path, favorite}, isFile = false) => () => {
@@ -98,48 +92,19 @@ class Directory extends Component {
     );
   };
 
-  componentDidMount() {
-    this.loadDirectoryIfNeed(this.props);
-  }
-
-  componentWillReceiveProps(nextProps) {
-    this.loadDirectoryIfNeed(nextProps);
-  }
-
-  loadDirectoryIfNeed({path, directory}) {
-    if (!directory) {
-      this.loadDirectory(`/${path}`);
-    }
-  }
-
-  loadDirectory(path) {
-    this.props.loadDirectory(path);
-  }
-
   render() {
     const {
       classes, path, directory,
-      onClickDirectory,
-      error,
+      loading, gotoDirectory,
     } = this.props;
+    if (loading) return null;
 
-    if (error.message.length > 0) return (
-      <React.Fragment>
-        <Grid item xs={12} >
-          <Typography variant="title">
-            {error.message}
-          </Typography>
-        </Grid>
-        <Grid item xs={12} >
-          <Button
-            color="primary"
-            onClick={() => onClickDirectory("/")}
-            >
-            Home
-          </Button>
-        </Grid>
-      </React.Fragment>
-    );
+    if (!directory) {
+      const paths = path.split("/");
+      const parent = paths.slice(0, paths.length - 1).join("/");
+      gotoDirectory(parent);
+      return null;
+    }
 
     return (
       <React.Fragment>

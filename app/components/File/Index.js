@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { Redirect } from 'react-router';
 import { withStyles } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
 import ImageFile from './../../containers/File/ImageFile.js';
@@ -35,7 +34,7 @@ class File extends Component {
     if (goBack) {
       goBack();
     } else {
-      gotoDirectory(directory);
+      gotoDirectory(directory.path);
     }
   }
   handleMouseEnter = () => {
@@ -52,7 +51,7 @@ class File extends Component {
     if (shiftKey) {
       switch(keyCode) {
       case 72:
-        gotoDirectory(directory);
+        gotoDirectory(directory.path);
         return;
       }
     }
@@ -117,16 +116,16 @@ class File extends Component {
   }
 
   render() {
-    const {classes, file, directory} = this.props;
+    const {classes, file, directory, gotoDirectory} = this.props;
 
     if (!file && directory) {
-      return (
-        <Redirect to={`/directories${directory.path}`}/>
-      )
+      gotoDirectory(directory.path);
+      return null;
     }
 
     if (!file || !directory) {
-      return <Redirect to="/" />
+      gotoDirectory("/")
+      return null;
     }
 
     return (

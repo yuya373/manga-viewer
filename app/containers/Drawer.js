@@ -3,6 +3,9 @@ import { bindActionCreators } from 'redux';
 import { push } from 'react-router-redux';
 import * as actions from './../actions/drawer.js';
 import Drawer from './../components/Drawer.js';
+import {
+  gotoDirectory,
+} from './../actions/directory.js';
 
 function mapStateToProps(state) {
   return {
@@ -13,7 +16,7 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   return {
     ...bindActionCreators(actions, dispatch),
-    gotoBrowse: () => dispatch(push(`/directories${require("os").homedir()}`)),
+    gotoBrowse: () => dispatch(gotoDirectory(require("os").homedir())),
     gotoFavorite: () => dispatch(push("/favorites")),
   };
 }

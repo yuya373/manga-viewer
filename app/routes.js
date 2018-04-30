@@ -27,10 +27,6 @@ export default () => (
         component={Directory}
         />
       <Route
-        path={`/directories${homedir}`}
-        component={Directory}
-        />
-      <Route
         path="/"
         render={() => <Redirect to={`/directories${homedir}`} />}
         />

@@ -1,5 +1,7 @@
 import { createAction } from 'redux-actions';
 import { ipcRenderer } from 'electron';
+import { push } from 'react-router-redux';
+import queryString from 'query-string';
 import Worker from './../workers/load_directory.worker.js'
 
 export const LOAD_DIRECTORY = "LOAD_DIRECTORY";
@@ -32,15 +34,27 @@ const directoryLoadError = createAction(
   })
 )
 
+export function gotoDirectory(path, params = {}, force = false) {
+  return (dispatch, getState) => {
+    const hasDirectory = Boolean(
+      getState().directory.directories.find((e) => e.path === path)
+    );
+    const qs = queryString.stringify(params);
+    const url = `/directories${path}?${qs}`;
+    if (force || !hasDirectory) {
+      dispatch(directoryLoading());
+      dispatch(push(url));
+      loadDirectory(path)(dispatch);
+    } else {
+      dispatch(push(url));
+    }
+  }
+}
+
 export function loadDirectory(path) {
   const worker = new Worker();
 
-  return (dispatch, getState) => {
-    const {directory} = getState()
-    if (directory.loading) return;
-
-    dispatch(directoryLoading());
-
+  return (dispatch) => {
     worker.onmessage = (e) => {
       const data = e.data;
 

@@ -7,6 +7,7 @@ import {
 } from './../actions/file.js';
 import {
   directoryFavoriteChanged,
+  gotoDirectory,
 } from './../actions/directory.js';
 
 function mapStateToProps(state) {
@@ -62,9 +63,8 @@ function mapDispatchToProps(dispatch) {
     gotoFile: (file, directory) => dispatch(push(
       `/files/${file.name}?path=${directory.path}&backTo=/favorites`
     )),
-    gotoDirectory: (directory) => dispatch(push(
-      `/directories${directory.path}?backTo=/favorites`
-    )),
+    gotoDirectory: (directory) =>
+      dispatch(gotoDirectory(directory.path, {backTo: "/favorites"})),
   }
 }
 

@@ -4,6 +4,9 @@ import queryString from 'query-string';
 import File from './../../components/File/Index.js';
 import { push } from 'react-router-redux';
 import * as actions from './../../actions/file.js';
+import {
+  gotoDirectory,
+} from './../../actions/directory.js';
 
 function mapStateToProps(state, {match, location}) {
   const name = match.params.name;
@@ -27,9 +30,13 @@ function mapDispatchToProps(dispatch, {location}) {
   const qs = queryString.parse(location.search);
   const backTo = qs.backTo;
   return {
-    ...bindActionCreators(actions, dispatch),
-    gotoDirectory: (directory) =>
-      dispatch(push(`/directories${directory.path}`)),
+    ...bindActionCreators(
+      {
+        ...actions,
+        gotoDirectory,
+      },
+      dispatch
+    ),
     ...(backTo ? {goBack: () => dispatch(push(backTo))} : {}),
   }
 }

@@ -8,6 +8,7 @@ import queryString from 'query-string';
 
 function mapStateToProps(state, { match }) {
   return {
+    loading: state.directory.loading,
     path: match.params.path || "",
     directory: state.directory.directories.
       find((e) => e.path === `/${match.params.path || ""}`),
@@ -29,8 +30,6 @@ function mapDispatchToProps(dispatch, {location}) {
       dispatch
     ),
     ...(backTo ? {goBack: () => dispatch(push(backTo))} : {}),
-    onClickDirectory: (path) =>
-      dispatch(push(`/directories/${path.slice(1, path.length)}`)),
     onClickFile: (file, directory) =>
       dispatch(push(`/files/${file.name}?path=${directory.path}`))
   };
