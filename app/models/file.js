@@ -1,13 +1,20 @@
-export function create(path) {
+export function create(path, {size, mtime, ctime, birthtime}) {
   const splitted = path.split("/");
   const name = splitted[splitted.length - 1];
   const ext = require('path').extname(name).substring(1);
 
   return {
+    isFile: true,
+    isDirectory: false,
     path,
     name,
     images: [],
     ext,
+
+    size,
+    mtime,
+    ctime,
+    birthtime,
   };
 }
 
