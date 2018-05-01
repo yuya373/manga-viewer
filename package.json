@@ -75,15 +75,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/chentsulin/manga-viewer.git"
+    "url": "git+https://github.com/yuya373/manga-viewer.git"
   },
   "bugs": {
-    "url": "https://github.com/chentsulin/manga-viewer/issues"
+    "url": "https://github.com/yuya373/manga-viewer/issues"
   },
   "keywords": [
     "electron"
   ],
-  "homepage": "https://github.com/chentsulin/manga-viewer#readme",
+  "homepage": "https://github.com/yuya373/manga-viewer#readme",
   "jest": {
     "moduleNameMapper": {
       "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/internals/mocks/fileMock.js",
@@ -149,7 +149,7 @@
     "file-loader": "^1.1.6",
     "flow-bin": "^0.64.0",
     "flow-runtime": "^0.16.0",
-    "flow-typed": "^2.3.0",
+    "flow-typed": "^2.4.0",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^22.1.4",
     "minimist": "^1.2.0",
