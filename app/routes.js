@@ -2,7 +2,6 @@
 import React from 'react';
 import { Switch, Route, Redirect } from 'react-router';
 import App from './containers/App';
-import Home from './containers/Home.js';
 import CounterPage from './containers/CounterPage';
 import Directory from './containers/Directory.js';
 import File from './containers/File/Index.js';
