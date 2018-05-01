@@ -3,7 +3,7 @@ import { bindActionCreators } from 'redux';
 import { push, goBack } from 'react-router-redux';
 import Directory from './../components/Directory.js';
 import * as actions from './../actions/directory.js';
-import { fileFavoriteChanged } from './../actions/file.js';
+import { fileFavoriteChanged, gotoFile } from './../actions/file.js';
 import queryString from 'query-string';
 
 function mapStateToProps(state, { match }) {
@@ -26,12 +26,11 @@ function mapDispatchToProps(dispatch, {location}) {
       {
         ...actions,
         fileFavoriteChanged,
+        gotoFile,
       },
       dispatch
     ),
     ...(backTo ? {goBack: () => dispatch(push(backTo))} : {}),
-    onClickFile: (file, directory) =>
-      dispatch(push(`/files/${file.name}?path=${directory.path}`))
   };
 }
 

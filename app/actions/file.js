@@ -1,4 +1,6 @@
 import { createAction } from 'redux-actions';
+import { push } from 'react-router-redux';
+import queryString from 'query-string';
 import F from './../models/file.js';
 import D from './../models/directory.js';
 import Worker from './../workers/load_file.worker.js'
@@ -39,15 +41,24 @@ const fileLoadError = createAction(
   })
 )
 
+export function gotoFile(file, directory, param = {}) {
+  return (dispatch) => {
+    const params = {
+      path: directory.path,
+      ...param,
+    };
+
+    const url = `/files/${file.name}?${queryString.stringify(params)}`;
+    dispatch(fileLoading());
+    dispatch(push(url));
+    loadFile(file, directory)(dispatch);
+  };
+}
+
 export function loadFile(file, directory) {
   const worker = new Worker();
 
-  return (dispatch, getState) => {
-    const state = getState()
-    if (state.file.loading) return;
-
-    dispatch(fileLoading());
-
+  return (dispatch) => {
     worker.onmessage = (e) => {
       console.log("WORKER", e);
       const data = e.data;

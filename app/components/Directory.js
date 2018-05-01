@@ -19,8 +19,8 @@ const styles = theme => ({
 
 class Directory extends Component {
   handleClickFile = (file, directory) => {
-    const { onClickFile } = this.props;
-    onClickFile(file, directory);
+    const { gotoFile } = this.props;
+    gotoFile(file, directory);
   };
   handleClickDirectory = (dir) => {
     const { gotoDirectory } = this.props;

@@ -4,6 +4,7 @@ import { push } from 'react-router-redux';
 import Favorite from './../components/Favorite.js';
 import {
   fileFavoriteChanged,
+  gotoFile,
 } from './../actions/file.js';
 import {
   directoryFavoriteChanged,
@@ -60,8 +61,8 @@ function mapDispatchToProps(dispatch) {
       },
       dispatch
     ),
-    gotoFile: (file, directory) => dispatch(push(
-      `/files/${file.name}?path=${directory.path}&backTo=/favorites`
+    gotoFile: (file, directory) => dispatch(gotoFile(
+      file, directory, {backTo: "/favorites"}
     )),
     gotoDirectory: (directory) =>
       dispatch(gotoDirectory(directory.path, {backTo: "/favorites"})),

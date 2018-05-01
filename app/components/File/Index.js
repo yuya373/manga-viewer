@@ -56,27 +56,7 @@ class File extends Component {
       }
     }
   }
-
-  displayAppBarTimer = null;
-  hideAppBarTimer = null;
-
-  componentDidMount() {
-    this.mounted = true
-    const {file, directory, loadFile} = this.props;
-    if (file && directory) {
-      loadFile(file, directory);
-      document.addEventListener("keyup", this.handleKeyUp);
-      setTimeout(this.hideAppBar, 1000);
-    }
-  }
-
-  componentWillUnmount() {
-    this.mounted = false
-    this.clearTimers();
-    document.removeEventListener("keyup", this.handleKeyUp);
-  }
-
-  clearTimers() {
+  clearTimers = () => {
     if (this.displayAppBarTimer) {
       window.clearTimeout(this.displayAppBarTimer);
     }
@@ -84,8 +64,18 @@ class File extends Component {
       window.clearTimeout(this.hideAppBarTimer);
     }
   }
-
-  renderAppBar() {
+  redirectIfNotExists = ({loading, gotoDirectory, file, directory}) => {
+    if (loading) return;
+    if (!directory) {
+      gotoDirectory(require('os').homedir());
+      return;
+    }
+    if (!file) {
+      gotoDirectory(directory.path);
+      return;
+    }
+  }
+  renderAppBar = () => {
     const {displayAppBar} = this.state;
     const {file} = this.props;
 
@@ -101,8 +91,7 @@ class File extends Component {
         />
     );
   }
-
-  renderFile() {
+  renderFile = () => {
     const {file, perPage} = this.props;
 
     switch(file.ext) {
@@ -115,18 +104,37 @@ class File extends Component {
     }
   }
 
+  displayAppBarTimer = null;
+  hideAppBarTimer = null;
+
+  componentWillMount() {
+    this.redirectIfNotExists(this.props);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.redirectIfNotExists(nextProps);
+  }
+
+  componentDidMount() {
+    this.mounted = true
+    const {file, directory} = this.props;
+    if (file && directory) {
+      document.addEventListener("keyup", this.handleKeyUp);
+      setTimeout(this.hideAppBar, 1000);
+    }
+  }
+
+  componentWillUnmount() {
+    this.mounted = false
+    this.clearTimers();
+    document.removeEventListener("keyup", this.handleKeyUp);
+  }
+
+
   render() {
-    const {classes, file, directory, gotoDirectory} = this.props;
+    const {classes, loading, file, directory, gotoDirectory} = this.props;
 
-    if (!file && directory) {
-      gotoDirectory(directory.path);
-      return null;
-    }
-
-    if (!file || !directory) {
-      gotoDirectory("/")
-      return null;
-    }
+    if (loading || !file) return null;
 
     return (
       <React.Fragment>
