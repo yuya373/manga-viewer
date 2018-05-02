@@ -41,14 +41,11 @@ onmessage = (e) => {
     readZipFile(file).then(() => {
         postMessage({
           success: true,
-          images: [],
           error: null,
-          message: "",
         });
     }).catch((error) => {
         postMessage({
           success: false,
-          images: [],
           error: {
             message: error.message,
             code: error.code,

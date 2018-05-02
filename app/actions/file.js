@@ -4,6 +4,7 @@ import queryString from 'query-string';
 import F from './../models/file.js';
 import D from './../models/directory.js';
 import Worker from './../workers/load_file.worker.js'
+import { persist } from './persist.js';
 
 export const LOAD_FILE = "LOAD_FILE";
 export const FILE_LOADING = "FILE_LOADING";
@@ -15,22 +16,7 @@ export const FILE_FAVORITE_CHANGED = "FILE_FAVORITE_CHANGED";
 export const fileLoading = createAction(FILE_LOADING);
 export const filePerPageChanged = createAction(FILE_PER_PAGE_CHANGED);
 
-export const fileFavoriteChanged = createAction(
-  FILE_FAVORITE_CHANGED,
-  ({ path, favorite }) => ({
-    path,
-    favorite,
-  })
-);
-
-
-export const fileLoaded = createAction(
-  FILE_LOADED,
-  (file, directory) => ({
-    file,
-    directory
-  })
-);
+export const fileLoaded = createAction(FILE_LOADED);
 
 export const fileLoadError = createAction(
   FILE_LOAD_ERROR,
@@ -67,10 +53,7 @@ export function loadFile(file, directory) {
       const data = e.data;
 
       if (data.success) {
-        const {images} = data;
-        const newFile = F.setImages(file, images);
-        const newDirectory = D.upsertFile(directory, newFile);
-        dispatch(fileLoaded(newFile, newDirectory))
+        dispatch(fileLoaded())
       } else {
         const {error} = data;
         console.log("Error in worker", error);
@@ -79,5 +62,20 @@ export function loadFile(file, directory) {
     }
 
     worker.postMessage(file);
+  }
+}
+
+export function fileFavoriteChanged({path, favorite}) {
+  const action = createAction(
+    FILE_FAVORITE_CHANGED,
+    ({ path, favorite }) => ({
+      path,
+      favorite,
+    })
+  );
+
+  return (dispatch) => {
+    dispatch(action({path, favorite}));
+    dispatch(persist());
   }
 }

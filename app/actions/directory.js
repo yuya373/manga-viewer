@@ -3,6 +3,7 @@ import { ipcRenderer } from 'electron';
 import { push } from 'react-router-redux';
 import queryString from 'query-string';
 import Worker from './../workers/load_directory.worker.js'
+import { persist } from './persist.js';
 
 export const LOAD_DIRECTORY = "LOAD_DIRECTORY";
 export const DIRECTORY_LOADING = "DIRECTORY_LOADING";
@@ -15,14 +16,6 @@ export const directoryLoaded = createAction(
   DIRECTORY_LOADED,
   (directory) => ({
     directory,
-  })
-);
-
-export const directoryFavoriteChanged = createAction(
-  DIRECTORY_FAVORITE_CHANGED,
-  ({ path, favorite }) => ({
-    path,
-    favorite
   })
 );
 
@@ -61,6 +54,7 @@ export function loadDirectory(path) {
       if (data.success) {
         const {directory} = data;
         dispatch(directoryLoaded(directory))
+        dispatch(persist());
       } else {
         const {error} = data;
         console.warn("Error in worker", error);
@@ -69,5 +63,21 @@ export function loadDirectory(path) {
     }
 
     worker.postMessage(path);
+  }
+}
+
+
+export const directoryFavoriteChanged = ({path, favorite}) => {
+  const action = createAction(
+    DIRECTORY_FAVORITE_CHANGED,
+    ({ path, favorite }) => ({
+      path,
+      favorite
+    })
+  );
+
+  return (dispatch) => {
+    dispatch(action({path, favorite}));
+    dispatch(persist());
   }
 }
