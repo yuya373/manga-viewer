@@ -46,6 +46,7 @@ class File extends Component {
     this.displayAppBar();
   }
   handleKeyUp = (event) => {
+    event.preventDefault();
     const {shiftKey, keyCode} = event;
     const {gotoDirectory, directory} = this.props;
     if (shiftKey) {

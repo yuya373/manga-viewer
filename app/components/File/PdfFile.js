@@ -23,6 +23,7 @@ class PdfFile extends Component {
   };
 
   handleKeyUp = (event) => {
+    event.preventDefault();
     const dom = ReactDOM.findDOMNode(this.webviewRef)
     // console.log("EVENT", event);
     const by = this.eventToScrollBy(event);

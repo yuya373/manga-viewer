@@ -21,6 +21,7 @@ class ImageFile extends Component {
   };
 
   handleKeyUp = (event) => {
+    event.preventDefault();
     const {altKey, ctrlKey, key, keyCode, metaKey, shiftKey} = event;
     console.log(
       "keyup",
