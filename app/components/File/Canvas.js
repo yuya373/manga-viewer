@@ -19,6 +19,29 @@ export default class Canvas extends Component {
     });
   }
 
+  backingStoreRatio = (context) => {
+    // http://www.html5rocks.com/en/tutorials/canvas/hidpi/?redirect_from_locale=ja
+    const devicePixelRatio = window.devicePixelRatio || 1;
+    const backingStoreRatio = 1;
+    const ratio = devicePixelRatio / backingStoreRatio;
+    if (devicePixelRatio !== backingStoreRatio) {
+      const canvas = context.canvas;
+      const oldWidth = canvas.width;
+      const oldHeight = canvas.height;
+
+      canvas.width = oldWidth * ratio;
+      canvas.height = oldHeight * ratio;
+
+      canvas.style.width = oldWidth + "px";
+      canvas.style.height = oldHeight + "px";
+
+      // now scale the context to counter
+      // the fact that we've manually scaled
+      // our canvas element
+      context.scale(ratio, ratio);
+    }
+  }
+
   renderImage = () => {
     const image = this.image;
     const canvas = ReactDOM.findDOMNode(this.canvas);
@@ -64,7 +87,14 @@ export default class Canvas extends Component {
 
     canvas.height = h;
     canvas.width = w;
-    ctx.drawImage(image, 0, 0, w, h);
+    this.backingStoreRatio(ctx);
+    ctx.drawImage(
+      image, // source
+      0, 0, // source point (x, y)
+      image.width, image.height, // (x + dx, y + dy)
+      0, 0, // target point (x, y)
+      w, h // (x + dx, y + dy)
+    );
   }
 
   componentWillReceiveProps(nextProps) {
