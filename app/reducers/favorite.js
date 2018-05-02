@@ -27,7 +27,7 @@ export default handleActions(
     }),
     [FILE_LOAD_ERROR]: (state, {payload}) => ({
       ...state,
-      files: state.files.filter((e) => e !== payload.path),
+      files: state.files.filter((e) => e !== payload.file.path),
     }),
     [DIRECTORY_LOAD_ERROR]: (state, {payload}) => ({
       ...state,

@@ -57,7 +57,7 @@ export default handleActions(
       ...state,
       directories: state.directories.
         filter((e) => !D.isEqual(e, payload.directory)).
-        concat([payload.directory]),
+        concat([D.removeFile(payload.directory, payload.file)]),
     }),
   },
   defaultState,

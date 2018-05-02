@@ -2,12 +2,22 @@ import React, { Component } from 'react';
 import { withStyles } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
 import Canvas from './Canvas.js';
+import fs from 'fs';
+import JSZip from 'jszip';
+
+const allowedExts = [
+  "jpg",
+  "jpeg",
+  "png",
+]
 
 class ImageFile extends Component {
   state = {
     index: 0,
     width: null,
     height: null,
+    images: [],
+    loading: true,
   };
 
   handleKeyUp = (event) => {
@@ -60,10 +70,91 @@ class ImageFile extends Component {
     });
   }
 
+  readZipFile = () => {
+    const {path} = this.props.file;
+    const pStart = performance.now();
+    return new Promise((resolve, reject) => {
+      fs.readFile(path, (error, data) => {
+        if (error) {
+          reject(error);
+        } else {
+          const pEnd = performance.now();
+          console.log(
+            "readZipFile", pEnd - pStart,
+            " MB: ", data.length / 1000000
+          );
+          resolve(data);
+        }
+      })
+    })
+  }
+
+  loadZipFile = (data) => {
+    const pStart = performance.now();
+    return JSZip.loadAsync(data).then((zip) => {
+      const images = [];
+
+      zip.forEach((_, e) => {
+        if (!e.dir) {
+          const names = e.name.split("/");
+          const name = names[names.length - 1];
+          const ext = require('path').extname(name).substring(1).toLowerCase();
+
+          if (allowedExts.includes(ext)) {
+            images.push({
+              name,
+              ext,
+              data: e,
+            });
+          }
+        }
+      });
+
+      const pEnd = performance.now();
+      console.log("loadZipFile: ", pEnd - pStart, zip);
+      return images;
+    });
+  }
+
+  sortImages = (images) => {
+    return images.sort((a, b) => {
+      const ANumStr = a.name.match(/\d+/)[0];
+      const BNumStr = b.name.match(/\d+/)[0];
+      if ((typeof ANumStr) !== 'undefined' && (typeof BNumStr) !== 'undefined') {
+        const ANum = Number.parseInt(ANumStr, 10);
+        const BNum = Number.parseInt(BNumStr, 10);
+        if (!Number.isNaN(ANum) && !Number.isNaN(BNum)) {
+          if (ANum < BNum) return -1;
+          if (ANum > BNum) return 1;
+          return 0;
+        }
+      }
+
+      const A = a.name.toLowerCase();
+      const B = b.name.toLowerCase();
+      if (A < B) return -1;
+      if (A > B) return 1;
+      return 0;
+    });
+  }
+
   componentDidMount() {
     document.addEventListener("keyup", this.handleKeyUp);
     this.handleResize();
-    document.addEventListener("resize", this.handleResize);
+    window.addEventListener("resize", this.handleResize);
+    this.readZipFile().
+      then(this.loadZipFile).
+      then(this.sortImages).
+      then((images) => this.setState({
+        images,
+        loading: false,
+      })).catch((error) => {
+        const { fileLoadError, directory, file } = this.props;
+        fileLoadError({
+          message: error.message,
+          code: error.code,
+        }, directory, file);
+      });
   }
 
   componentWillUnmount() {
@@ -72,13 +163,14 @@ class ImageFile extends Component {
   }
 
   nextPage() {
-    const {file, perPage} = this.props;
+    const {perPage} = this.props;
+    const {images} = this.state;
     const {index} = this.state;
-    if ((index + 1) + (perPage - 1) > file.images.length - 1) {
+    if ((index + 1) + (perPage - 1) > images.length - 1) {
       return;
     }
 
-    const nextIndex = Math.min(index + perPage, (file.images.length - 1));
+    const nextIndex = Math.min(index + perPage, (images.length - 1));
     this.setState({index: nextIndex});
   }
 
@@ -90,16 +182,18 @@ class ImageFile extends Component {
   }
 
   render() {
-    const {index, width, height} = this.state;
+    const {index, width, height, loading, images} = this.state;
+    if (loading) return null;
+
     const {file, perPage} = this.props;
 
-    const images = file.images.slice(index, index + perPage).reverse();
+
     const gridProps = (i) => ({
       justify: perPage === 2 ?
         (i === 0 ? "flex-end" : "flex-start") :
         "center",
     })
-    const canvases = images.map((e, i) => (
+    const canvases = images.slice(index, index + perPage).reverse().map((e, i) => (
       <Grid item xs={12 / perPage} key={i} >
         <Grid
           container
@@ -108,8 +202,7 @@ class ImageFile extends Component {
           {...(gridProps(i))}
           >
           <Canvas
-            base64={e.base64}
-            name={e.name}
+            image={e}
             width={window.innerWidth / perPage}
             height={window.innerHeight}
             />

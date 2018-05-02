@@ -2,29 +2,27 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 
 export default class Canvas extends Component {
-  constructor(props) {
-    super(props);
-    this.canvas = null;
+  canval = null;
+  image = null;
+
+  loadImageToCanvas = ({image}) => {
+    const name = image.name
+    const ext = image.ext
+    const pStart = performance.now();
+    image.data.async("base64").then((base64) => {
+      const pEnd = performance.now();
+      console.log("Image: ", name, " Loaded: ", pEnd - pStart);
+      const image = new Image();
+      image.onload = this.renderImage;
+      image.src = `data:image/${ext};base64,${base64}`;
+      this.image = image;
+    });
   }
 
-  componentWillReceiveProps(nextProps) {
-    this.loadImageToCanvas(nextProps);
-  }
-
-  componentDidMount() {
-    this.loadImageToCanvas(this.props);
-  }
-
-  loadImageToCanvas({base64, name}) {
+  renderImage = () => {
+    const image = this.image;
     const canvas = ReactDOM.findDOMNode(this.canvas);
-    const image = new Image();
-    image.onload = () => this.handleImageLoad(canvas, image);
 
-    const extname = require('path').extname(name).substring(1);
-    image.src = `data:image/${extname};base64,${base64}`;
-  }
-
-  handleImageLoad(canvas, image) {
     const {
       width,
       height,
@@ -67,6 +65,21 @@ export default class Canvas extends Component {
     canvas.height = h;
     canvas.width = w;
     ctx.drawImage(image, 0, 0, w, h);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    console.log("props", this.props, "nextProps", nextProps);
+    if (this.props.width !== nextProps.width ||
+        this.props.height !== nextProps.height) {
+      this.renderImage();
+    }
+    if (this.props.image.name !== nextProps.image.name) {
+      this.loadImageToCanvas(nextProps);
+    }
+  }
+
+  componentDidMount() {
+    this.loadImageToCanvas(this.props);
   }
 
   shouldComponentUpdate() {

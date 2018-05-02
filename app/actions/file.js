@@ -32,12 +32,15 @@ export const fileLoaded = createAction(
   })
 );
 
-const fileLoadError = createAction(
+export const fileLoadError = createAction(
   FILE_LOAD_ERROR,
-  (error, directory, path) => ({
-    error,
+  (error, directory, file) => ({
+    error: {
+      message: error.message,
+      code: error.code,
+    },
     directory,
-    path,
+    file,
   })
 )
 
@@ -71,8 +74,7 @@ export function loadFile(file, directory) {
       } else {
         const {error} = data;
         console.log("Error in worker", error);
-        const newDirectory = D.removeFile(directory, file);
-        dispatch(fileLoadError(error, newDirectory, file.path))
+        dispatch(fileLoadError(error, directory, file))
       }
     }
 

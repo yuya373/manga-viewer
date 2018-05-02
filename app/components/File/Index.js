@@ -92,11 +92,11 @@ class File extends Component {
     );
   }
   renderFile = () => {
-    const {file, perPage} = this.props;
+    const {file, perPage, directory} = this.props;
 
     switch(file.ext) {
     case "zip":
-      return (<ImageFile file={file} />);
+      return (<ImageFile file={file} directory={directory} />);
     case "pdf":
       return (<PdfFile file={file} />);
     default:

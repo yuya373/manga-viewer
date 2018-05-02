@@ -2,6 +2,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import {
   filePerPageChanged,
+  fileLoadError,
 } from './../../actions/file.js';
 import ImageFile from './../../components/File/ImageFile.js';
 
@@ -16,6 +17,7 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators(
     {
       filePerPageChanged,
+      fileLoadError,
     },
     dispatch
   );
