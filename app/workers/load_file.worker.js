@@ -72,11 +72,12 @@ function readZipFile({path}) {
   return new Promise((resolve, reject) => {
     fs.readFile(path, (error, data) => {
       if (error) {
-        reject({error});
+        reject(error);
       } else {
-        loadZipFile(data).
-          then((images) => resolve({images: sortImages(images)})).
-          catch((error) => reject({error}));
+        resolve(data);
+        // loadZipFile(data).
+        //   then((images) => resolve({images: sortImages(images)})).
+        //   catch((error) => reject({error}));
       }
     })
   })
@@ -88,23 +89,24 @@ onmessage = (e) => {
 
   switch(ext) {
   case "zip":
-    readZipFile(file).then(({images}) => {
-      postMessage({
-        success: true,
-        images,
-        error: null,
-        message: "",
+    readZipFile(file).
+      then(loadZipFile).then(sortImages).then((images) => {
+        postMessage({
+          success: true,
+          images,
+          error: null,
+          message: "",
+        });
+      }).catch((error) => {
+        postMessage({
+          success: false,
+          images: [],
+          error: {
+            message: error.message,
+            code: error.code,
+          },
+        })
       });
-    }).catch(({error}) => {
-      postMessage({
-        success: false,
-        images: [],
-        error: {
-          message: error.message,
-          code: error.code,
-        },
-      })
-    });
     return;
   case "pdf":
     readPdfFile(file).then(() => {
