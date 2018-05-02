@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { withStyles } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
 import ImageFile from './../../containers/File/ImageFile.js';
@@ -12,7 +12,7 @@ const styles = theme => ({
   },
 });
 
-class File extends Component {
+class File extends PureComponent {
   mounted = false
   state = {
     displayAppBar: true,

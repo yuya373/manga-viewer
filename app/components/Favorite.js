@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { withStyles } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
 import List from 'material-ui/List';
@@ -14,7 +14,7 @@ const styles = theme => ({
   },
 });
 
-class Favorite extends Component {
+class Favorite extends PureComponent {
   toggleFavorite = (path, isFile) => () => {
     if (isFile) {
       this.props.fileFavoriteChanged({path, favorite: false});

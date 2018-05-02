@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { withStyles } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
 import List from 'material-ui/List';
@@ -17,7 +17,7 @@ const styles = theme => ({
   },
 });
 
-class Directory extends Component {
+class Directory extends PureComponent {
   handleClickFile = (file, directory) => {
     const { gotoFile } = this.props;
     gotoFile(file, directory);

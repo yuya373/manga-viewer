@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { withStyles } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
 import Canvas from './Canvas.js';
@@ -11,7 +11,7 @@ const allowedExts = [
   "png",
 ]
 
-class ImageFile extends Component {
+class ImageFile extends PureComponent {
   state = {
     index: 0,
     width: null,

@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import ReactDOM from 'react-dom';
 import Grid from 'material-ui/Grid';
 
-class PdfFile extends Component {
+class PdfFile extends PureComponent {
   webviewRef = null;
   eventToScrollBy = (event) => {
     const {key, keyCode} = event;

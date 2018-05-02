@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { withStyles } from 'material-ui/styles';
 import IconButton from 'material-ui/IconButton';
 import Menu, { MenuItem } from 'material-ui/Menu';
@@ -20,7 +20,7 @@ const styles = theme => ({
   }
 });
 
-class FileMenu extends Component {
+class FileMenu extends PureComponent {
   state = {
     menuAnchor: null
   };

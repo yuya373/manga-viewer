@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {PureComponent} from 'react';
 import { withStyles } from 'material-ui/styles';
 import Typography from 'material-ui/Typography';
 import Button from 'material-ui/Button';
@@ -20,7 +20,7 @@ const styles = theme => ({
   },
 });
 
-class NavBar extends Component {
+class NavBar extends PureComponent {
   renderBackButton = () => {
     const {
       classes,
