@@ -51,7 +51,7 @@ export function gotoFile(file, directory, param = {}) {
     const url = `/files/${file.name}?${queryString.stringify(params)}`;
     dispatch(fileLoading());
     dispatch(push(url));
-    loadFile(file, directory)(dispatch);
+    dispatch(loadFile(file, directory));
   };
 }
 

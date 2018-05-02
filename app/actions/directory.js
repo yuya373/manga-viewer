@@ -44,7 +44,7 @@ export function gotoDirectory(path, params = {}, force = false) {
     if (force || !hasDirectory) {
       dispatch(directoryLoading());
       dispatch(push(url));
-      loadDirectory(path)(dispatch);
+      dispatch(loadDirectory(path));
     } else {
       dispatch(push(url));
     }
