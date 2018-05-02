@@ -12,10 +12,11 @@ const allowedExts = [
 
 function readPdfFile({path}) {
   return new Promise((resolve, reject) => {
-    fs.readFile(path, (error, data) => {
+    fs.lstat(path, (error, stats) => {
       if (error) {
         reject({error});
       } else {
+        console.log("STATS", stats);
         resolve();
       }
     })
