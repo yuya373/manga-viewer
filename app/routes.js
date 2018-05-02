@@ -2,7 +2,6 @@
 import React from 'react';
 import { Switch, Route, Redirect } from 'react-router';
 import App from './containers/App';
-import CounterPage from './containers/CounterPage';
 import Directory from './containers/Directory.js';
 import File from './containers/File/Index.js';
 import Favorite from './containers/Favorite.js';
@@ -12,7 +11,6 @@ const homedir = require('os').homedir();
 export default () => (
   <App>
     <Switch>
-      <Route path="/counter" component={CounterPage} />
       <Route
         path="/favorites"
         component={Favorite}
