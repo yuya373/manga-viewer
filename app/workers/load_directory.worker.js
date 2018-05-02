@@ -55,38 +55,43 @@ function separateFilesAndDirectories(filesOrDirectories) {
   };
 }
 
-onmessage = (e) => {
-  const path = e.data;
-  stat(path).then((dirStats) => {
-    return readdir(path).then((files) => {
-      return files.map((f) => {
-        const normalizedPath = `${path === "/" ? "" : path}/${f}`;
-        return stat(normalizedPath).then((stats) => {
-          if (stats.isDirectory()) {
-            return D.create(normalizedPath, stats);
-          } else if (stats.isFile()) {
-            return F.create(normalizedPath, stats);
-          }
-        })
-      });
-    }).then((promises) => {
-      return Promise.all(promises).then((filesOrDirectories) => {
-        const {files, directories} = separateFilesAndDirectories(
-          filesOrDirectories
-        );
+function parseDir(path) {
+  return readdir(path).then((files) => {
+    return files.map((f) => {
+      const normalizedPath = `${path === "/" ? "" : path}/${f}`;
+      return stat(normalizedPath).then((stats) => {
+        if (stats.isDirectory()) {
+          return D.create(normalizedPath, stats);
+        } else if (stats.isFile()) {
+          return F.create(normalizedPath, stats);
+        }
+      })
+    });
+  });
+}
 
-        postMessage({
-          success: true,
-          directory: D.create(
-            path,
-            dirStats,
-            files,
-            directories
-          ),
+onmessage = (e) => {
+  const path = e.data || "/";
+  stat(path).then((dirStats) => {
+    return parseDir(path).then((promises) => {
+        return Promise.all(promises).then((filesOrDirectories) => {
+          const separated = separateFilesAndDirectories(
+            filesOrDirectories
+          );
+
+          postMessage({
+            success: true,
+            directory: D.create(
+              path,
+              dirStats,
+              separated.files,
+              separated.directories
+            ),
+          });
         });
       });
-    });
   }).catch((error) => {
+    console.log(error);
     postMessage({
       success: false,
       error: {
