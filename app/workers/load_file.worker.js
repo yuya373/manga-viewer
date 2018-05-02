@@ -23,13 +23,19 @@ function readPdfFile({path}) {
 }
 
 function loadZipFile(data) {
+  console.log("START loading zip file")
+  const pStart = performance.now();
   return JSZip.loadAsync(data).then((zip) => {
+    const pEnd = performance.now();
+    console.log("COMPLETE loading zip file: ", pEnd - pStart,  zip);
     const results = [];
 
+    const p1Start = performance.now();
     zip.forEach((path, entry) => {
       // console.log("ENTRY", entry, entry.dir, !entry.dir);
       if (!entry.dir) {
-        const name = entry.name;
+        const names = entry.name.split("/");
+        const name = names[names.length - 1];
         const ext = require('path').extname(name);
         // console.log("EXT", ext, ext.toLowerCase());
 
@@ -41,12 +47,20 @@ function loadZipFile(data) {
         }
       }
     })
+    const p1End = performance.now();
+    console.log("iterate each zip contents: ", p1End - p1Start, " count: ", results.length);
 
-    return Promise.all(results);
+    const p2Start = performance.now();
+    return Promise.all(results).then((results) => {
+      const p2End = performance.now();
+      console.log("each zip contents Promise complete: ", p2End - p2Start);
+      return results;
+    });
   });
 }
 
 function sortImages(images) {
+  console.log("START sort images: ", images.length);
   return images.sort((a, b) => {
     const ANumStr = a.name.match(/\d+/)[0];
     const BNumStr = b.name.match(/\d+/)[0];
@@ -69,11 +83,15 @@ function sortImages(images) {
 }
 
 function readZipFile({path}) {
+  console.log("START reading zip file: ", path);
+  const pStart = performance.now();
   return new Promise((resolve, reject) => {
     fs.readFile(path, (error, data) => {
       if (error) {
         reject(error);
       } else {
+        const pEnd = performance.now();
+        console.log("COMPLETE read zip file: ", pEnd - pStart, " MB: ", data.length / 1000000);
         resolve(data);
         // loadZipFile(data).
         //   then((images) => resolve({images: sortImages(images)})).
@@ -89,8 +107,11 @@ onmessage = (e) => {
 
   switch(ext) {
   case "zip":
+    const pAllStart = performance.now();
     readZipFile(file).
       then(loadZipFile).then(sortImages).then((images) => {
+        const pAllEnd = performance.now();
+        console.log("COMPLETE ZIP WORKER: ", pAllEnd - pAllStart);
         postMessage({
           success: true,
           images,
