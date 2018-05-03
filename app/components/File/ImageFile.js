@@ -18,6 +18,7 @@ class ImageFile extends PureComponent {
     height: null,
     images: [],
     loading: true,
+    drawComplete: 0,
   };
 
   handleKeyUp = (event) => {
@@ -139,6 +140,39 @@ class ImageFile extends PureComponent {
     });
   }
 
+  handleDrawComplete = () => this.setState((state) => ({
+    drawComplete: state.drawComplete + 1,
+  }));
+
+  resetDrawComplete = (cb) => this.setState(
+    () => ({drawComplete: 0}),
+    cb
+  );
+
+  nextPage = () => {
+    const {perPage} = this.props;
+    const {images} = this.state;
+    const {index} = this.state;
+    if ((index + 1) + (perPage - 1) > images.length - 1) {
+      return;
+    }
+
+    const nextIndex = Math.min(index + perPage, (images.length - 1));
+
+    this.resetDrawComplete(() => this.setState({
+      index: nextIndex,
+    }))
+  }
+
+  prevPage = () => {
+    const {index} = this.state;
+    const {perPage} = this.props
+    const nextIndex = Math.max(0, index - perPage);
+    this.resetDrawComplete(() => this.setState({
+      index: nextIndex,
+    }));
+  }
+
   componentDidMount() {
     document.addEventListener("keyup", this.handleKeyUp);
     this.handleResize();
@@ -163,27 +197,15 @@ class ImageFile extends PureComponent {
     document.removeEventListener("resize", this.handleResize);
   }
 
-  nextPage() {
-    const {perPage} = this.props;
-    const {images} = this.state;
-    const {index} = this.state;
-    if ((index + 1) + (perPage - 1) > images.length - 1) {
-      return;
-    }
-
-    const nextIndex = Math.min(index + perPage, (images.length - 1));
-    this.setState({index: nextIndex});
-  }
-
-  prevPage() {
-    const {index} = this.state;
-    const {perPage} = this.props
-    const nextIndex = Math.max(0, index - perPage);
-    this.setState({index: nextIndex});
-  }
-
   render() {
-    const {index, width, height, loading, images} = this.state;
+    const {
+      index,
+      width, height,
+      loading,
+      images,
+      drawComplete
+    } = this.state;
+
     if (loading) return null;
 
     const {file, perPage} = this.props;
@@ -192,8 +214,12 @@ class ImageFile extends PureComponent {
     const gridProps = (i) => ({
       justify: perPage === 2 ?
         (i === 0 ? "flex-end" : "flex-start") :
-        "center",
+      "center",
     })
+    const style = {
+      ...(drawComplete >= perPage ? {} : { display: "none" }),
+    };
+
     const canvases = images.slice(index, index + perPage).reverse().map((e, i) => (
       <Grid item xs={12 / perPage} key={i} >
         <Grid
@@ -201,11 +227,13 @@ class ImageFile extends PureComponent {
           direction="row"
           alignItems="center"
           {...(gridProps(i))}
+          style={style}
           >
           <Canvas
             image={e}
             width={window.innerWidth / perPage}
             height={window.innerHeight}
+            onDrawComplete={this.handleDrawComplete}
             />
         </Grid>
       </Grid>

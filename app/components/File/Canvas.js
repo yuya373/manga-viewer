@@ -49,6 +49,7 @@ export default class Canvas extends Component {
     const {
       width,
       height,
+      onDrawComplete,
     } = this.props;
     const ctx = canvas.getContext("2d");
     let w = null;
@@ -95,6 +96,7 @@ export default class Canvas extends Component {
       0, 0, // target point (x, y)
       w, h // (x + dx, y + dy)
     );
+    onDrawComplete();
   }
 
   componentWillReceiveProps(nextProps) {
