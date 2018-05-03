@@ -3,8 +3,6 @@ import { withStyles } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
 import List from 'material-ui/List';
 import ListSubheader from 'material-ui/List/ListSubheader';
-import Typography from 'material-ui/Typography';
-import Button from 'material-ui/Button';
 import NavBar from './../containers/NavBar/Index.js';
 import DirectoryMenu from './NavBar/DirectoryMenu.js';
 import ListItem from './ListItem.js';
