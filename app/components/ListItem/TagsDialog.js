@@ -7,6 +7,9 @@ import Dialog, {
   DialogContentText,
 } from 'material-ui/Dialog';
 import TextField from 'material-ui/TextField';
+import Typography from 'material-ui/Typography';
+import Input from 'material-ui/Input';
+
 
 const style = (theme) => ({
   input: {
@@ -18,9 +21,16 @@ const style = (theme) => ({
     justifyContent: "flex-start",
     flexWrap: "wrap",
     padding: `${theme.spacing.unit}px 0`,
+    minHeight: 40,
   },
   tag: {
     margin: `${theme.spacing.unit / 2}px`,
+  },
+  inputContainer: {
+    display: "flex",
+  },
+  newTagInput: {
+    marginTop: 0,
   },
 });
 
@@ -54,6 +64,12 @@ class TagsDialog extends PureComponent {
 
   renderTags = () => {
     const { classes, tags = [] } = this.props;
+    if (tags.length < 1) return (
+      <Typography variant="body1">
+        No Tags
+      </Typography>
+    );
+
     return tags.map((e, i) => (
       <Chip
         className={classes.tag}
@@ -89,15 +105,18 @@ class TagsDialog extends PureComponent {
           <div className={classes.tags}>
             {this.renderTags()}
           </div>
-          <TextField
-            margin="dense"
-            autoFocus={true}
-            fullWidth={true}
-            label="Add New Tag"
-            onKeyDown={this.handleTextFieldKeyDown}
-            onChange={this.handleTextFieldChange}
-            value={newTagTextField}
-            />
+          <div className={classes.inputContainer}>
+            <Input
+              className={classes.newTagInput}
+              margin="dense"
+              fullWidth={true}
+              autoFocus={true}
+              placeholder="Add New Tag"
+              onKeyDown={this.handleTextFieldKeyDown}
+              onChange={this.handleTextFieldChange}
+              value={newTagTextField}
+              />
+          </div>
         </DialogContent>
       </Dialog>
     )

@@ -5,7 +5,8 @@ import List from 'material-ui/List';
 import ListSubheader from 'material-ui/List/ListSubheader';
 import NavBar from './../containers/NavBar/Index.js';
 import DirectoryMenu from './NavBar/DirectoryMenu.js';
-import ListItem from './ListItem.js';
+import FileListItem from './../containers/ListItem/FileListItem.js';
+import DirectoryListItem from './../containers/ListItem/DirectoryListItem.js';
 
 const styles = theme => ({
   root: {
@@ -16,14 +17,6 @@ const styles = theme => ({
 });
 
 class Directory extends PureComponent {
-  handleClickFile = (file, directory) => {
-    const { gotoFile } = this.props;
-    gotoFile(file, directory);
-  };
-  handleClickDirectory = (dir) => {
-    const { gotoDirectory } = this.props;
-    gotoDirectory(dir.path);
-  };
   handleClickReload = () => {
     const { directory, gotoDirectory } = this.props;
     gotoDirectory(directory.path, {}, true);
@@ -44,60 +37,22 @@ class Directory extends PureComponent {
       gotoDirectory("/");
     }
   };
-  toggleFavorite = ({path, favorite}, isFile = false) => () => {
-    if (isFile) {
-      this.props.fileFavoriteChanged({path, favorite});
-    } else {
-      this.props.directoryFavoriteChanged({path, favorite});
-    }
-  }
-  addTag = (file) => (tag) => {
-    this.props.addTag({ tag, filePath: file.path });
-  };
-  deleteTag = (file) => (tag) => {
-    this.props.deleteTag({ tag, filePath: file.path });
-  }
   renderFile = (file, i) => {
-    const { directory, favoriteFiles, tags } = this.props;
-    const { name, path } = file;
-    const favorite = favoriteFiles.includes(path);
-    const matchedTags =
-          Object.keys(tags).filter((e) => tags[e].includes(path))
-
+    const { directory } = this.props;
     return (
-      <React.Fragment
-        key={i}
-        >
-        <ListItem
-          text={name}
-          favorite={favorite}
-          onClick={() => this.handleClickFile(file, directory)}
-          onClickFavorite={this.toggleFavorite({path, favorite: !favorite}, true)}
-          addTag={this.addTag(file)}
-          deleteTag={this.deleteTag(file)}
-          tags={matchedTags}
+      <React.Fragment key={i}>
+        <FileListItem
+          file={file}
+          directory={directory}
           />
-
       </React.Fragment>
     );
   }
   renderDirectory = (dir, i) => {
-    const { directory, favoriteDirectories } = this.props;
-    const parent = directory;
-    const { name, path } = dir;
-    const favorite = favoriteDirectories.includes(path);
-
     return (
-      <React.Fragment
-        key={i}
-        >
-        <ListItem
-          text={name}
-          favorite={favorite}
-          isDirectory={true}
-          onClick={() => this.handleClickDirectory(dir)}
-          onClickFavorite={this.toggleFavorite({path, favorite: !favorite})}
-          />
+      <React.Fragment key={i}>
+        <DirectoryListItem
+          directory={dir} />
       </React.Fragment>
     );
   };

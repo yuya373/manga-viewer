@@ -4,7 +4,8 @@ import Grid from 'material-ui/Grid';
 import List from 'material-ui/List';
 import ListSubheader from 'material-ui/List/ListSubheader';
 import NavBar from './../containers/NavBar/Index.js';
-import ListItem from './ListItem.js';
+import FileListItem from './../containers/ListItem/FileListItem.js';
+import DirectoryListItem from './../containers/ListItem/DirectoryListItem.js';
 
 const styles = theme => ({
   root: {
@@ -15,42 +16,23 @@ const styles = theme => ({
 });
 
 class Favorite extends PureComponent {
-  toggleFavorite = (path, isFile) => () => {
-    if (isFile) {
-      this.props.fileFavoriteChanged({path, favorite: false});
-    } else {
-      this.props.directoryFavoriteChanged({path, favorite: false});
-    }
-  }
-  gotoFile = (file) => () => {
-    this.props.gotoFile(file, file.parent);
-  }
   renderFile = (file, i) => {
-    const { name, path } = file;
     return (
       <React.Fragment key={i}>
-        <ListItem
-          text={name}
-          favorite={true}
-          onClick={this.gotoFile(file)}
-          onClickFavorite={this.toggleFavorite(path, true)}
+        <FileListItem
+          file={file}
+          directory={file.parent}
+          queryParams={{backTo: "/favorites"}}
           />
       </React.Fragment>
     );
   }
-  gotoDirectory = (directory) => () => {
-    this.props.gotoDirectory(directory);
-  }
   renderDirectory = (directory, i) => {
-    const { name, path } = directory;
     return (
       <React.Fragment key={i}>
-        <ListItem
-          text={name}
-          favorite={true}
-          isDirectory={true}
-          onClick={this.gotoDirectory(directory)}
-          onClickFavorite={this.toggleFavorite(path)}
+        <DirectoryListItem
+          directory={directory}
+          queryParams={{backTo: "/favorites"}}
           />
       </React.Fragment>
     );
