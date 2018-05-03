@@ -157,7 +157,10 @@ class ImageFile extends PureComponent {
       return;
     }
 
-    const nextIndex = Math.min(index + perPage, (images.length - 1));
+    const nextIndex = Math.min(
+      index === 0 ? index + 1 :(index + perPage),
+      (images.length - 1)
+    );
 
     this.resetDrawComplete(() => this.setState({
       index: nextIndex,
@@ -192,6 +195,52 @@ class ImageFile extends PureComponent {
       });
   }
 
+  renderCanvases = () => {
+    const { perPage } = this.props;
+    const {
+      index,
+      width, height,
+      images,
+      drawComplete
+    } = this.state;
+
+
+    const imagesToDisplay = index === 0 ?
+          images.slice(0, 1) :
+          images.slice(index, index + perPage).reverse();
+
+    const style = {
+      ...((imagesToDisplay.length < 2 || (drawComplete >= perPage)) ?
+          {} : { display: "none" }),
+    };
+
+    return imagesToDisplay.map((e, i) => {
+      const justify = perPage === 2 && imagesToDisplay.length > 1 ?
+            (i === 0 ? "flex-end" : "flex-start") : "center";
+
+      const xs = imagesToDisplay.length > 1 ?
+            (12 / perPage) : 12;
+      return (
+        <Grid item xs={xs} key={i} >
+          <Grid
+            container
+            direction="row"
+            alignItems="center"
+            justify={justify}
+            style={style}
+            >
+            <Canvas
+              image={e}
+              width={width / perPage}
+              height={height}
+              onDrawComplete={this.handleDrawComplete}
+              />
+          </Grid>
+        </Grid>
+      );
+    })
+  }
+
   componentWillUnmount() {
     document.removeEventListener("keyup", this.handleKeyUp);
     document.removeEventListener("resize", this.handleResize);
@@ -199,45 +248,11 @@ class ImageFile extends PureComponent {
 
   render() {
     const {
-      index,
-      width, height,
+      height,
       loading,
-      images,
-      drawComplete
     } = this.state;
 
     if (loading) return null;
-
-    const {file, perPage} = this.props;
-
-
-    const gridProps = (i) => ({
-      justify: perPage === 2 ?
-        (i === 0 ? "flex-end" : "flex-start") :
-      "center",
-    })
-    const style = {
-      ...(drawComplete >= perPage ? {} : { display: "none" }),
-    };
-
-    const canvases = images.slice(index, index + perPage).reverse().map((e, i) => (
-      <Grid item xs={12 / perPage} key={i} >
-        <Grid
-          container
-          direction="row"
-          alignItems="center"
-          {...(gridProps(i))}
-          style={style}
-          >
-          <Canvas
-            image={e}
-            width={window.innerWidth / perPage}
-            height={window.innerHeight}
-            onDrawComplete={this.handleDrawComplete}
-            />
-        </Grid>
-      </Grid>
-    ))
 
     return (
       <Grid
@@ -245,7 +260,7 @@ class ImageFile extends PureComponent {
         alignItems="center"
         style={{height}}
         >
-        {canvases}
+        {this.renderCanvases()}
       </Grid>
     )
   }
