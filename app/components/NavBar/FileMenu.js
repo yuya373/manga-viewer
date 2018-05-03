@@ -12,6 +12,7 @@ import { FormGroup, FormControlLabel } from 'material-ui/Form';
 import HelpIcon from '@material-ui/icons/HelpOutline';
 import Tooltip from 'material-ui/Tooltip';
 import Typography from 'material-ui/Typography';
+import FavoriteButton from './../FavoriteButton.js';
 
 const styles = theme => ({
   menuItemControl: {
@@ -37,9 +38,13 @@ class FileMenu extends PureComponent {
     this.setState({menuAnchor: null});
   }
 
+  handleClickFavorite = () => {
+    const { favorite, filePath, fileFavoriteChanged } = this.props;
+    fileFavoriteChanged({path: filePath, favorite: !favorite });
+  }
 
   render() {
-    const {classes, perPage} = this.props;
+    const {classes, perPage, favorite} = this.props;
     const {menuAnchor} = this.state;
     const perPageSwitch = (
       <Switch checked={perPage == 2}/>
@@ -64,6 +69,11 @@ class FileMenu extends PureComponent {
             <HelpIcon />
           </IconButton>
         </Tooltip>
+        <FavoriteButton
+          color="inherit"
+          favorite={favorite}
+          onClick={this.handleClickFavorite}
+          />
         <IconButton
           aria-owns={open ? 'menu-appbar' : null}
           aria-haspopup="true"

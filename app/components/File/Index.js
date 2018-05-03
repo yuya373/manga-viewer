@@ -81,7 +81,7 @@ class File extends PureComponent {
     const {file} = this.props;
 
     const menu = file.ext === "zip" ?
-          (<FileMenu />) : null;
+          (<FileMenu filePath={file.path} />) : null;
 
     return (
       <NavBar
