@@ -13,26 +13,31 @@ const initialState = {
   directories: [],
 };
 
-export default handleActions(
-  {
-    [DIRECTORY_FAVORITE_CHANGED]: (state, {payload}) => ({
+export default function(state = initialState, {type, payload}) {
+  switch(type) {
+  case DIRECTORY_FAVORITE_CHANGED:
+    return ({
       ...state,
       directories: state.directories.filter((e) => e !== payload.path).
         concat(payload.favorite ? [payload.path] : []),
-    }),
-    [FILE_FAVORITE_CHANGED]: (state, {payload}) => ({
+    });
+  case FILE_FAVORITE_CHANGED:
+    return ({
       ...state,
       files: state.files.filter((e) => e !== payload.path).
         concat(payload.favorite ? [payload.path] : []),
-    }),
-    [FILE_LOAD_ERROR]: (state, {payload}) => ({
+    });
+  case FILE_LOAD_ERROR:
+    return ({
       ...state,
       files: state.files.filter((e) => e !== payload.file.path),
-    }),
-    [DIRECTORY_LOAD_ERROR]: (state, {payload}) => ({
+    });
+  case DIRECTORY_LOAD_ERROR:
+    return ({
       ...state,
       directories: state.directories.filter((e) => e !== payload.path),
-    }),
-  },
-  initialState
-);
+    });
+  default:
+    return state;
+  }
+}

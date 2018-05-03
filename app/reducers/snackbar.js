@@ -20,16 +20,18 @@ const displayMessage = (state, {message}) => ({
   message,
 });
 
-export default handleActions(
-  {
-    [FILE_LOAD_ERROR]: (state, {payload}) =>
-      displayMessage(state, payload.error),
-    [DIRECTORY_LOAD_ERROR]: (state, {payload}) =>
-      displayMessage(state, payload.error),
-    [SNACKBAR_HIDE]: (state) =>  ({
+export default function(state = initialState, {type, payload}) {
+  switch(type) {
+  case FILE_LOAD_ERROR:
+    return displayMessage(state, payload.error);
+  case DIRECTORY_LOAD_ERROR:
+    return displayMessage(state, payload.error);
+  case SNACKBAR_HIDE:
+    return ({
       ...state,
       isOpen: false,
-    }),
-  },
-  initialState
-);
+    });
+  default:
+    return state;
+  }
+}

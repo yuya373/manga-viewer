@@ -4,18 +4,23 @@ import {
   DRAWER_CLOSE,
 } from './../actions/drawer.js';
 
-export default handleActions(
-  {
-    [DRAWER_OPEN]: (state) => ({
+const initialState = {
+  isOpen: false,
+};
+
+export default function(state = initialState, {type}) {
+  switch(type) {
+  case DRAWER_OPEN:
+    return ({
       ...state,
       isOpen: true,
-    }),
-    [DRAWER_CLOSE]: (state) => ({
+    });
+  case DRAWER_CLOSE:
+    return ({
       ...state,
       isOpen: false,
-    }),
-  },
-  {
-    isOpen: false,
+    });
+  default:
+    return state;
   }
-);
+}

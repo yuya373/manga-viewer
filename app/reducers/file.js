@@ -6,27 +6,34 @@ import {
   FILE_PER_PAGE_CHANGED,
 } from './../actions/file.js';
 
-export default handleActions(
-  {
-    [FILE_LOADING]: (state) => ({
+const initialState = {
+  loading: false,
+  perPage: 2,
+};
+
+export default function(state = initialState, {type, payload}) {
+  switch(type) {
+  case FILE_LOADING:
+    return ({
       ...state,
       loading: true,
-    }),
-    [FILE_LOADED]: (state) => ({
+    });
+  case FILE_LOADED:
+    return ({
       ...state,
       loading: false,
-    }),
-    [FILE_PER_PAGE_CHANGED]: (state, {payload}) => ({
+    });
+  case FILE_PER_PAGE_CHANGED:
+    return ({
       ...state,
       perPage: payload,
-    }),
-    [FILE_LOAD_ERROR] : (state, {payload}) => ({
+    });
+  case FILE_LOAD_ERROR :
+    return ({
       ...state,
       loading: false,
-    })
-  },
-  {
-    loading: false,
-    perPage: 2,
+    });
+  default:
+    return state;
   }
-)
+}

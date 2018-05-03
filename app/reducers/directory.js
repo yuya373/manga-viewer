@@ -10,7 +10,7 @@ import {
 } from './../actions/file.js';
 import D from './../models/directory.js';
 
-const defaultState = {
+const initialState = {
   loading: false,
   directories: [],
 };
@@ -25,34 +25,41 @@ const modifyParentDirectory = (directories, childPath, modify) => {
   });
 }
 
-export default handleActions(
-  {
-    [DIRECTORY_LOAD_ERROR]: (state, {payload}) => ({
+export default function(state = initialState, {type, payload}) {
+  switch(type) {
+  case DIRECTORY_LOAD_ERROR:
+    return ({
       ...state,
       loading: false,
       directories: modifyParentDirectory(
         state.directories.filter((e) => e.path !== payload.path),
         payload.path,
-        (parentDir) => D.removeChildDirectory(parentDir, payload.path),
+        (parentDir) => D.removeChildDirectory(
+          parentDir, payload.path
+        ),
       ),
-    }),
-    [DIRECTORY_LOADING]: (state) => ({
+    });
+  case DIRECTORY_LOADING:
+    return ({
       ...state,
       loading: true,
-    }),
-    [DIRECTORY_LOADED]: (state, {payload}) => ({
+    });
+  case DIRECTORY_LOADED:
+    return ({
       ...state,
       loading: false,
       directories: state.directories.
         filter((e) => !D.isEqual(e, payload.directory)).
         concat([payload.directory]),
-    }),
-    [FILE_LOAD_ERROR]: (state, {payload}) => ({
+    });
+  case FILE_LOAD_ERROR:
+    return ({
       ...state,
       directories: state.directories.
         filter((e) => !D.isEqual(e, payload.directory)).
         concat([D.removeFile(payload.directory, payload.file)]),
-    }),
-  },
-  defaultState,
-);
+    });
+  default:
+    return state;
+  }
+}
