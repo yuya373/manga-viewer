@@ -14,6 +14,7 @@ onmessage = (event) => {
       loading: false,
     },
     favorite: state.favorite,
+    tag: state.tag,
   })
   postMessage("finished");
 }

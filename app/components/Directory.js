@@ -51,10 +51,18 @@ class Directory extends PureComponent {
       this.props.directoryFavoriteChanged({path, favorite});
     }
   }
+  addTag = (file) => (tag) => {
+    this.props.addTag({ tag, filePath: file.path });
+  };
+  deleteTag = (file) => (tag) => {
+    this.props.deleteTag({ tag, filePath: file.path });
+  }
   renderFile = (file, i) => {
-    const { directory, favoriteFiles } = this.props;
+    const { directory, favoriteFiles, tags } = this.props;
     const { name, path } = file;
     const favorite = favoriteFiles.includes(path);
+    const matchedTags =
+          Object.keys(tags).filter((e) => tags[e].includes(path))
 
     return (
       <React.Fragment
@@ -65,7 +73,11 @@ class Directory extends PureComponent {
           favorite={favorite}
           onClick={() => this.handleClickFile(file, directory)}
           onClickFavorite={this.toggleFavorite({path, favorite: !favorite}, true)}
+          addTag={this.addTag(file)}
+          deleteTag={this.deleteTag(file)}
+          tags={matchedTags}
           />
+
       </React.Fragment>
     );
   }

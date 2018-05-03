@@ -5,6 +5,10 @@ import Directory from './../components/Directory.js';
 import * as actions from './../actions/directory.js';
 import { fileFavoriteChanged, gotoFile } from './../actions/file.js';
 import queryString from 'query-string';
+import {
+  addTag,
+  deleteTag,
+} from './../actions/tag.js';
 
 function mapStateToProps(state, { match }) {
   return {
@@ -15,6 +19,7 @@ function mapStateToProps(state, { match }) {
     error: state.directory.error,
     favoriteDirectories: state.favorite.directories,
     favoriteFiles: state.favorite.files,
+    tags: state.tag.tags,
   };
 }
 
@@ -27,6 +32,8 @@ function mapDispatchToProps(dispatch, {location}) {
         ...actions,
         fileFavoriteChanged,
         gotoFile,
+        addTag,
+        deleteTag,
       },
       dispatch
     ),

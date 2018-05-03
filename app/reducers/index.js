@@ -6,6 +6,7 @@ import file from './file.js';
 import drawer from './drawer.js';
 import favorite from './favorite.js';
 import snackbar from './snackbar.js';
+import tag from './tag.js';
 
 const rootReducer = combineReducers({
   router,
@@ -14,6 +15,7 @@ const rootReducer = combineReducers({
   drawer,
   favorite,
   snackbar,
+  tag,
 });
 
 export default rootReducer;
