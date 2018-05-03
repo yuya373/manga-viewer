@@ -209,19 +209,19 @@ class ImageFile extends PureComponent {
           images.slice(0, 1) :
           images.slice(index, index + perPage).reverse();
 
+    const drawCount = Math.min(imagesToDisplay.length, perPage);
+
     const style = {
-      ...((imagesToDisplay.length < 2 || (drawComplete >= perPage)) ?
+      ...(drawComplete >= drawCount ?
           {} : { display: "none" }),
     };
 
     return imagesToDisplay.map((e, i) => {
-      const justify = perPage === 2 && imagesToDisplay.length > 1 ?
+      const justify = drawCount === 2 ?
             (i === 0 ? "flex-end" : "flex-start") : "center";
 
-      const xs = imagesToDisplay.length > 1 ?
-            (12 / perPage) : 12;
       return (
-        <Grid item xs={xs} key={i} >
+        <Grid item xs={12 / drawCount} key={i} >
           <Grid
             container
             direction="row"
@@ -231,7 +231,7 @@ class ImageFile extends PureComponent {
             >
             <Canvas
               image={e}
-              width={width / perPage}
+              width={width / drawCount}
               height={height}
               onDrawComplete={this.handleDrawComplete}
               />

@@ -5,7 +5,7 @@ export default class Canvas extends Component {
   canval = null;
   image = null;
 
-  loadImageToCanvas = ({image}) => {
+  loadImageToCanvas = ({image, onDrawComplete}) => {
     const name = image.name
     const ext = image.ext
     const pStart = performance.now();
@@ -13,7 +13,10 @@ export default class Canvas extends Component {
       const pEnd = performance.now();
       console.log("Image: ", name, " Loaded: ", pEnd - pStart);
       const image = new Image();
-      image.onload = this.renderImage;
+      image.onload = () => {
+        this.renderImage();
+        onDrawComplete();
+      };
       image.src = `data:image/${ext};base64,${base64}`;
       this.image = image;
     });
@@ -49,7 +52,6 @@ export default class Canvas extends Component {
     const {
       width,
       height,
-      onDrawComplete,
     } = this.props;
     const ctx = canvas.getContext("2d");
     let w = null;
@@ -96,7 +98,6 @@ export default class Canvas extends Component {
       0, 0, // target point (x, y)
       w, h // (x + dx, y + dy)
     );
-    onDrawComplete();
   }
 
   componentWillReceiveProps(nextProps) {
