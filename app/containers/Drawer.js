@@ -18,6 +18,7 @@ function mapDispatchToProps(dispatch) {
     ...bindActionCreators(actions, dispatch),
     gotoBrowse: () => dispatch(gotoDirectory(require("os").homedir())),
     gotoFavorite: () => dispatch(push("/favorites")),
+    gotoTags: () => dispatch(push("/tags")),
   };
 }
 

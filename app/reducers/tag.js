@@ -8,6 +8,8 @@ const initialState = {
 };
 
 function addTag(state, {filePath, tag}) {
+  tag = tag.replace("/", "");
+
   if (state.tags[tag]  && state.tags[tag].length > 0) {
     return {
       ...state,

@@ -1,4 +1,5 @@
 import { createAction } from 'redux-actions';
+import { push } from 'react-router-redux';
 import { persist } from './persist.js';
 
 export const ADD_TAG = "ADD_TAG";
@@ -31,5 +32,11 @@ export function addTag({filePath, tag}) {
   return (dispatch) => {
     dispatch(action(filePath, tag));
     dispatch(persist());
+  }
+}
+
+export function gotoTag(tag) {
+  return  (dispatch) => {
+    dispatch(push(`/tags/${tag}`));
   }
 }

@@ -18,6 +18,7 @@ function Drawer({
   drawerClose,
   gotoBrowse,
   gotoFavorite,
+  gotoTags,
 }) {
   const handleClickBrowse = () => {
     gotoBrowse();
@@ -25,6 +26,10 @@ function Drawer({
   };
   const handleClickFavorite = () => {
     gotoFavorite();
+    drawerClose();
+  };
+  const handleClickTags = () => {
+    gotoTags();
     drawerClose();
   };
 
@@ -62,6 +67,7 @@ function Drawer({
         </ListItem>
         <ListItem
           button={true}
+          onClick={handleClickTags}
           >
           <ListItemIcon>
             <LabelIcon />
