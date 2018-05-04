@@ -28,13 +28,21 @@ function addTag(state, {filePath, tag}) {
 }
 
 function deleteTag(state, {filePath, tag}) {
-  const newTag = state.tags[tag].filter((e) => e !== filePath);
+  const tags = {
+    ...state.tags,
+    [tag]: state.tags[tag].filter((e) => e !== filePath),
+  };
+  const newTags = Object.keys(tags).reduce((a, key) => {
+    if (tags[key].length > 0) {
+      a[key] = tags[key];
+      return a;
+    }
+    return a;
+  }, {});
+
   return {
     ...state,
-    tags: {
-      ...state.tags,
-      [tag]: newTag,
-    },
+    tags: newTags,
   };
 }
 
