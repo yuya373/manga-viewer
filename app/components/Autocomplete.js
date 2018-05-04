@@ -108,9 +108,11 @@ class Autocomplete extends PureComponent {
       margin,
       autoFocus,
       fullWidth,
+      onSelect,
       onKeyDown,
       onInputValueChange,
       value,
+      selectedItem,
       source,
     } = this.props;
     const { inputWidth } = this.state;
@@ -118,7 +120,7 @@ class Autocomplete extends PureComponent {
     const suggestion = (
       isOpen,
       inputValue, getItemProps, highlightedIndex, selectedItem,
-    ) => !isOpen ? null : (
+    ) => (inputValue.length <= 0 || !isOpen) ? null : (
       <Paper
         className={classes.paper} square
         style={{width: inputWidth}}
@@ -138,9 +140,10 @@ class Autocomplete extends PureComponent {
     return (
       <Downshift
         onChange={(item, s) => console.log("onChange", item, s)}
-        onSelect={(item, s) => console.log("onSelect", item, s)}
+        onSelect={onSelect}
         onInputValueChange={(inputValue) => onInputValueChange(inputValue)}
         inputValue={value}
+        selectedItem={selectedItem}
         >
         {({
           getInputProps, getItemProps, isOpen,
@@ -151,7 +154,7 @@ class Autocomplete extends PureComponent {
                 fullWidth: true,
                 margin,
                 autoFocus,
-                onKeyDown: (e) => !isOpen && onKeyDown(e),
+                onKeyDown: (e) => highlightedIndex === null && onKeyDown(e),
                 value,
                 classes,
                 InputProps: getInputProps({

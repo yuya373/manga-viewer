@@ -40,6 +40,7 @@ class TagsDialog extends PureComponent {
     newTagTextField: "",
   };
 
+  handleSelect = (item) => this.addNewTag(item);
   handleTextFieldKeyDown = (event) => {
     if (event.keyCode === 13) {
       event.preventDefault();
@@ -51,8 +52,8 @@ class TagsDialog extends PureComponent {
     newTagTextField: inputValue,
   });
 
-  addNewTag = () => {
-    const newTag = this.state.newTagTextField;
+  addNewTag = (tag = undefined) => {
+    const newTag = tag || this.state.newTagTextField;
     if (newTag.length > 0) {
       this.props.addTag(newTag);
       this.setState({newTagTextField: ""});
@@ -115,9 +116,11 @@ class TagsDialog extends PureComponent {
               fullWidth={true}
               autoFocus={true}
               placeholder="Add New Tag"
+              onSelect={this.handleSelect}
               onKeyDown={this.handleTextFieldKeyDown}
               onInputValueChange={this.handleTextFieldChange}
               value={newTagTextField}
+              selectedItem={newTagTextField.length < 1 ? "" : undefined}
               source={source}
               />
           </div>
