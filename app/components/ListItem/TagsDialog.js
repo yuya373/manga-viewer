@@ -9,6 +9,7 @@ import Dialog, {
 import TextField from 'material-ui/TextField';
 import Typography from 'material-ui/Typography';
 import Input from 'material-ui/Input';
+import Autocomplete from './../Autocomplete.js';
 
 
 const style = (theme) => ({
@@ -40,26 +41,25 @@ class TagsDialog extends PureComponent {
   };
 
   handleTextFieldKeyDown = (event) => {
-    const { keyCode } = event;
-    if (keyCode === 13) {
+    if (event.keyCode === 13) {
       event.preventDefault();
       this.addNewTag();
     }
   }
 
-  handleTextFieldChange = (e) => this.setState({
-    newTagTextField: e.target.value,
+  handleTextFieldChange = (inputValue) => this.setState({
+    newTagTextField: inputValue,
   });
 
   addNewTag = () => {
     const newTag = this.state.newTagTextField;
     if (newTag.length > 0) {
-      this.props.onAddTag(newTag);
+      this.props.addTag(newTag);
       this.setState({newTagTextField: ""});
     }
   }
   handleDeleteTag = (tag) => () => {
-    this.props.onDeleteTag(tag);
+    this.props.deleteTag(tag);
   }
 
   renderTags = () => {
@@ -86,9 +86,12 @@ class TagsDialog extends PureComponent {
       open,
       title,
       onClose,
+      suggestions,
     } = this.props;
-
     const { newTagTextField } = this.state;
+    const source = suggestions.map((e) => ({
+      label: e,
+    }));
 
     return (
       <Dialog
@@ -106,15 +109,16 @@ class TagsDialog extends PureComponent {
             {this.renderTags()}
           </div>
           <div className={classes.inputContainer}>
-            <Input
+            <Autocomplete
               className={classes.newTagInput}
               margin="dense"
               fullWidth={true}
               autoFocus={true}
               placeholder="Add New Tag"
               onKeyDown={this.handleTextFieldKeyDown}
-              onChange={this.handleTextFieldChange}
+              onInputValueChange={this.handleTextFieldChange}
               value={newTagTextField}
+              source={source}
               />
           </div>
         </DialogContent>

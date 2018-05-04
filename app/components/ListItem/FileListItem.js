@@ -10,7 +10,7 @@ import List, {
 import IconButton from 'material-ui/IconButton';
 import LabelIcon from '@material-ui/icons/LabelOutline';
 import FavoriteButton from './../FavoriteButton.js';
-import TagsDialog from './TagsDialog.js';
+import TagsDialog from './../../containers/ListItem/TagsDialog.js';
 
 const styles = theme => ({
   secondaryAction: {
@@ -33,7 +33,6 @@ class FileListItem extends PureComponent {
       classes,
       file,
       onClick,
-      tags,
       favorite,
     } = this.props
     const { isDialogOpen } = this.state;
@@ -41,12 +40,9 @@ class FileListItem extends PureComponent {
     return (
       <React.Fragment>
         <TagsDialog
-          title={file.path}
-          tags={tags}
           open={isDialogOpen}
+          file={file}
           onClose={this.closeDialog}
-          onAddTag={this.handleAddTag}
-          onDeleteTag={this.handleDeleteTag}
           />
         <MuiListItem
           classes={{secondaryAction: classes.secondaryAction}}

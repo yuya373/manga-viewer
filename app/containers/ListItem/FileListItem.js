@@ -7,14 +7,10 @@ import { fileFavoriteChanged, gotoFile } from './../../actions/file.js';
 import FileListItem from './../../components/ListItem/FileListItem.js';
 
 function mapStateToProps(state, { file }) {
-  const tags = Object.keys(state.tag.tags).filter((e) => {
-    return state.tag.tags[e].includes(file.path);
-  });
   const favorite = state.favorite.files.includes(file.path);
 
   return {
     file,
-    tags,
     favorite,
   };
 }
@@ -25,14 +21,6 @@ function mapDispatchToProps(dispatch, { file, directory, queryParams = {} }) {
     onClickFavorite: (favorite) => dispatch(fileFavoriteChanged({
       path: file.path,
       favorite,
-    })),
-    addTag: (tag) => dispatch(addTag({
-      filePath: file.path,
-      tag,
-    })),
-    deleteTag: (tag) => dispatch(deleteTag({
-      filePath: file.path,
-      tag,
     })),
   };
 }
