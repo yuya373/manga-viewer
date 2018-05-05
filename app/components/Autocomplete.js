@@ -8,7 +8,7 @@ import Paper from 'material-ui/Paper';
 import { MenuItem } from 'material-ui/Menu';
 import Chip from 'material-ui/Chip';
 
-const styles = theme => console.log("theme",theme) || ({
+const styles = theme => ({
   root: {
     flexGrow: 1,
     height: 250,
