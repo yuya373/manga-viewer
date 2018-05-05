@@ -84,6 +84,7 @@ class File extends PureComponent {
         title={file.name}
         onClickBack={this.handleClickBack}
         menu={menu}
+        hideSearch={true}
         />
     );
   }

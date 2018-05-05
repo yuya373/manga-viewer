@@ -49,7 +49,10 @@ class NavBar extends PureComponent {
       position,
       isDrawerOpen,
       drawerOpen,
+      hideSearch,
     } = this.props;
+
+    const search = hideSearch ? null : (<Search />);
 
     return (
       <React.Fragment>
@@ -64,7 +67,7 @@ class NavBar extends PureComponent {
                 >
                 {title}
               </Typography>
-              <Search />
+              {search}
               {menu}
               <IconButton
                 color="inherit"
