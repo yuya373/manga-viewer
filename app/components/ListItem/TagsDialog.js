@@ -81,6 +81,32 @@ class TagsDialog extends PureComponent {
     ))
   };
 
+  renderExistingTags = () => {
+    const { classes, tags, suggestions } = this.props;
+    const exitings = suggestions.filter((e) => !tags.includes(e))
+    if (exitings.length <= 0) return null;
+
+    const candidates = exitings.map((e) => (
+      <Chip
+        key={e}
+        className={classes.tag}
+        label={e}
+        onClick={() => this.addNewTag(e)}
+        />
+    ));
+
+    return (
+      <React.Fragment>
+        <DialogContentText>
+          Existing Tags
+        </DialogContentText>
+        <div className={classes.tags}>
+          {candidates}
+        </div>
+      </React.Fragment>
+    )
+  }
+
   render() {
     const {
       classes,
@@ -109,6 +135,7 @@ class TagsDialog extends PureComponent {
           <div className={classes.tags}>
             {this.renderTags()}
           </div>
+          {this.renderExistingTags()}
           <div className={classes.inputContainer}>
             <Autocomplete
               className={classes.newTagInput}
