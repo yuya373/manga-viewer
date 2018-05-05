@@ -2,7 +2,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import queryString from 'query-string';
 import File from './../../components/File/Index.js';
-import { push } from 'react-router-redux';
+import { push, goBack } from 'react-router-redux';
 import * as actions from './../../actions/file.js';
 import {
   gotoDirectory,
@@ -37,7 +37,7 @@ function mapDispatchToProps(dispatch, {location}) {
       },
       dispatch
     ),
-    ...(backTo ? {goBack: () => dispatch(push(backTo))} : {}),
+    goBack: () => dispatch(goBack()),
   }
 }
 
