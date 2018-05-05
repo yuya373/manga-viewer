@@ -48,11 +48,10 @@ class File extends PureComponent {
   handleKeyUp = (event) => {
     event.preventDefault();
     const {shiftKey, keyCode} = event;
-    const {gotoDirectory, directory} = this.props;
     if (shiftKey) {
       switch(keyCode) {
       case 72:
-        gotoDirectory(directory.path);
+        this.handleClickBack();
         return;
       }
     }
