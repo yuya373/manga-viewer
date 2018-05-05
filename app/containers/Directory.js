@@ -6,11 +6,14 @@ import * as actions from './../actions/directory.js';
 import queryString from 'query-string';
 
 function mapStateToProps(state, { match }) {
+    const directory = state.directory.directories.
+          find((e) => e.path === `/${match.params.path || ""}`) || {};
   return {
     loading: state.directory.loading,
     path: match.params.path || "",
-    directory: state.directory.directories.
-      find((e) => e.path === `/${match.params.path || ""}`),
+    directory,
+    files: directory.files || [],
+    childDirectories: directory.childDirectories || [],
   };
 }
 

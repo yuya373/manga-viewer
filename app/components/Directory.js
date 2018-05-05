@@ -77,6 +77,7 @@ class Directory extends PureComponent {
     const {
       classes, path, directory,
       loading, gotoDirectory,
+      files, childDirectories
     } = this.props;
 
     if (loading || !directory) return null;
@@ -96,11 +97,11 @@ class Directory extends PureComponent {
               <ListSubheader disableSticky={true} >
                 Files
               </ListSubheader>
-              {directory && directory.files.map(this.renderFile)}
+              {files.map(this.renderFile)}
               <ListSubheader disableSticky={true} >
                 Directories
               </ListSubheader>
-              {directory && directory.childDirectories.map(this.renderDirectory)}
+              {childDirectories.map(this.renderDirectory)}
             </List>
           </Grid>
         </Grid>

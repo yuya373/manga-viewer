@@ -8,6 +8,7 @@ import IconButton from 'material-ui/IconButton';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import Slide from 'material-ui/transitions/Slide';
 import MenuIcon from '@material-ui/icons/Menu';
+import Search from './../../containers/NavBar/Search.js';
 
 const styles = theme => ({
   title: {
@@ -63,6 +64,7 @@ class NavBar extends PureComponent {
                 >
                 {title}
               </Typography>
+              <Search />
               {menu}
               <IconButton
                 color="inherit"

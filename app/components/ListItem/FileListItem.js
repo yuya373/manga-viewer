@@ -34,12 +34,23 @@ class FileListItem extends PureComponent {
       file,
       onClick,
       favorite,
+      searchQuery,
+      tags,
     } = this.props
     const { isDialogOpen } = this.state;
+
+    if (searchQuery.length > 0) {
+      if (file.name.indexOf(searchQuery) < 0 &&
+          !tags.some((e) => e.indexOf(searchQuery) >= 0)) {
+        return null;
+      }
+    }
+
 
     return (
       <React.Fragment>
         <TagsDialog
+          tags={tags}
           open={isDialogOpen}
           file={file}
           onClose={this.closeDialog}

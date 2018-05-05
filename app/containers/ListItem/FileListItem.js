@@ -8,8 +8,14 @@ import FileListItem from './../../components/ListItem/FileListItem.js';
 
 function mapStateToProps(state, { file }) {
   const favorite = state.favorite.files.includes(file.path);
+  const searchQuery = state.search.query;
+  const tags = Object.keys(state.tag.tags).filter((e) => {
+    return state.tag.tags[e].includes(file.path);
+  });
 
   return {
+    tags,
+    searchQuery,
     file,
     favorite,
   };

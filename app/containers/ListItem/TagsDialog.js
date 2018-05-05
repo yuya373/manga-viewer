@@ -5,11 +5,8 @@ import {
 } from './../../actions/tag.js';
 import TagsDialog from './../../components/ListItem/TagsDialog.js';
 
-function mapStateToProps(state, { file, open }) {
+function mapStateToProps(state, { file, open, tags }) {
   const suggestions = Object.keys(state.tag.tags);
-  const tags = suggestions.filter((e) => {
-    return state.tag.tags[e].includes(file.path);
-  });
 
   return {
     open,
