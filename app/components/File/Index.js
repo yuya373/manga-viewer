@@ -33,9 +33,12 @@ class File extends PureComponent {
     const { goBack } = this.props;
     goBack();
   }
-  handleMouseEnter = () => {
-    this.clearTimers();
-    this.hideAppBar();
+  handleMouseOver = () => {
+    if (this.state.displayAppBar) {
+      this.clearTimers()
+      this.clearTimers();
+      this.hideAppBar();
+    }
   }
   handleMouseLeave = () => {
     this.clearTimers();
@@ -140,7 +143,7 @@ class File extends PureComponent {
           container
           className={classes.root}
           spacing={0}
-          onMouseEnter={this.handleMouseEnter}
+          onMouseOver={this.handleMouseOver}
           onMouseLeave={this.handleMouseLeave}
           >
           {this.renderFile()}
