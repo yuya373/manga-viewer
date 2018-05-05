@@ -10,6 +10,9 @@ import List, {
 } from 'material-ui/List';
 import { FormGroup, FormControlLabel } from 'material-ui/Form';
 import FavoriteButton from './../FavoriteButton.js';
+import LabelIcon from '@material-ui/icons/Label';
+import LabelOutlineIcon from '@material-ui/icons/LabelOutline';
+import TagsDialog from './../../containers/ListItem/TagsDialog.js';
 
 const styles = theme => ({
   menuItemControl: {
@@ -20,7 +23,8 @@ const styles = theme => ({
 
 class FileMenu extends PureComponent {
   state = {
-    menuAnchor: null
+    menuAnchor: null,
+    tagsDialogOpen: false,
   };
 
   handleMenuOpen = (e) => this.setState({menuAnchor: e.currentTarget});
@@ -36,19 +40,39 @@ class FileMenu extends PureComponent {
   }
 
   handleClickFavorite = () => {
-    const { favorite, filePath, fileFavoriteChanged } = this.props;
-    fileFavoriteChanged({path: filePath, favorite: !favorite });
+    const { favorite, file, fileFavoriteChanged } = this.props;
+    fileFavoriteChanged({path: file.path, favorite: !favorite });
   }
 
+  openTagsDialog = () => this.setState({tagsDialogOpen: true});
+  closeTagsDialog = () => this.setState({tagsDialogOpen: false});
+
+
   render() {
-    const {classes, perPage, favorite} = this.props;
-    const {menuAnchor} = this.state;
+    const { classes, perPage, favorite, tags, file } = this.props;
+    const { menuAnchor, tagsDialogOpen } = this.state;
     const perPageSwitch = (
       <Switch checked={perPage == 2}/>
     );
 
+    const tagIcon = tags.length > 0 ?
+          (<LabelIcon />) : (<LabelOutlineIcon />);
+
     return (
       <React.Fragment>
+        <IconButton
+          onClick={this.openTagsDialog}
+          aria-label="Tags"
+          color="inherit"
+          >
+          {tagIcon}
+        </IconButton>
+        <TagsDialog
+          open={tagsDialogOpen}
+          file={file}
+          tags={tags}
+          onClose={this.closeTagsDialog}
+          />
         <FavoriteButton
           color="inherit"
           favorite={favorite}

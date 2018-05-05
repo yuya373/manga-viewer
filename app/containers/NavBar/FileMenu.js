@@ -7,10 +7,14 @@ import {
   fileFavoriteChanged,
 } from './../../actions/file.js';
 
-function mapStateToProps(state, props) {
+function mapStateToProps(state, { file }) {
+  const tags = Object.keys(state.tag.tags).
+        filter((e) => state.tag.tags[e].includes(file.path));
+
   return ({
-    filePath: props.filePath,
-    favorite: state.favorite.files.includes(props.filePath),
+    file,
+    tags,
+    favorite: state.favorite.files.includes(file.path),
     perPage: state.file.perPage,
   });
 }
