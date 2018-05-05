@@ -8,7 +8,8 @@ import List, {
   ListItemText,
 } from 'material-ui/List';
 import IconButton from 'material-ui/IconButton';
-import LabelIcon from '@material-ui/icons/LabelOutline';
+import LabelIcon from '@material-ui/icons/Label';
+import LabelOutlineIcon from '@material-ui/icons/LabelOutline';
 import FavoriteButton from './../FavoriteButton.js';
 import TagsDialog from './../../containers/ListItem/TagsDialog.js';
 
@@ -46,6 +47,9 @@ class FileListItem extends PureComponent {
       }
     }
 
+    const tagIcon = tags.length > 0 ?
+          (<LabelIcon />) : (<LabelOutlineIcon />);
+
 
     return (
       <React.Fragment>
@@ -68,7 +72,7 @@ class FileListItem extends PureComponent {
               onClick={this.openDialog}
               aria-label="Info"
               >
-              <LabelIcon />
+              {tagIcon}
             </IconButton>
             <FavoriteButton
               favorite={favorite}
