@@ -9,9 +9,6 @@ import List, {
   ListItemText,
 } from 'material-ui/List';
 import { FormGroup, FormControlLabel } from 'material-ui/Form';
-import HelpIcon from '@material-ui/icons/HelpOutline';
-import Tooltip from 'material-ui/Tooltip';
-import Typography from 'material-ui/Typography';
 import FavoriteButton from './../FavoriteButton.js';
 
 const styles = theme => ({
@@ -50,25 +47,8 @@ class FileMenu extends PureComponent {
       <Switch checked={perPage == 2}/>
     );
 
-    const toolTipText = (
-      <React.Fragment>
-        <Typography color="inherit">
-          <kbd>→</kbd>aaa
-        </Typography>
-      </React.Fragment>
-    );
-
     return (
       <React.Fragment>
-        <Tooltip
-          title={toolTipText}
-          >
-          <IconButton
-            color="inherit"
-            >
-            <HelpIcon />
-          </IconButton>
-        </Tooltip>
         <FavoriteButton
           color="inherit"
           favorite={favorite}
