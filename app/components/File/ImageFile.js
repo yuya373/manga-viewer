@@ -2,10 +2,10 @@ import React, { PureComponent } from 'react';
 import { withStyles } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
 import Canvas from './Canvas.js';
-import fs from 'fs';
-import JSZip from 'jszip';
+import zip from './../../lib/zip.js';
+import image from './../../lib/image.js';
 
-const allowedExts = [
+export const allowedExts = [
   "jpg",
   "jpeg",
   "png",
@@ -72,28 +72,9 @@ class ImageFile extends PureComponent {
     });
   }
 
-  readZipFile = () => {
+  loadZipFile = () => {
     const {path} = this.props.file;
-    const pStart = performance.now();
-    return new Promise((resolve, reject) => {
-      fs.readFile(path, (error, data) => {
-        if (error) {
-          reject(error);
-        } else {
-          const pEnd = performance.now();
-          console.log(
-            "readZipFile", pEnd - pStart,
-            " MB: ", data.length / 1000000
-          );
-          resolve(data);
-        }
-      })
-    })
-  }
-
-  loadZipFile = (data) => {
-    const pStart = performance.now();
-    return JSZip.loadAsync(data).then((zip) => {
+    return zip.read(path).then((zip) => {
       const images = [];
 
       zip.forEach((_, e) => {
@@ -112,32 +93,12 @@ class ImageFile extends PureComponent {
         }
       });
 
-      const pEnd = performance.now();
-      console.log("loadZipFile: ", pEnd - pStart, zip);
       return images;
     });
   }
 
   sortImages = (images) => {
-    return images.sort((a, b) => {
-      const ANumStr = a.name.match(/\d+/)[0];
-      const BNumStr = b.name.match(/\d+/)[0];
-      if ((typeof ANumStr) !== 'undefined' && (typeof BNumStr) !== 'undefined') {
-        const ANum = Number.parseInt(ANumStr, 10);
-        const BNum = Number.parseInt(BNumStr, 10);
-        if (!Number.isNaN(ANum) && !Number.isNaN(BNum)) {
-          if (ANum < BNum) return -1;
-          if (ANum > BNum) return 1;
-          return 0;
-        }
-      }
-
-      const A = a.name.toLowerCase();
-      const B = b.name.toLowerCase();
-      if (A < B) return -1;
-      if (A > B) return 1;
-      return 0;
-    });
+    return images.sort((a, b) => image.sort(a.name, b.name));
   }
 
   handleDrawComplete = () => this.setState((state) => ({
@@ -180,8 +141,7 @@ class ImageFile extends PureComponent {
     document.addEventListener("keyup", this.handleKeyUp);
     this.handleResize();
     window.addEventListener("resize", this.handleResize);
-    this.readZipFile().
-      then(this.loadZipFile).
+    this.loadZipFile().
       then(this.sortImages).
       then((images) => this.setState({
         images,
