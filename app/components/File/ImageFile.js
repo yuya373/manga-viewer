@@ -2,8 +2,8 @@ import React, { PureComponent } from 'react';
 import { withStyles } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
 import Canvas from './Canvas.js';
-import zip from './../../lib/zip.js';
-import image from './../../lib/image.js';
+import * as zip from './../../lib/zip.js';
+import * as image from './../../lib/image.js';
 
 export const allowedExts = [
   "jpg",
