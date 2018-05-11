@@ -24,3 +24,11 @@ export function sort(aName, bName) {
   if (A > B) return 1;
   return 0;
 }
+
+export function base64Url(base64, ext) {
+  if (base64 && ext) {
+    return `data:image/${ext};base64,${base64}`;
+  }
+
+  return null;
+}

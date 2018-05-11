@@ -7,8 +7,10 @@ import {
 import {
   FILE_LOADED,
   FILE_LOAD_ERROR,
+  FILE_SAVE_THUMBNAIL_URL,
 } from './../actions/file.js';
 import D from './../models/directory.js';
+import F from './../models/file.js';
 
 const initialState = {
   loading: false,
@@ -59,6 +61,16 @@ export default function(state = initialState, {type, payload}) {
         filter((e) => !D.isEqual(e, payload.directory)).
         concat([D.removeFile(payload.directory, payload.file)]),
     });
+  case FILE_SAVE_THUMBNAIL_URL:
+    return ({
+      ...state,
+      directories: state.directories.
+        filter((e) => !D.isEqual(e, payload.directory)).
+        concat([D.upsertFile(
+          payload.directory,
+          F.saveThumbnailUrl(payload.file, payload.thumbnailUrl),
+        )]),
+    })
   default:
     return state;
   }

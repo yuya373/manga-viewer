@@ -37,9 +37,17 @@ export function setImages(file, images) {
   };
 }
 
+export function saveThumbnailUrl(file, thumbnailUrl) {
+  return {
+    ...file,
+    thumbnailUrl,
+  };
+}
+
 export default {
   create,
   isEqual,
   setImages,
   createImage,
+  saveThumbnailUrl,
 }

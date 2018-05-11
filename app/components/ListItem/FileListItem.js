@@ -34,7 +34,7 @@ const styles = theme => ({
 class FileListItem extends PureComponent {
   state = {
     isDialogOpen: false,
-    base64: null,
+    thumbnailUrl: null,
   };
   mounted = false;
   openDialog = () => this.setState({isDialogOpen: true});
@@ -42,7 +42,13 @@ class FileListItem extends PureComponent {
   handleClickFavorite = (favorite) => () => this.props.onClickFavorite(!favorite);
   handleAddTag = (tag) => this.props.addTag(tag);
   handleDeleteTag = (tag) => this.props.deleteTag(tag);
-  ext = (name) => require("path").extname(name).substring(1).toLowerCase();
+  ext = (name) => {
+    if (name) {
+      return require("path").extname(name).
+        substring(1).toLowerCase();
+    }
+    return null;
+  }
   loadZipFile = () => {
     const {path} = this.props.file;
     return zip.read(path);
@@ -63,18 +69,28 @@ class FileListItem extends PureComponent {
     return { base64: null, ext: null };
   }
   storeImage = ({ base64, ext }) => {
-    if (this.mounted && base64 !== null && ext !== null) {
-      const src = `data:image/${ext};base64,${base64}`;
-      this.setState({ base64: src });
+    if (this.mounted) {
+      const url = image.base64Url(base64, ext);
+      if (url) {
+        const { saveThumbnailUrl } = this.props;
+        this.setState(
+          () => ({thumbnailUrl: url}),
+          () => saveThumbnailUrl({ thumbnailUrl: url })
+        );
+      }
     }
   }
   loadThumbnail = () => {
-    const { path } = this.props.file;
+    const { path, thumbnailUrl } = this.props.file;
     if (this.mounted && this.ext(path) === "zip") {
-      this.loadZipFile().
-        then(this.getFirstImage).
-        then(this.storeImage).
-        catch((e) => console.error(path, "DISPLAY ERROR", e));
+      if (thumbnailUrl) {
+        this.setState({thumbnailUrl})
+      } else {
+        this.loadZipFile().
+          then(this.getFirstImage).
+          then(this.storeImage).
+          catch((e) => console.error(path, "DISPLAY ERROR", e));
+      }
     }
   }
 
@@ -88,15 +104,15 @@ class FileListItem extends PureComponent {
   }
 
   renderAvater() {
-    const { classes } = this.props;
-    const { base64 } = this.state;
+    const { classes, file } = this.props;
+    const { thumbnailUrl } = this.state;
 
-    if (!base64) return null;
+    if (!thumbnailUrl) return null;
     return (
       <Avatar
         classes={{img: classes.avaterImg}}
         className={classes.avater}
-        src={base64}
+        src={thumbnailUrl}
         />
     );
   }
@@ -112,7 +128,6 @@ class FileListItem extends PureComponent {
     } = this.props
     const {
       isDialogOpen,
-      base64,
     } = this.state;
 
     if (searchQuery.length > 0) {

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
+import { base64Url } from './../../lib/image.js';
 
 export default class Canvas extends Component {
   canval = null;
@@ -17,7 +18,7 @@ export default class Canvas extends Component {
         this.renderImage();
         onDrawComplete();
       };
-      image.src = `data:image/${ext};base64,${base64}`;
+      image.src = base64Url(base64, ext);
       this.image = image;
     });
   }

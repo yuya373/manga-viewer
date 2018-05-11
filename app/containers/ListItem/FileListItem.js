@@ -3,7 +3,7 @@ import {
   addTag,
   deleteTag,
 } from './../../actions/tag.js';
-import { fileFavoriteChanged, gotoFile } from './../../actions/file.js';
+import { fileFavoriteChanged, gotoFile, saveThumbnailUrl } from './../../actions/file.js';
 import FileListItem from './../../components/ListItem/FileListItem.js';
 
 function mapStateToProps(state, { file }) {
@@ -28,6 +28,8 @@ function mapDispatchToProps(dispatch, { file, directory, queryParams = {} }) {
       path: file.path,
       favorite,
     })),
+    saveThumbnailUrl: ({ thumbnailUrl }) =>
+      dispatch(saveThumbnailUrl({ file, directory, thumbnailUrl })),
   };
 }
 

@@ -12,6 +12,7 @@ export const FILE_LOADED = "FILE_LOADED";
 export const FILE_LOAD_ERROR = "FILE_LOAD_ERROR";
 export const FILE_PER_PAGE_CHANGED = "FILE_PER_PAGE_CHANGED";
 export const FILE_FAVORITE_CHANGED = "FILE_FAVORITE_CHANGED";
+export const FILE_SAVE_THUMBNAIL_URL = "FILE_SAVE_THUMBNAIL_URL";
 
 export const fileLoading = createAction(FILE_LOADING);
 export const filePerPageChanged = createAction(FILE_PER_PAGE_CHANGED);
@@ -77,5 +78,13 @@ export function fileFavoriteChanged({path, favorite}) {
   return (dispatch) => {
     dispatch(action({path, favorite}));
     dispatch(persist());
+  }
+}
+
+export function saveThumbnailUrl({ file, directory, thumbnailUrl }) {
+  const action = createAction(FILE_SAVE_THUMBNAIL_URL);
+
+  return (dispatch) => {
+    dispatch(action({ file, directory, thumbnailUrl }));
   }
 }
