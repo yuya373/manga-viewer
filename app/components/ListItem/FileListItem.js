@@ -36,6 +36,7 @@ class FileListItem extends PureComponent {
     isDialogOpen: false,
     base64: null,
   };
+  mounted = false;
   openDialog = () => this.setState({isDialogOpen: true});
   closeDialog = () => this.setState({isDialogOpen: false});
   handleClickFavorite = (favorite) => () => this.props.onClickFavorite(!favorite);
@@ -47,27 +48,29 @@ class FileListItem extends PureComponent {
     return zip.read(path);
   }
   getFirstImage = (zip) => {
-    const ext = this.ext;
-    const cover = Object.keys(zip.files).
-          map((e) => ({ name: e, ext: ext(e) })).
-          filter(({ name, ext }) => allowedExts.includes(ext)).
-          sort((a, b) => image.sort(a.name, b.name))[0];
+    if (this.mounted) {
+      const ext = this.ext;
+      const cover = Object.keys(zip.files).
+            map((e) => ({ name: e, ext: ext(e) })).
+            filter(({ name, ext }) => allowedExts.includes(ext)).
+            sort((a, b) => image.sort(a.name, b.name))[0];
 
-    if (cover) {
-      return zip.files[cover.name].async("base64").
-        then((base64) => ({base64, ext: ext(cover.name)}));
+      if (cover) {
+        return zip.files[cover.name].async("base64").
+          then((base64) => ({base64, ext: ext(cover.name)}));
+      }
     }
     return { base64: null, ext: null };
   }
   storeImage = ({ base64, ext }) => {
-    if (base64 !== null && ext !== null) {
+    if (this.mounted && base64 !== null && ext !== null) {
       const src = `data:image/${ext};base64,${base64}`;
       this.setState({ base64: src });
     }
   }
   loadThumbnail = () => {
     const { path } = this.props.file;
-    if (this.ext(path) === "zip") {
+    if (this.mounted && this.ext(path) === "zip") {
       this.loadZipFile().
         then(this.getFirstImage).
         then(this.storeImage).
@@ -76,7 +79,12 @@ class FileListItem extends PureComponent {
   }
 
   componentDidMount() {
+    this.mounted = true;
     this.loadThumbnail();
+  }
+
+  componentWillUnmount() {
+    this.mounted = false;
   }
 
   renderAvater() {
