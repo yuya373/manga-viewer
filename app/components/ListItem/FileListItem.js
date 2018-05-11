@@ -41,34 +41,56 @@ class FileListItem extends PureComponent {
   handleClickFavorite = (favorite) => () => this.props.onClickFavorite(!favorite);
   handleAddTag = (tag) => this.props.addTag(tag);
   handleDeleteTag = (tag) => this.props.deleteTag(tag);
+  ext = (name) => require("path").extname(name).substring(1).toLowerCase();
   loadZipFile = () => {
     const {path} = this.props.file;
     return zip.read(path);
   }
   getFirstImage = (zip) => {
-    const ext = (name) => require("path").extname(name).
-          substring(1).toLowerCase();
-
+    const ext = this.ext;
     const cover = Object.keys(zip.files).
           map((e) => ({ name: e, ext: ext(e) })).
           filter(({ name, ext }) => allowedExts.includes(ext)).
           sort((a, b) => image.sort(a.name, b.name))[0];
 
-    return zip.files[cover.name].async("base64").
-      then((base64) => ({base64, ext: ext(cover.name)}));
+    if (cover) {
+      return zip.files[cover.name].async("base64").
+        then((base64) => ({base64, ext: ext(cover.name)}));
+    }
+    return { base64: null, ext: null };
   }
   storeImage = ({ base64, ext }) => {
-    const src = `data:image/${ext};base64,${base64}`;
-    this.setState({base64: src});
+    if (base64 !== null && ext !== null) {
+      const src = `data:image/${ext};base64,${base64}`;
+      this.setState({ base64: src });
+    }
   }
   loadThumbnail = () => {
-    this.loadZipFile().
-      then(this.getFirstImage).
-      then(this.storeImage);
+    const { path } = this.props.file;
+    if (this.ext(path) === "zip") {
+      this.loadZipFile().
+        then(this.getFirstImage).
+        then(this.storeImage).
+        catch((e) => console.error(path, "DISPLAY ERROR", e));
+    }
   }
 
   componentDidMount() {
     this.loadThumbnail();
+  }
+
+  renderAvater() {
+    const { classes } = this.props;
+    const { base64 } = this.state;
+
+    if (!base64) return null;
+    return (
+      <Avatar
+        classes={{img: classes.avaterImg}}
+        className={classes.avater}
+        src={base64}
+        />
+    );
   }
 
   render() {
@@ -109,11 +131,7 @@ class FileListItem extends PureComponent {
           button
           onClick={onClick}
           >
-          <Avatar
-            classes={{img: classes.avaterImg}}
-            className={classes.avater}
-            src={base64}
-            />
+          {this.renderAvater()}
           <ListItemText>
             {file.name}
           </ListItemText>
