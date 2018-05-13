@@ -1,12 +1,9 @@
 import React, { PureComponent } from 'react';
 import { withStyles } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
-import List from 'material-ui/List';
-import ListSubheader from 'material-ui/List/ListSubheader';
 import NavBar from './../containers/NavBar/Index.js';
 import DirectoryMenu from './NavBar/DirectoryMenu.js';
-import FileListItem from './../containers/ListItem/FileListItem.js';
-import DirectoryListItem from './../containers/ListItem/DirectoryListItem.js';
+import LazyList from './LazyList.js';
 
 const styles = theme => ({
   root: {
@@ -36,25 +33,6 @@ class Directory extends PureComponent {
     } else {
       gotoDirectory("/");
     }
-  };
-  renderFile = (file, i) => {
-    const { directory } = this.props;
-    return (
-      <React.Fragment key={i}>
-        <FileListItem
-          file={file}
-          directory={directory}
-          />
-      </React.Fragment>
-    );
-  }
-  renderDirectory = (dir, i) => {
-    return (
-      <React.Fragment key={i}>
-        <DirectoryListItem
-          directory={dir} />
-      </React.Fragment>
-    );
   };
   redirectIfDirectoryNotExists = ({path, directory, loading, gotoDirectory}) => {
     if (loading) return;
@@ -93,16 +71,11 @@ class Directory extends PureComponent {
           />
         <Grid container className={classes.root} spacing={16}>
           <Grid item xs={12}>
-            <List >
-              <ListSubheader disableSticky={true} >
-                Files
-              </ListSubheader>
-              {files.map(this.renderFile)}
-              <ListSubheader disableSticky={true} >
-                Directories
-              </ListSubheader>
-              {childDirectories.map(this.renderDirectory)}
-            </List>
+            <LazyList
+              directory={directory}
+              files={files}
+              directories={childDirectories}
+              />
           </Grid>
         </Grid>
       </React.Fragment>
