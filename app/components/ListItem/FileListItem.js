@@ -1,4 +1,6 @@
 import React, { PureComponent } from 'react';
+import ReactDOM from 'react-dom';
+import classNames from 'classnames';
 import { withStyles } from 'material-ui/styles';
 import List, {
   ListItem as MuiListItem,
@@ -16,12 +18,16 @@ import * as zip from './../../lib/zip.js';
 import * as image from './../../lib/image.js';
 import { allowedExts } from './../File/ImageFile.js';
 import Avatar from 'material-ui/Avatar';
+import Popover from 'material-ui/Popover';
 
 const styles = theme => ({
   avater: {
     width: 50,
     height: 50,
     borderRadius: 0,
+  },
+  avaterWithPopover: {
+    zIndex: theme.zIndex.modal + 1,
   },
   avaterImg: {
     objectFit: "contain",
@@ -35,6 +41,8 @@ class FileListItem extends PureComponent {
   state = {
     isDialogOpen: false,
     thumbnailUrl: null,
+    popoverAnchorEl: null,
+    popoverOpen: false,
   };
   mounted = false;
   openDialog = () => this.setState({isDialogOpen: true});
@@ -94,6 +102,75 @@ class FileListItem extends PureComponent {
     }
   }
 
+  renderAvater = () => {
+    const { classes, file } = this.props;
+    const { thumbnailUrl, popoverOpen } = this.state;
+
+    if (!thumbnailUrl) return null;
+    return (
+      <Avatar
+        ref={(ref) => this.avatarRef = ref}
+        classes={{img: classes.avaterImg}}
+        className={classNames(
+          classes.avater,
+          { [classes.avaterWithPopover] : popoverOpen }
+        )}
+        src={thumbnailUrl}
+        onMouseOver={this.handlePopoverOpen}
+        onMouseLeave={this.handlePopoverClose}
+        />
+    );
+  }
+
+  handlePopoverClose = () => this.setState({
+    popoverOpen: false,
+  });
+  handlePopoverOpen = (event) => this.setState({
+    popoverAnchorEl: event.target,
+    popoverOpen: true,
+  });
+
+  renderPopover = () => {
+    const { popoverAnchorEl, popoverOpen, thumbnailUrl } = this.state;
+    const { classes } = this.props;
+    const getLeftOffset = () => {
+      if (!popoverAnchorEl) {
+        return 0;
+      }
+      return popoverAnchorEl.getBoundingClientRect().right;
+    };
+
+    const getImgStyle = () => {
+      const leftOffset = getLeftOffset();
+      const margin = 16;
+      return {
+        maxHeight: (window.innerHeight - margin),
+        maxWidth: (window.innerWidth - margin) - leftOffset,
+      };
+    };
+
+    return (
+      <Popover
+        open={popoverOpen}
+        anchorEl={popoverAnchorEl}
+        anchorOrigin={{
+          vertical: 'center',
+          horizontal: 'right',
+        }}
+        transformOrigin={{
+          vertical: 'center',
+          horizontal: 'left',
+        }}
+        marginThreshold={16}
+        >
+        <img
+          src={thumbnailUrl}
+          style={getImgStyle()}
+          />
+      </Popover>
+    );
+  }
+
   componentDidMount() {
     this.mounted = true;
     this.loadThumbnail();
@@ -101,20 +178,6 @@ class FileListItem extends PureComponent {
 
   componentWillUnmount() {
     this.mounted = false;
-  }
-
-  renderAvater() {
-    const { classes, file } = this.props;
-    const { thumbnailUrl } = this.state;
-
-    if (!thumbnailUrl) return null;
-    return (
-      <Avatar
-        classes={{img: classes.avaterImg}}
-        className={classes.avater}
-        src={thumbnailUrl}
-        />
-    );
   }
 
   render() {
@@ -149,6 +212,7 @@ class FileListItem extends PureComponent {
           file={file}
           onClose={this.closeDialog}
           />
+        {this.renderPopover()}
         <MuiListItem
           classes={{secondaryAction: classes.secondaryAction}}
           button
