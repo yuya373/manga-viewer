@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import { withStyles } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
 import NavBar from './../containers/NavBar/Index.js';
-import LazyList from './LazyList.js';
+import LazyList from './../containers/LazyList.js';
 
 const styles = theme => ({
   root: {
@@ -18,6 +18,7 @@ class Favorite extends PureComponent {
       classes,
       files,
       directories,
+      location,
     } = this.props;
 
     return (
@@ -30,6 +31,7 @@ class Favorite extends PureComponent {
         <Grid container className={classes.root} spacing={16}>
           <Grid item xs={12}>
             <LazyList
+              location={location}
               files={files}
               directories={directories}
               queryParams={{backTo: "/favorites"}}

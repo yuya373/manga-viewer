@@ -9,16 +9,28 @@ const perPage = 15;
 export default class LazyList extends PureComponent {
   constructor(props) {
     super(props);
+    const page = props.page || 0;
     this.state = {
-      page: 0,
-      ...(this.getItems(0)),
+      page,
+      ...(this.getItems(page)),
     };
   }
-  onDisplay = ({isLastItem}) => () =>
-    isLastItem && this.setState((state) => ({
-      page: state.page + 1,
-      ...(this.getItems(state.page + 1)),
-    }));
+  gotoNextPage = () => {
+    const { gotoNextPage } = this.props;
+    this.setState(
+      (state) => {
+        const nextPage = state.page + 1;
+
+        return {
+          ...state,
+          page: nextPage,
+          ...this.getItems(nextPage),
+        }
+      },
+      () => gotoNextPage(this.state.page)
+    )
+  }
+  onDisplay = ({isLastItem}) => () => isLastItem && this.gotoNextPage();
   renderFile = (file) => {
     const { directory, queryParams } = this.props;
 
