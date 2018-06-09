@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import classNames from 'classnames';
 import { withStyles } from 'material-ui/styles';
 import List, {
+  ListItem,
   ListItemAvatar,
   ListItemIcon,
   ListItemSecondaryAction,
@@ -18,7 +19,6 @@ import * as image from './../../lib/image.js';
 import { allowedExts } from './../File/ImageFile.js';
 import Avatar from 'material-ui/Avatar';
 import Popover from 'material-ui/Popover';
-import LazyListItem from './LazyListItem.js';
 
 const styles = theme => ({
   avater: {
@@ -188,7 +188,6 @@ class FileListItem extends PureComponent {
       favorite,
       searchQuery,
       tags,
-      onDisplay,
     } = this.props
     const {
       isDialogOpen,
@@ -214,10 +213,10 @@ class FileListItem extends PureComponent {
           onClose={this.closeDialog}
           />
         {this.renderPopover()}
-        <LazyListItem
+        <ListItem
+          button
           classes={{secondaryAction: classes.secondaryAction}}
           onClick={onClick}
-          onDisplay={onDisplay}
           >
           {this.renderAvater()}
           <ListItemText>
@@ -235,7 +234,7 @@ class FileListItem extends PureComponent {
               onClick={this.handleClickFavorite(favorite)}
               />
           </ListItemSecondaryAction>
-        </LazyListItem>
+        </ListItem>
       </React.Fragment>
     )
   }

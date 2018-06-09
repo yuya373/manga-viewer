@@ -1,36 +1,35 @@
 import React, { PureComponent } from 'react';
+import ReactDOM from 'react-dom';
 import List from 'material-ui/List';
 import ListSubheader from 'material-ui/List/ListSubheader';
+import queryString from 'query-string';
+import { subscribe } from 'subscribe-ui-event';
 import FileListItem from './../containers/ListItem/FileListItem.js';
 import DirectoryListItem from './../containers/ListItem/DirectoryListItem.js';
 
 const perPage = 15;
 
 export default class LazyList extends PureComponent {
-  constructor(props) {
-    super(props);
-    const page = props.page || 0;
-    this.state = {
-      page,
-      ...(this.getItems(page)),
-    };
+  gotoPrevPage = (onPageChange) => () => {
+    const { gotoPage, page } = this.props;
+    const prevPage = Math.max(1, page - 1);
+    if (page !== prevPage) {
+      if (onPageChange) onPageChange();
+      gotoPage(prevPage);
+    }
   }
-  gotoNextPage = () => {
-    const { gotoNextPage } = this.props;
-    this.setState(
-      (state) => {
-        const nextPage = state.page + 1;
+  gotoNextPage = (onPageChange) => () => {
+    const {
+      gotoPage, files, directories,
+      page, maxPage,
+    } = this.props;
+    const nextPage = Math.min(maxPage - 1, page + 1);
 
-        return {
-          ...state,
-          page: nextPage,
-          ...this.getItems(nextPage),
-        }
-      },
-      () => gotoNextPage(this.state.page)
-    )
+    if (page !== nextPage) {
+      if (onPageChange) onPageChange();
+      gotoPage(nextPage);
+    }
   }
-  onDisplay = ({isLastItem}) => () => isLastItem && this.gotoNextPage();
   renderFile = (file) => {
     const { directory, queryParams } = this.props;
 
@@ -39,7 +38,6 @@ export default class LazyList extends PureComponent {
         <FileListItem
           file={file}
           directory={directory || file.parent}
-          onDisplay={this.onDisplay(file)}
           queryParams={queryParams}
           />
       </React.Fragment>
@@ -51,58 +49,49 @@ export default class LazyList extends PureComponent {
       <React.Fragment key={dir.path} >
         <DirectoryListItem
           directory={dir}
-          onDisplay={this.onDisplay(dir)}
           queryParams={queryParams}
           />
       </React.Fragment>
     );
   };
-  getItems = (page) => {
-    const {
-      files, directories
-    } = this.props;
 
-    const beg = 0;
-    const end = beg + (perPage * (page + 1));
+  scrollHandler = null;
+  handleScroll = (e, payload) => {
+    const { delta, top } = payload.scroll;
+    const offSet = 100;
 
-    const items = files.concat(directories).slice(beg, end);
-    const filesToRender = [];
-    const directoriesToRender = [];
-    items.forEach((e, i) => {
-      const isLastItem = (items.length - 1) === i;
-      if (e.isFile) {
-        filesToRender.push({ ...e, isLastItem });
-      } else {
-        directoriesToRender.push({ ...e, isLastItem });
+    if (delta < 0) {
+      if (top <= offSet) {
+        this.gotoPrevPage(() => window.scrollBy(0, 1))();
       }
-    })
-
-    return {
-      files: filesToRender,
-      directories: directoriesToRender,
+    } else {
+      if (top >= (document.body.clientHeight - window.innerHeight - offSet)) {
+        this.gotoNextPage(() => window.scrollBy(0, -1))();
+      }
     }
   }
-  enqueueItems = () => {
-    this.setState((state) => ({
-      ...state,
-      ...this.getItems(state.page),
-    }));
+
+  componentDidMount() {
+    this.scrollHandler = subscribe("scroll", this.handleScroll, {
+      useRAF: true,
+      enableScrollInfo: true,
+    });
+  }
+
+  componentWillUnmount() {
+    if (this.scrollHandler) {
+      this.scrollHandler.unsubscribe();
+    }
   }
 
   render() {
     const {
       files, directories,
-    } = this.state;
+    } = this.props;
 
     return (
       <List>
-        <ListSubheader disableSticky={true} >
-          Files
-        </ListSubheader>
         {files.map(this.renderFile)}
-        <ListSubheader disableSticky={true} >
-          Directories
-        </ListSubheader>
         {directories.map(this.renderDirectory)}
       </List>
     );
