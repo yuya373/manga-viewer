@@ -11,8 +11,8 @@ const perPage = 15;
 
 export default class LazyList extends PureComponent {
   gotoPrevPage = (onPageChange) => () => {
-    const { gotoPage, page } = this.props;
-    const prevPage = Math.max(1, page - 1);
+    const { gotoPage, page, minPage } = this.props;
+    const prevPage = Math.max(minPage, page - 1);
     if (page !== prevPage) {
       if (onPageChange) onPageChange();
       gotoPage(prevPage);
@@ -23,7 +23,7 @@ export default class LazyList extends PureComponent {
       gotoPage, files, directories,
       page, maxPage,
     } = this.props;
-    const nextPage = Math.min(maxPage - 1, page + 1);
+    const nextPage = Math.min(maxPage, page + 1);
 
     if (page !== nextPage) {
       if (onPageChange) onPageChange();

@@ -4,7 +4,7 @@ import { push } from 'react-router-redux';
 import LazyList from './../components/LazyList.js';
 
 
-const perPage = 15;
+const perPage = 10;
 
 const sliceItems = (page, items) => {
   const beg = page * perPage;
@@ -48,16 +48,18 @@ function mapStateToProps(
   } = props;
 
   const queryParams = queryString.parse(location.search);
-  const page = queryParams.page ?
-        Number.parseInt(queryParams.page) : 1;
 
   const itemsCount = files.length + directories.length;
-  const maxPage = Math.ceil(itemsCount / perPage);
+  const maxPage = Math.ceil(itemsCount / perPage) - 1;
+  const minPage = 1;
+  const page = queryParams.page ?
+        Number.parseInt(queryParams.page) : minPage;
 
   return {
     page,
     directory,
     maxPage,
+    minPage,
     ...getItems(page, files, directories),
   }
 }
