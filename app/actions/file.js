@@ -36,9 +36,7 @@ function hasFileAndDirectory(state, file, directory) {
   const d = state.directory.directories.
         find((e) => D.isEqual(e, directory));
   if (!d) return false;
-
-  if (!d.files.find((e) => F.isEqual(e, file)))
-    return false;
+  if (!d.files.find((e) => F.isEqual(e, file))) return false;
 
   return true;
 }
@@ -51,15 +49,21 @@ export function gotoFile(file, directory, param = {}) {
     };
 
     const url = `/files/${file.name}?${queryString.stringify(params)}`;
+
     dispatch(fileLoading());
 
-
     if (!hasFileAndDirectory(getState(), file, directory)) {
-      dispatch(loadDirectory(directory.path));
+      console.warn("NO FILE AND DIRECTORY");
+      dispatch(loadDirectory(directory.path)).then(() => {
+        console.warn("DIRECTORY LOADED THEN PUSH URL: ", url);
+        dispatch(push(url));
+        dispatch(loadFile(file, directory));
+      });
+    } else {
+      dispatch(push(url));
+      dispatch(loadFile(file, directory));
     }
 
-    dispatch(push(url));
-    dispatch(loadFile(file, directory));
   };
 }
 

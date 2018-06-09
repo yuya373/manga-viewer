@@ -48,21 +48,25 @@ export function loadDirectory(path) {
   const worker = new Worker();
 
   return (dispatch) => {
-    worker.onmessage = (e) => {
-      const data = e.data;
+    return new Promise((resolve, reject) =>  {
+      worker.onmessage = (e) => {
+        const data = e.data;
 
-      if (data.success) {
-        const {directory} = data;
-        dispatch(directoryLoaded(directory))
-        dispatch(persist());
-      } else {
-        const {error} = data;
-        console.warn("Error in worker", error);
-        dispatch(directoryLoadError(error, path))
+        if (data.success) {
+          const {directory} = data;
+          dispatch(directoryLoaded(directory))
+          dispatch(persist());
+          resolve();
+        } else {
+          const {error} = data;
+          console.warn("Error in worker", error);
+          dispatch(directoryLoadError(error, path))
+          reject(error);
+        }
       }
-    }
 
-    worker.postMessage(path);
+      worker.postMessage(path);
+    })
   }
 }
 
