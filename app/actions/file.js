@@ -5,6 +5,7 @@ import F from './../models/file.js';
 import D from './../models/directory.js';
 import Worker from './../workers/load_file.worker.js'
 import { persist } from './persist.js';
+import { loadDirectory } from './directory.js';
 
 export const LOAD_FILE = "LOAD_FILE";
 export const FILE_LOADING = "FILE_LOADING";
@@ -31,8 +32,19 @@ export const fileLoadError = createAction(
   })
 )
 
+function hasFileAndDirectory(state, file, directory) {
+  const d = state.directory.directories.
+        find((e) => D.isEqual(e, directory));
+  if (!d) return false;
+
+  if (!d.files.find((e) => F.isEqual(e, file)))
+    return false;
+
+  return true;
+}
+
 export function gotoFile(file, directory, param = {}) {
-  return (dispatch) => {
+  return (dispatch, getState) => {
     const params = {
       path: directory.path,
       ...param,
@@ -40,6 +52,12 @@ export function gotoFile(file, directory, param = {}) {
 
     const url = `/files/${file.name}?${queryString.stringify(params)}`;
     dispatch(fileLoading());
+
+
+    if (!hasFileAndDirectory(getState(), file, directory)) {
+      dispatch(loadDirectory(directory.path));
+    }
+
     dispatch(push(url));
     dispatch(loadFile(file, directory));
   };

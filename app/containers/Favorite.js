@@ -2,40 +2,28 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { push } from 'react-router-redux';
 import Favorite from './../components/Favorite.js';
+import F from './../models/file.js';
+import D from './../models/directory.js';
 
 function mapStateToProps(state) {
   const files = state.favorite.files.reduce((a, e) => {
-    let parent = null;
-    let file = null;
-
-    state.directory.directories.some((f) => {
-      const found = f.files.find((g) => g.path === e);
-      if (found) {
-        parent = f;
-        file = found;
-        return true;
-      }
-      return false;
-    });
-    if (parent && file) return a.concat([{...file, parent}]);
-    return a;
+    const splitted = e.split("/");
+    const parent = D.create(
+      splitted.slice(0, splitted.length - 1).join("/"),
+      {}
+    );
+    const file = F.create(e, {});
+    return a.concat([{...file, parent}]);
   }, []);
+
   const directories = state.favorite.directories.reduce((a, e) => {
-    let parent = null;
-    let dir = null;
-
-    const fav = state.directory.directories.some((f) => {
-      const found = f.childDirectories.find((g) => g.path === e);
-      if (found) {
-        parent = f;
-        dir = found;
-        return true;
-      }
-      return false;
-    });
-
-    if (parent && dir) return a.concat([{...dir, parent}]);
-    return a;
+    const splitted = e.split("/");
+    const parent = D.create(
+      splitted.slice(0, splitted.length - 1).join("/"),
+      {}
+    );
+    let dir = D.create(e, {});
+    return a.concat([{...dir, parent}]);
   }, []);
 
   return {
