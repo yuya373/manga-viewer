@@ -30,6 +30,10 @@ export default class LazyList extends PureComponent {
       gotoPage(nextPage);
     }
   }
+  onClickListItem = () => {
+    const { gotoPage, page } = this.props;
+    gotoPage(page);
+  }
   renderFile = (file) => {
     const { directory, queryParams } = this.props;
 
@@ -39,6 +43,7 @@ export default class LazyList extends PureComponent {
           file={file}
           directory={directory || file.parent}
           queryParams={queryParams}
+          onClick={this.onClickListItem}
           />
       </React.Fragment>
     );
@@ -50,6 +55,7 @@ export default class LazyList extends PureComponent {
         <DirectoryListItem
           directory={dir}
           queryParams={queryParams}
+          onClick={this.onClickListItem}
           />
       </React.Fragment>
     );
@@ -71,11 +77,27 @@ export default class LazyList extends PureComponent {
     }
   }
 
+  restoreScrollY = (scrollY) => {
+    window.scrollTo(0, scrollY);
+  }
+
   componentDidMount() {
     this.scrollHandler = subscribe("scroll", this.handleScroll, {
       useRAF: true,
       enableScrollInfo: true,
     });
+
+    const { scrollY } = this.props;
+    console.log("componentDidMount", "scrollY", scrollY);
+    this.restoreScrollY(scrollY);
+  }
+
+  componentDidUpdate(prevProps) {
+    const { location, scrollY } = this.props;
+    if (location.pathname !== prevProps.location.pathname) {
+      console.log("componentDidUpdate", "scrollY", scrollY);
+      this.restoreScrollY(scrollY);
+    }
   }
 
   componentWillUnmount() {

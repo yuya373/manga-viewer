@@ -22,7 +22,9 @@ function mapDispatchToProps(dispatch, {location}) {
   const backTo = qs.backTo;
   return {
     ...bindActionCreators(actions, dispatch),
-    ...(backTo ? {goBack: () => dispatch(push(backTo))} : {}),
+    ...(backTo ?
+        {goBack: () => dispatch(push(backTo))} :
+        {goBack: () => dispatch(goBack())}),
   };
 }
 

@@ -21,9 +21,12 @@ function mapStateToProps(state, { file }) {
   };
 }
 
-function mapDispatchToProps(dispatch, { file, directory, queryParams = {} }) {
+function mapDispatchToProps(dispatch, { onClick, file, directory, queryParams = {} }) {
   return {
-    onClick: () => dispatch(gotoFile(file, directory, queryParams)),
+    onClick: () => {
+      onClick();
+      dispatch(gotoFile(file, directory, queryParams));
+    },
     onClickFavorite: (favorite) => dispatch(fileFavoriteChanged({
       path: file.path,
       favorite,

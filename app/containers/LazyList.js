@@ -47,16 +47,20 @@ function mapStateToProps(
     location,
   } = props;
 
-  const queryParams = queryString.parse(location.search);
 
   const itemsCount = files.length + directories.length;
   const maxPage = Math.ceil(itemsCount / perPage) - 1;
   const minPage = 1;
+
+  const queryParams = queryString.parse(location.search);
   const page = queryParams.page ?
         Number.parseInt(queryParams.page) : minPage;
+  const scrollY = queryParams.scrollY ?
+        Number.parseInt(queryParams.scrollY) : 0;
 
   return {
     page,
+    scrollY,
     directory,
     maxPage,
     minPage,
@@ -69,9 +73,10 @@ function mapDispatchToProps(dispatch, props) {
   const { pathname } = location;
   return {
     gotoPage: (page) => {
-      console.log("gotoPage", page);
+      console.log("gotoPage", page, window.scrollY);
       const param = queryString.stringify({
         page,
+        scrollY: window.scrollY,
       });
       dispatch(push(`${pathname}?${param}`));
     }
