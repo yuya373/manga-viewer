@@ -6,6 +6,9 @@ import {
   filePerPageChanged,
   fileFavoriteChanged,
 } from './../../actions/file.js';
+import {
+  toggleDialog as toggleTagsDialog,
+} from './../../actions/tag.js';
 
 function mapStateToProps(state, { file }) {
   const tags = Object.keys(state.tag.tags).
@@ -16,6 +19,7 @@ function mapStateToProps(state, { file }) {
     tags,
     favorite: state.favorite.files.includes(file.path),
     perPage: state.file.perPage,
+    tagsDialogOpen: state.tag.dialogIsOpen,
   });
 }
 
@@ -24,6 +28,7 @@ function mapDispatchToProps(dispatch) {
     {
       filePerPageChanged,
       fileFavoriteChanged,
+      toggleTagsDialog,
     },
     dispatch
   );

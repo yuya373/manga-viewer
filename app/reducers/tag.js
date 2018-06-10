@@ -1,10 +1,12 @@
 import {
   ADD_TAG,
   DELETE_TAG,
+  TOGGLE_DIALOG,
 } from './../actions/tag.js';
 
 const initialState = {
   tags: {},
+  dialogIsOpen: false,
 };
 
 function addTag(state, {filePath, tag}) {
@@ -54,6 +56,11 @@ export default function(state = initialState, {type, payload}) {
     return addTag(state, payload);
   case DELETE_TAG:
     return deleteTag(state, payload);
+  case TOGGLE_DIALOG:
+    return ({
+      ...state,
+      dialogIsOpen: !state.dialogIsOpen,
+    });
   default:
     return state;
   }

@@ -4,6 +4,9 @@ import { persist } from './persist.js';
 
 export const ADD_TAG = "ADD_TAG";
 export const DELETE_TAG = "DELETE_TAG";
+export const TOGGLE_DIALOG = "TOGGLE_DIALOG";
+
+export const toggleDialog = createAction(TOGGLE_DIALOG);
 
 export function deleteTag({filePath, tag}) {
   const action = createAction(

@@ -22,6 +22,7 @@ class ImageFile extends PureComponent {
   };
 
   handleKeyUp = (event) => {
+    if (this.props.tagsDialogOpen) return;
     event.preventDefault();
     const {altKey, ctrlKey, key, keyCode, metaKey, shiftKey} = event;
     console.log(

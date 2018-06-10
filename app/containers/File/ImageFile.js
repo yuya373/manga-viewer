@@ -10,6 +10,7 @@ function mapStateToProps(state, {file}) {
   return {
     file,
     perPage: state.file.perPage,
+    tagsDialogOpen: state.tag.dialogIsOpen,
   };
 }
 

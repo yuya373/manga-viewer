@@ -24,7 +24,6 @@ const styles = theme => ({
 class FileMenu extends PureComponent {
   state = {
     menuAnchor: null,
-    tagsDialogOpen: false,
   };
 
   handleMenuOpen = (e) => this.setState({menuAnchor: e.currentTarget});
@@ -44,13 +43,20 @@ class FileMenu extends PureComponent {
     fileFavoriteChanged({path: file.path, favorite: !favorite });
   }
 
-  openTagsDialog = () => this.setState({tagsDialogOpen: true});
-  closeTagsDialog = () => this.setState({tagsDialogOpen: false});
+  openTagsDialog = () => this.props.toggleTagsDialog();
+  closeTagsDialog = () => this.props.toggleTagsDialog();
 
 
   render() {
-    const { classes, perPage, favorite, tags, file } = this.props;
-    const { menuAnchor, tagsDialogOpen } = this.state;
+    const {
+      classes,
+      perPage,
+      favorite,
+      tags,
+      file,
+      tagsDialogOpen,
+    } = this.props;
+    const { menuAnchor } = this.state;
     const perPageSwitch = (
       <Switch checked={perPage == 2}/>
     );

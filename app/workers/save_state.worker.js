@@ -14,7 +14,10 @@ onmessage = (event) => {
     //   loading: false,
     // },
     favorite: state.favorite,
-    tag: state.tag,
+    tag: {
+      ...state.tag,
+      dialogIsOpen: false,
+    },
   })
   postMessage("finished");
 }
