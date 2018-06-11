@@ -64,7 +64,7 @@ export default class LazyList extends PureComponent {
   scrollHandler = null;
   handleScroll = (e, payload) => {
     const { delta, top } = payload.scroll;
-    const offSet = 100;
+    const offSet = 0;
 
     if (delta < 0) {
       if (top <= offSet) {
