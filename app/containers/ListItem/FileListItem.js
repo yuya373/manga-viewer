@@ -25,6 +25,7 @@ function mapDispatchToProps(dispatch, { onClick, file, directory, queryParams = 
   return {
     onClick: () => {
       onClick();
+      console.log("location: ", window.location, window.scrollY);
       dispatch(gotoFile(file, directory, queryParams));
     },
     onClickFavorite: (favorite) => dispatch(fileFavoriteChanged({

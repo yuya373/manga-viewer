@@ -106,16 +106,14 @@ class FileListItem extends PureComponent {
     const { classes, file } = this.props;
     const { thumbnailUrl, popoverOpen } = this.state;
 
-    if (!thumbnailUrl) return null;
     return (
       <Avatar
-        ref={(ref) => this.avatarRef = ref}
         classes={{img: classes.avaterImg}}
         className={classNames(
           classes.avater,
           { [classes.avaterWithPopover] : popoverOpen }
         )}
-        src={thumbnailUrl}
+        src={thumbnailUrl || ""}
         onMouseOver={this.handlePopoverOpen}
         onMouseLeave={this.handlePopoverClose}
         />
