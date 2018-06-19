@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import classNames from 'classnames';
 import { withStyles } from 'material-ui/styles';
 import List, {
-  ListItem,
+  // ListItem,
   ListItemAvatar,
   ListItemIcon,
   ListItemSecondaryAction,
@@ -19,6 +19,7 @@ import * as image from './../../lib/image.js';
 import { allowedExts } from './../File/ImageFile.js';
 import Avatar from 'material-ui/Avatar';
 import Popover from 'material-ui/Popover';
+import ListItem from './LazyListItem.js';
 
 const styles = theme => ({
   avater: {
@@ -215,6 +216,7 @@ class FileListItem extends PureComponent {
           button
           classes={{secondaryAction: classes.secondaryAction}}
           onClick={onClick}
+          onDisplay={this.props.onDisplay}
           >
           {this.renderAvater()}
           <ListItemText>

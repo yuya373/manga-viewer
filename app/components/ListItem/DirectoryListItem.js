@@ -1,6 +1,6 @@
 import React from 'react';
 import List, {
-  ListItem,
+  // ListItem,
   ListItemAvatar,
   ListItemIcon,
   ListItemSecondaryAction,
@@ -9,12 +9,14 @@ import List, {
 import Avatar from 'material-ui/Avatar';
 import FolderIcon from '@material-ui/icons/Folder';
 import FavoriteButton from './../FavoriteButton.js';
+import ListItem from './LazyListItem.js';
 
 export default function DirectoryListItem({
   directory,
   favorite,
   onClick,
   onClickFavorite,
+  onDisplay,
 }) {
 
   const handleClickFavorite = () => onClickFavorite(!favorite);
@@ -23,6 +25,7 @@ export default function DirectoryListItem({
     <ListItem
       button
       onClick={onClick}
+      onDisplay={onDisplay}
       >
       <ListItemAvatar>
         <Avatar>
