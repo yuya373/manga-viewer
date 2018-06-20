@@ -32,11 +32,18 @@ export const fileLoadError = createAction(
   })
 )
 
+const findDirectory = (state, directory) =>
+      state.directory.directories.
+      find((e) => D.isEqual(e, directory));
+
+
+const findFile = (directory, file) =>
+      directory.files.find((e) => F.isEqual(e, file));
+
 function hasFileAndDirectory(state, file, directory) {
-  const d = state.directory.directories.
-        find((e) => D.isEqual(e, directory));
+  const d = findDirectory(state, directory);
   if (!d) return false;
-  if (!d.files.find((e) => F.isEqual(e, file))) return false;
+  if (!findFile(d, file)) return false;
 
   return true;
 }
@@ -106,7 +113,31 @@ export function fileFavoriteChanged({path, favorite}) {
 export function saveThumbnailUrl({ file, directory, thumbnailUrl }) {
   const action = createAction(FILE_SAVE_THUMBNAIL_URL);
 
-  return (dispatch) => {
-    dispatch(action({ file, directory, thumbnailUrl }));
+  return (dispatch, getState) => {
+    const findDirectoryAndFile = (state) => {
+      const _directory = findDirectory(state, directory);
+      const _file = _directory && findFile(_directory, file);
+      return [_directory, _file];
+    };
+
+    const [_directory, _file] = findDirectoryAndFile(getState());
+
+    if (_directory && _file) {
+      dispatch(action({
+        file: _file,
+        directory: _directory,
+        thumbnailUrl,
+      }));
+    } else {
+      dispatch(loadDirectory(directory.path)).then(() => {
+        const [_directory, _file] = findDirectoryAndFile(getState());
+
+        dispatch(action({
+          file: _file,
+          directory: _directory,
+          thumbnailUrl
+        }));
+      });
+    }
   }
 }
