@@ -185,19 +185,11 @@ class FileListItem extends PureComponent {
       file,
       onClick,
       favorite,
-      searchQuery,
       tags,
     } = this.props
     const {
       isDialogOpen,
     } = this.state;
-
-    if (searchQuery.length > 0) {
-      if (file.name.indexOf(searchQuery) < 0 &&
-          !tags.some((e) => e.indexOf(searchQuery) >= 0)) {
-        return null;
-      }
-    }
 
     const tagIcon = tags.length > 0 ?
           (<LabelIcon />) : (<LabelOutlineIcon />);

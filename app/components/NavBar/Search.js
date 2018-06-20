@@ -37,13 +37,17 @@ class Search extends PureComponent {
   state = {
     displayInput: false,
     displayButton: true,
+    query: "",
   };
-  handleChange = (event) =>
-    this.props.searchQueryChanged({query: event.target.value});
+  handleChange = (event) => this.setState({
+    query: event.target.value,
+  });
   handleKeyDown = (event) => {
     const { keyCode } = event;
     if (keyCode === 13) {
-      console.log("handleKeyDown", this.props.query);
+      console.log("handleKeyDown", this.state.query);
+      this.props.searchQueryChanged({query: this.state.query});
+      this.inputRef.blur();
     }
   }
   handleClickIcon = () => this.setState({
@@ -51,18 +55,19 @@ class Search extends PureComponent {
     displayButton: false,
   });
   handleBlur = () => this.setState((state) => ({
-    displayInput: this.props.query.length > 0,
+    displayInput: state.query.length > 0,
   }));
   handleEnter = () => this.inputRef.focus();
   handleExit = () => this.setState({displayButton: true});
   handleClickClear = () => this.setState({
+    query: "",
     displayInput: false,
     displayButton: true,
   }, () => this.props.searchQueryChanged({query: ""}));
 
   render() {
-    const { classes, query } = this.props;
-    const { displayInput, displayButton } = this.state;
+    const { classes } = this.props;
+    const { displayInput, displayButton, query } = this.state;
 
     const button = displayButton ? (
       <IconButton

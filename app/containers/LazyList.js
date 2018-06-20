@@ -25,15 +25,17 @@ function mapStateToProps(
         Number.parseInt(queryParams.page) : minPage;
   const scrollY = queryParams.scrollY ?
         Number.parseInt(queryParams.scrollY) : 0;
+  const searchQuery = state.search.query;
 
   return {
     page,
     scrollY,
     directory,
     maxPage,
-    files,
-    directories,
     perPage,
+    searchQuery,
+    tags: state.tag.tags,
+    items: files.concat(directories),
   }
 }
 
