@@ -7,13 +7,11 @@ import { subscribe } from 'subscribe-ui-event';
 import FileListItem from './../containers/ListItem/FileListItem.js';
 import DirectoryListItem from './../containers/ListItem/DirectoryListItem.js';
 
-const perPage = 15;
 
 export default class LazyList extends PureComponent {
   gotoNextPage = () => {
     const {
-      gotoPage, files, directories,
-      page, maxPage,
+      gotoPage, page, maxPage,
     } = this.props;
     const nextPage = Math.min(maxPage, page + 1);
 
@@ -25,12 +23,12 @@ export default class LazyList extends PureComponent {
     const { gotoPage, page } = this.props;
     gotoPage(page);
   }
-  onDisplay = ({isLastItem}) => {
+  onDisplay = (isLastItem) => {
     if (isLastItem) {
       return this.gotoNextPage;
     }
   }
-  renderFile = (file) => {
+  renderFile = (file, isLastItem) => {
     const { directory, queryParams } = this.props;
 
     return (
@@ -40,12 +38,12 @@ export default class LazyList extends PureComponent {
           directory={directory || file.parent}
           queryParams={queryParams}
           onClick={this.onClickListItem}
-          onDisplay={this.onDisplay(file)}
+          onDisplay={this.onDisplay(isLastItem)}
           />
       </React.Fragment>
     );
   }
-  renderDirectory = (dir) => {
+  renderDirectory = (dir, isLastItem) => {
     const { queryParams } = this.props;
     return (
       <React.Fragment key={dir.path} >
@@ -53,53 +51,34 @@ export default class LazyList extends PureComponent {
           directory={dir}
           queryParams={queryParams}
           onClick={this.onClickListItem}
-          onDisplay={this.onDisplay(dir)}
+          onDisplay={this.onDisplay(isLastItem)}
           />
       </React.Fragment>
     );
   };
 
+  renderItem = (item, isLastItem) => {
+    if (item.isFile) {
+      return this.renderFile(item, isLastItem);
+    } else {
+      return this.renderDirectory(item, isLastItem);
+    }
+  }
+
   restoreScrollY = (scrollY) => {
     window.scrollTo(0, scrollY);
   }
 
-  getItems({directories, files, page, perPage}) {
-    const items = directories.concat(files).
-          slice(0, (page * perPage));
-
-    const _files = [];
-    const _directories = [];
-
-    const lastIndex = items.length - 1;
-    items.forEach((e, i) => {
-      if (e.isFile) {
-        _files.push({
-          ...e,
-          isLastItem: i === lastIndex,
-        });
-      } else {
-        _directories.push({
-          ...e,
-          isLastItem: i === lastIndex,
-        });
-      }
-    })
-
-    return {
-      files: _files,
-      directories: _directories,
-    };
+  paginateItems = ({items, page, perPage}) => {
+    return items.slice(0, (page * perPage));
   }
 
   constructor(props) {
     super(props);
 
-    const { files, directories } = this.getItems(props);
-
     this.state = {
-      files,
-      directories,
-    };
+      items: this.paginateItems(props),
+    }
   }
 
   componentDidMount() {
@@ -118,23 +97,22 @@ export default class LazyList extends PureComponent {
 
   componentWillReceiveProps(nextProps) {
     if (this.props.page !== nextProps.page) {
-      const { files, directories } = this.getItems(nextProps);
       this.setState({
-        files,
-        directories,
+        items: this.paginateItems(nextProps),
       });
     }
   }
 
   render() {
     const {
-      files, directories,
+      items,
     } = this.state;
+    const lastItemIndex = items.length - 1;
+    console.log("lastItemIndex: ", lastItemIndex);
 
     return (
       <List>
-        {files.map(this.renderFile)}
-        {directories.map(this.renderDirectory)}
+        {items.map((e, i) => this.renderItem(e, i === lastItemIndex))}
       </List>
     );
   }
