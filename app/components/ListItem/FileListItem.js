@@ -1,4 +1,4 @@
-import React, { PureComponent } from 'react';
+import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import classNames from 'classnames';
 import { withStyles } from 'material-ui/styles';
@@ -38,13 +38,7 @@ const styles = theme => ({
   },
 });
 
-class FileListItem extends PureComponent {
-  state = {
-    isDialogOpen: false,
-    thumbnailUrl: null,
-    popoverAnchorEl: null,
-    popoverOpen: false,
-  };
+class FileListItem extends Component {
   mounted = false;
   openDialog = () => this.setState({isDialogOpen: true});
   closeDialog = () => this.setState({isDialogOpen: false});
@@ -90,11 +84,12 @@ class FileListItem extends PureComponent {
     }
   }
   loadThumbnail = () => {
-    const { path, thumbnailUrl } = this.props.file;
+    const { path } = this.props.file;
     if (this.mounted && this.ext(path) === "zip") {
-      if (thumbnailUrl) {
-        this.setState({thumbnailUrl})
+      if (this.state.thumbnailUrl) {
+        console.log("thumbnailUrl exists");
       } else {
+        console.warn("thumbnailUrl NOT exists");
         this.loadZipFile().
           then(this.getFirstImage).
           then(this.storeImage).
@@ -170,6 +165,16 @@ class FileListItem extends PureComponent {
     );
   }
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      isDialogOpen: false,
+      thumbnailUrl: props.file.thumbnailUrl,
+      popoverAnchorEl: null,
+      popoverOpen: false,
+    };
+  }
+
   componentDidMount() {
     this.mounted = true;
     this.loadThumbnail();
@@ -177,6 +182,38 @@ class FileListItem extends PureComponent {
 
   componentWillUnmount() {
     this.mounted = false;
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    if (this.props.favorite !== nextProps.favorite) {
+      console.log("shouldComponentUpdate: ", "favorite changed");
+      return true;
+    }
+    if (this.props.tags.length !== nextProps.tags.length) {
+      console.log("shouldComponentUpdate: ", "tags.length changed");
+      return true;
+    }
+    if (this.state.isDialogOpen !== nextState.isDialogOpen) {
+      console.log("shouldComponentUpdate: ", "state.isDialogOpen changed");
+      return true;
+    }
+    if (this.state.popoverAnchorEl !== nextState.popoverAnchorEl) {
+      console.log("shouldComponentUpdate: ", "state.popoverAnchorEl changed");
+      return true;
+    }
+    if (this.state.popoverOpen !== nextState.popoverOpen) {
+      console.log("shouldComponentUpdate: ", "state.popoverOpen changed");
+      return true;
+    }
+    if (this.state.thumbnailUrl !== nextState.thumbnailUrl) {
+      console.log("shouldComponentUpdate: ", "state.thumbnailUrl changed");
+      console.log(
+        "this", (this.state.thumbnailUrl || "").length,
+        "next", nextState.thumbnailUrl.length,
+      );
+      return true;
+    }
+    return false;
   }
 
   render() {

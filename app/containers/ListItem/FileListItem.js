@@ -11,8 +11,10 @@ function mapStateToProps(state, { file }) {
   const tags = Object.keys(state.tag.tags).filter((e) => {
     return state.tag.tags[e].includes(file.path);
   });
+  const hasThumbnail = !!file.thumbnailUrl;
 
   return {
+    hasThumbnail,
     tags,
     file,
     favorite,
