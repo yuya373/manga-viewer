@@ -1,9 +1,9 @@
 import React from 'react';
 import { withStyles } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
-import List from 'material-ui/List';
 import FileListItem from './../containers/ListItem/FileListItem.js';
 import NavBar from './../containers/NavBar/Index.js';
+import LazyList from './../containers/LazyList.js';
 
 const styles = theme => ({
   root: {
@@ -19,17 +19,8 @@ function Tag({
   tag,
   files,
   goBack,
+  location,
 }) {
-  const renderFile = (e, i) => (
-    <React.Fragment key={e.path}>
-      <FileListItem
-        file={e}
-        directory={e.directory}
-        queryParams={{backTo: `/tags/${tag}`}}
-        />
-    </React.Fragment>
-  );
-
   return (
     <React.Fragment>
       <NavBar
@@ -40,9 +31,12 @@ function Tag({
         />
       <Grid container className={classes.root} spacing={16}>
         <Grid item xs={12}>
-          <List>
-            {files.map(renderFile)}
-          </List>
+          <LazyList
+            location={location}
+            files={files}
+            directories={[]}
+            queryParams={{backTo: `/tags/${tag}`}}
+            />
         </Grid>
       </Grid>
     </React.Fragment>
