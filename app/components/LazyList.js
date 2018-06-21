@@ -148,7 +148,8 @@ export default class LazyList extends PureComponent {
   componentWillReceiveProps(nextProps) {
     if (this.props.page !== nextProps.page ||
         this.props.searchQuery !== nextProps.searchQuery ||
-        this.props.sort !== nextProps.sort) {
+        this.props.sort !== nextProps.sort ||
+        this.props.location.pathname !== nextProps.location.pathname) {
       this.setState({
         items: this.paginateItems(nextProps),
       });
