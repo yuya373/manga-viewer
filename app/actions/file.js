@@ -55,7 +55,9 @@ export function gotoFile(file, directory, param = {}) {
       ...param,
     };
 
-    const url = `/files/${file.name}?${queryString.stringify(params)}`;
+
+    const url = `/files/${encodeURIComponent(file.name)}?${queryString.stringify(params)}`;
+    console.log("URL: ", url);
 
     dispatch(fileLoading());
 

@@ -9,7 +9,7 @@ import {
 } from './../../actions/directory.js';
 
 function mapStateToProps(state, {match, location}) {
-  const name = match.params.name;
+  const name = decodeURIComponent(match.params.name);
   const qs = queryString.parse(location.search);
   const path = qs.path
 

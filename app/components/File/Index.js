@@ -66,12 +66,12 @@ class File extends PureComponent {
   redirectIfNotExists = ({loading, gotoDirectory, file, directory}) => {
     if (loading) return;
     if (!directory) {
-      console.log("NO DIRECTORY", this.props);
+      console.error("NO DIRECTORY", this.props);
       gotoDirectory(require('os').homedir());
       return;
     }
     if (!file) {
-      console.log("No FILE", this.props);
+      console.error("No FILE", this.props);
       gotoDirectory(directory.path);
       return;
     }

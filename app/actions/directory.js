@@ -33,7 +33,7 @@ export function gotoDirectory(path, params = {}, force = false) {
       getState().directory.directories.find((e) => e.path === path)
     );
     const qs = queryString.stringify(params);
-    const url = `/directories${path}?${qs}`;
+    const url = `/directories/${encodeURIComponent(path)}?${qs}`;
     if (force || !hasDirectory) {
       dispatch(directoryLoading());
       dispatch(push(url));
