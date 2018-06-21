@@ -9,6 +9,7 @@ import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import Slide from 'material-ui/transitions/Slide';
 import MenuIcon from '@material-ui/icons/Menu';
 import Search from './../../containers/NavBar/Search.js';
+import Sort from './../../containers/NavBar/Sort.js';
 
 const styles = theme => ({
   title: {
@@ -50,9 +51,11 @@ class NavBar extends PureComponent {
       isDrawerOpen,
       drawerOpen,
       hideSearch,
+      hideSort,
     } = this.props;
 
     const search = hideSearch ? null : (<Search />);
+    const sort = hideSort ? null : (<Sort />);
 
     return (
       <React.Fragment>
@@ -68,6 +71,7 @@ class NavBar extends PureComponent {
                 {title}
               </Typography>
               {search}
+              {sort}
               {menu}
               <IconButton
                 color="inherit"

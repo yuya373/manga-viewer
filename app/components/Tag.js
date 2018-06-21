@@ -28,6 +28,7 @@ function Tag({
         visible={true}
         position="sticky"
         onClickBack={goBack}
+        hideSort={true}
         />
       <Grid container className={classes.root} spacing={16}>
         <Grid item xs={12}>

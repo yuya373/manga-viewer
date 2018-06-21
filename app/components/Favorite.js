@@ -27,6 +27,7 @@ class Favorite extends PureComponent {
           title="Favorites"
           visible={true}
           position="sticky"
+          hideSort={true}
           />
         <Grid container className={classes.root} spacing={16}>
           <Grid item xs={12}>

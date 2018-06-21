@@ -8,6 +8,7 @@ import favorite from './favorite.js';
 import snackbar from './snackbar.js';
 import tag from './tag.js';
 import search from './search.js';
+import sort from './sort.js';
 
 const rootReducer = combineReducers({
   router,
@@ -18,6 +19,7 @@ const rootReducer = combineReducers({
   snackbar,
   tag,
   search,
+  sort,
 });
 
 export default rootReducer;

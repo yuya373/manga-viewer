@@ -90,6 +90,7 @@ class File extends PureComponent {
         onClickBack={this.handleClickBack}
         menu={menu}
         hideSearch={true}
+        hideSort={true}
         />
     );
   }

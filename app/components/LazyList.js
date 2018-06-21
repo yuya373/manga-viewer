@@ -7,6 +7,24 @@ import { subscribe } from 'subscribe-ui-event';
 import FileListItem from './../containers/ListItem/FileListItem.js';
 import DirectoryListItem from './../containers/ListItem/DirectoryListItem.js';
 
+function sortItems({ files, directories }, sort) {
+  if (!sort) return files.concat(directories);
+
+  const { key, desc } = sort;
+
+  const f = (a, b) => {
+    const _a = a[key];
+    const _b = b[key];
+
+    if (desc) {
+      return _b - _a;
+    } else {
+      return _a - _b;
+    }
+  };
+
+  return files.sort(f).concat(directories.sort(f));
+}
 
 export default class LazyList extends PureComponent {
   gotoNextPage = () => {
@@ -69,8 +87,8 @@ export default class LazyList extends PureComponent {
     window.scrollTo(0, scrollY);
   }
 
-  filterByQuery = ({items, searchQuery, tags}) => {
-    if (!searchQuery) return items;
+  filterByQuery = ({files, directories, searchQuery, tags}) => {
+    if (!searchQuery) return { files, directories };
 
     const filteredTags = Object.keys(tags).
           filter((e) => e.includes(searchQuery));
@@ -82,22 +100,27 @@ export default class LazyList extends PureComponent {
       }
     }));
 
-    return items.filter((e) => {
-      if (e.isFile) {
+    return {
+      files: files.filter((e) => {
         if (filePathsByTags.includes(e.path)) return true;
         if (e.name.includes(searchQuery)) return true;
 
         return false;
-      } else {
+      }),
+      directories: directories.filter((e) => {
         if (e.name.includes(searchQuery)) return true;
         return false;
-      }
-    })
+      }),
+    };
   }
 
-  paginateItems = ({items, page, perPage, searchQuery, tags}) => {
-    return this.filterByQuery({ items, searchQuery, tags }).
-      slice(0, (page * perPage));
+  paginateItems = ({
+    page, perPage, searchQuery, tags, sort,
+    files, directories,
+  }) => {
+    const filtered = this.filterByQuery({ files, directories, searchQuery, tags })
+
+    return sortItems(filtered, sort).slice(0, (page * perPage));
   }
 
   constructor(props) {
@@ -124,7 +147,8 @@ export default class LazyList extends PureComponent {
 
   componentWillReceiveProps(nextProps) {
     if (this.props.page !== nextProps.page ||
-        this.props.searchQuery !== nextProps.searchQuery) {
+        this.props.searchQuery !== nextProps.searchQuery ||
+        this.props.sort !== nextProps.sort) {
       this.setState({
         items: this.paginateItems(nextProps),
       });

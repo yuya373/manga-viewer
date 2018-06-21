@@ -35,7 +35,8 @@ function mapStateToProps(
     perPage,
     searchQuery,
     tags: state.tag.tags,
-    items: files.concat(directories),
+    files,
+    directories,
   }
 }
 

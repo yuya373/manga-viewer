@@ -56,7 +56,7 @@ class Directory extends PureComponent {
       classes, path, directory,
       loading, gotoDirectory,
       files, childDirectories,
-      location,
+      location, sort,
     } = this.props;
 
     if (loading || !directory) return null;
@@ -77,6 +77,7 @@ class Directory extends PureComponent {
               directory={directory}
               files={files}
               directories={childDirectories}
+              sort={sort}
               />
           </Grid>
         </Grid>

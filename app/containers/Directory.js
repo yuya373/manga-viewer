@@ -14,6 +14,7 @@ function mapStateToProps(state, { match }) {
     directory,
     files: directory.files || [],
     childDirectories: directory.childDirectories || [],
+    sort: state.sort,
   };
 }
 
