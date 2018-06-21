@@ -89,7 +89,7 @@ class FileListItem extends Component {
       if (this.state.thumbnailUrl) {
         console.log("thumbnailUrl exists");
       } else {
-        console.warn("thumbnailUrl NOT exists");
+        console.log("thumbnailUrl NOT exists");
         this.loadZipFile().
           then(this.getFirstImage).
           then(this.storeImage).
