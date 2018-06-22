@@ -39,6 +39,12 @@ const styles = theme => ({
 });
 
 class FileListItem extends Component {
+  state = {
+    isDialogOpen: false,
+    thumbnailUrl: null,
+    popoverAnchorEl: null,
+    popoverOpen: false,
+  };
   mounted = false;
   openDialog = () => this.setState({isDialogOpen: true});
   closeDialog = () => this.setState({isDialogOpen: false});
@@ -57,45 +63,72 @@ class FileListItem extends Component {
     return zip.read(path);
   }
   getFirstImage = (zip) => {
-    if (this.mounted) {
-      const ext = this.ext;
-      const cover = Object.keys(zip.files).
-            map((e) => ({ name: e, ext: ext(e) })).
-            filter(({ name, ext }) => allowedExts.includes(ext)).
-            sort((a, b) => image.sort(a.name, b.name))[0];
+    return new Promise((resolve) => {
+      const nullValue = { base64: null, ext: null };
 
-      if (cover) {
-        return zip.files[cover.name].async("base64").
-          then((base64) => ({base64, ext: ext(cover.name)}));
+      if (this.mounted) {
+        const ext = this.ext;
+        const cover = Object.keys(zip.files).
+              map((e) => ({ name: e, ext: ext(e) })).
+              filter(({ name, ext }) => allowedExts.includes(ext)).
+              sort((a, b) => image.sort(a.name, b.name))[0];
+
+        if (cover) {
+          return zip.files[cover.name].async("base64").
+            then((base64) => ({base64, ext: ext(cover.name)})).
+            then((ret) => resolve(ret));
+        } else {
+          resolve(nullValue);
+        }
+      } else {
+        resolve(nullValue);
       }
-    }
-    return { base64: null, ext: null };
+    });
   }
   storeImage = ({ base64, ext }) => {
-    if (this.mounted) {
-      const url = image.base64Url(base64, ext);
-      if (url) {
-        const { saveThumbnailUrl } = this.props;
-        this.setState(
-          () => ({thumbnailUrl: url}),
-          () => saveThumbnailUrl({ thumbnailUrl: url })
-        );
+    return new Promise((resolve) => {
+      if (this.mounted) {
+        const url = image.base64Url(base64, ext);
+        if (url) {
+          const { saveThumbnailUrl } = this.props;
+          resolve();
+          window.setTimeout(() => this.setState(
+            () => ({thumbnailUrl: url}),
+            () => saveThumbnailUrl({ thumbnailUrl: url })
+          ));
+        } else {
+          resolve();
+        }
+      } else {
+        resolve();
       }
-    }
+    })
   }
   loadThumbnail = () => {
-    const { path } = this.props.file;
-    if (this.mounted && this.ext(path) === "zip") {
-      if (this.state.thumbnailUrl) {
-        console.log("thumbnailUrl exists");
+    return new Promise((resolve, reject) => {
+      const { path, thumbnailUrl } = this.props.file;
+      if (this.mounted && this.ext(path) === "zip") {
+        if (thumbnailUrl) {
+          resolve();
+          window.setTimeout(() => this.setState(
+            () => ({thumbnailUrl})
+          ));
+          console.log("thumbnailUrl exists");
+        } else {
+          console.log("thumbnailUrl NOT exists");
+          this.loadZipFile().
+            then(this.getFirstImage).
+            then(this.storeImage).
+            then(() => resolve()).
+            catch((e) => {
+              console.error(path, "DISPLAY ERROR", e);
+              resolve();
+            });
+        }
       } else {
-        console.log("thumbnailUrl NOT exists");
-        this.loadZipFile().
-          then(this.getFirstImage).
-          then(this.storeImage).
-          catch((e) => console.error(path, "DISPLAY ERROR", e));
+        resolve();
       }
-    }
+    })
   }
 
   renderAvater = () => {
@@ -163,16 +196,6 @@ class FileListItem extends Component {
           />
       </Popover>
     );
-  }
-
-  constructor(props) {
-    super(props);
-    this.state = {
-      isDialogOpen: false,
-      thumbnailUrl: props.file.thumbnailUrl,
-      popoverAnchorEl: null,
-      popoverOpen: false,
-    };
   }
 
   componentDidMount() {
