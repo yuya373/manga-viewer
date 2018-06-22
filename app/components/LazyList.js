@@ -1,4 +1,4 @@
-import React, { PureComponent } from 'react';
+import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import List from 'material-ui/List';
 import ListSubheader from 'material-ui/List/ListSubheader';
@@ -26,7 +26,7 @@ function sortItems({ files, directories }, sort) {
   return files.sort(f).concat(directories.sort(f));
 }
 
-export default class LazyList extends PureComponent {
+export default class LazyList extends Component {
   gotoNextPage = () => {
     const {
       gotoPage, page, maxPage,
@@ -154,6 +154,13 @@ export default class LazyList extends PureComponent {
         items: this.paginateItems(nextProps),
       });
     }
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    if (this.state !== nextState) {
+      return true;
+    }
+    return false;
   }
 
   render() {
