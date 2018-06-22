@@ -46,6 +46,46 @@ export default class LazyList extends Component {
       return this.gotoNextPage;
     }
   }
+  thumbnailQueue = [];
+  runningThumbnails = []
+  thumbnailWorker = null;
+  consumeThumbnailQueue = () => {
+    if (this.thumbnailWorker) return;
+
+    console.log("consumeThumbnailQueue");
+
+    const maxRunningThumbnails = 30;
+    while (true) {
+      if (this.runningThumbnails.length >= maxRunningThumbnails) {
+        break;
+      }
+
+      console.log("BEFORE: ", this.thumbnailQueue.length);
+      const fn = this.thumbnailQueue.pop()
+      console.log("AFTER: ", this.thumbnailQueue.length);
+
+      if (fn) {
+        this.runningThumbnails.push(fn());
+      } else {
+        break;
+      }
+    }
+
+    console.log("runningThumbnails: ", this.runningThumbnails.length);
+
+    if (this.runningThumbnails.length > 0) {
+      this.thumbnailWorker =
+        Promise.all(this.runningThumbnails).then(() => {
+          this.thumbnailWorker = null;
+          this.runningThumbnails = [];
+          window.setTimeout(() => this.consumeThumbnailQueue());
+        });
+    }
+  }
+  addThumbnailQueue = (fn) => {
+    this.thumbnailQueue.push(fn);
+    this.consumeThumbnailQueue();
+  }
   renderFile = (file, isLastItem) => {
     const { directory, queryParams } = this.props;
 
@@ -57,6 +97,7 @@ export default class LazyList extends Component {
           queryParams={queryParams}
           onClick={this.onClickListItem}
           onDisplay={this.onDisplay(isLastItem)}
+          addThumbnailQueue={this.addThumbnailQueue}
           />
       </React.Fragment>
     );

@@ -200,7 +200,8 @@ class FileListItem extends Component {
 
   componentDidMount() {
     this.mounted = true;
-    this.loadThumbnail();
+    // this.loadThumbnail();
+    this.props.addThumbnailQueue(this.loadThumbnail);
   }
 
   componentWillUnmount() {
