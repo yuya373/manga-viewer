@@ -6,6 +6,36 @@ import {
 import { fileFavoriteChanged, gotoFile, saveThumbnailUrl } from './../../actions/file.js';
 import FileListItem from './../../components/ListItem/FileListItem.js';
 
+function areStatesEqual(prevState, nextState) {
+  // console.log("areStatesEqual", prevState, nextState);
+  if (prevState.tag.tags !== nextState.tag.tags) {
+    return false;
+  }
+  if (prevState.favorite.files !== nextState.favorite.files) {
+    return false;
+  }
+  if (prevState.file.thumbnailUrls !== nextState.file.thumbnailUrls) {
+    return false
+  }
+
+  return true;
+}
+
+function areStatePropsEqual(prevProps, nextProps) {
+  // console.log("areStatePropsEqual", prevProps, nextProps);
+  if (prevProps.thumbnailUrls !== nextProps.thumbnailUrls) {
+    return false;
+  }
+  if (prevProps.tags.length !== nextProps.tags.length) {
+    return false;
+  }
+  if (prevProps.favorite !== nextProps.favorite) {
+    return false;
+  }
+
+  return true;
+}
+
 function mapStateToProps(state, { file }) {
   const favorite = state.favorite.files.includes(file.path);
   const tags = Object.keys(state.tag.tags).filter((e) => {
@@ -37,4 +67,7 @@ function mapDispatchToProps(dispatch, { onClick, file, directory, queryParams = 
   };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(FileListItem);
+export default connect(mapStateToProps, mapDispatchToProps, null, {
+  areStatesEqual,
+  areStatePropsEqual,
+})(FileListItem);
