@@ -1,4 +1,5 @@
 import React, {PureComponent} from 'react';
+import classNames from 'classnames';
 import { withStyles } from 'material-ui/styles';
 import Typography from 'material-ui/Typography';
 import Button from 'material-ui/Button';
@@ -20,6 +21,9 @@ const styles = theme => ({
     marginLeft: -(theme.spacing.unit * 1),
     marginRight: theme.spacing.unit * 2,
   },
+  disabledMenuButton: {
+    opacity: 0,
+  },
 });
 
 class NavBar extends PureComponent {
@@ -27,15 +31,22 @@ class NavBar extends PureComponent {
     const {
       classes,
       onClickBack,
+      disableBackButton,
     } = this.props;
 
     if ((typeof onClickBack) !== 'function')
       return null;
 
+    const className = classNames(
+      classes.menuButton, {
+        [classes.disabledMenuButton] : disableBackButton,
+      }
+    );
     return (
       <IconButton
+        disabled={disableBackButton}
         onClick={onClickBack}
-        className={classes.menuButton}
+        className={className}
         aria-label="Back"
         >
         <ArrowBackIcon />

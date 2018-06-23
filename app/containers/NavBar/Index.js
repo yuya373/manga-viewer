@@ -5,15 +5,9 @@ import {
 } from './../../actions/drawer.js';
 import NavBar from './../../components/NavBar/Index.js';
 
-function mapStateToProps(state, {visible, title, onClickBack, menu, position, hideSearch = false}) {
+function mapStateToProps(state) {
   return {
     isDrawerOpen: state.drawer.isOpen,
-    visible,
-    title,
-    onClickBack,
-    menu,
-    position,
-    hideSearch,
   };
 }
 

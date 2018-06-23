@@ -64,6 +64,13 @@ class Directory extends PureComponent {
 
     if (loading || !directory) return null;
 
+    const disableBackButton = directory.path === "/";
+    const navMenu = (
+      <DirectoryMenu
+        onClickReload={this.handleClickReload}
+        />
+    );
+
     return (
       <React.Fragment>
         <NavBar
@@ -71,7 +78,8 @@ class Directory extends PureComponent {
           visible={true}
           onClickBack={this.handleClickBack}
           position="sticky"
-          menu={<DirectoryMenu onClickReload={this.handleClickReload} />}
+          menu={navMenu}
+          disableBackButton={disableBackButton}
           />
         <Grid container className={classes.root} spacing={16}>
           <Grid item xs={12}>
