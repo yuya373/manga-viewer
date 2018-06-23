@@ -11,7 +11,7 @@ function mapStateToProps(
   props,
 ) {
   const {
-    directory, files, directories,
+    files, directories,
     location,
   } = props;
 
@@ -30,7 +30,6 @@ function mapStateToProps(
   return {
     page,
     scrollY,
-    directory,
     maxPage,
     perPage,
     searchQuery,
