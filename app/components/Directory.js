@@ -27,8 +27,9 @@ class Directory extends PureComponent {
 
     if (directory) {
       const paths = directory.path.split("/");
-      const parent = paths.slice(0, paths.length - 1).join("/");
-      console.log("PARENT", parent);
+      const parent = paths.
+            slice(0, paths.length - 1).join("/") || "/";
+      console.log("PARENT: ", parent);
       gotoDirectory(parent);
     } else {
       gotoDirectory("/");

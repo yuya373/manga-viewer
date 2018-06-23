@@ -21,11 +21,10 @@ function mapStateToProps(state, { match }) {
 function mapDispatchToProps(dispatch, {location}) {
   const qs = queryString.parse(location.search);
   const backTo = qs.backTo;
+
   return {
     ...bindActionCreators(actions, dispatch),
-    ...(backTo ?
-        {goBack: () => dispatch(push(backTo))} :
-        {goBack: () => dispatch(goBack())}),
+    ...(backTo ? {goBack: () => dispatch(push(backTo))} : {}),
   };
 }
 
