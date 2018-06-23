@@ -54,7 +54,7 @@ export default class LazyList extends Component {
 
     console.log("consumeThumbnailQueue");
 
-    const maxRunningThumbnails = 30;
+    const maxRunningThumbnails = this.props.perPage;
     while (true) {
       if (this.runningThumbnails.length >= maxRunningThumbnails) {
         break;
