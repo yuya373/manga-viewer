@@ -14,8 +14,6 @@ function mapStateToProps(state, { match }) {
     loading: state.directory.loading,
     path: match.params.path || "",
     directory,
-    files: directory.files || [],
-    childDirectories: directory.childDirectories || [],
     sort: state.sort,
   };
 }

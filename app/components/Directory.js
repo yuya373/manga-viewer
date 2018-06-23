@@ -55,9 +55,11 @@ class Directory extends PureComponent {
     const {
       classes, path, directory,
       loading, gotoDirectory,
-      files, childDirectories,
       location, sort,
     } = this.props;
+    const {
+      files = [], childDirectories = [],
+    } = directory;
 
     if (loading || !directory) return null;
 
