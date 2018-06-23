@@ -106,7 +106,8 @@ class FileListItem extends Component {
   }
   loadThumbnail = () => {
     return new Promise((resolve, reject) => {
-      const { path, thumbnailUrl } = this.props.file;
+      const { thumbnailUrl, file } = this.props;
+      const { path } = file;
       if (this.mounted && this.ext(path) === "zip") {
         if (thumbnailUrl) {
           resolve();
