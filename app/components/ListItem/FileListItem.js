@@ -93,10 +93,10 @@ class FileListItem extends Component {
         if (url) {
           const { saveThumbnailUrl } = this.props;
           resolve();
-          window.setTimeout(() => this.setState(
-            () => ({thumbnailUrl: url}),
-            () => saveThumbnailUrl({ thumbnailUrl: url })
-          ));
+          window.setTimeout(() => {
+            saveThumbnailUrl({ thumbnailUrl: url });
+            this.mounted && this.setState({thumbnailUrl: url})
+          });
         } else {
           resolve();
         }
@@ -112,9 +112,7 @@ class FileListItem extends Component {
       if (this.mounted && this.ext(path) === "zip") {
         if (thumbnailUrl) {
           resolve();
-          window.setTimeout(() => this.setState(
-            () => ({thumbnailUrl})
-          ));
+          window.setTimeout(() => this.mounted && this.setState({thumbnailUrl}));
           console.log("thumbnailUrl exists");
         } else {
           console.log("thumbnailUrl NOT exists");
