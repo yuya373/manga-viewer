@@ -112,10 +112,10 @@ class ImageFile extends PureComponent {
   );
 
   nextPage = () => {
-    const {perPage} = this.props;
-    const {images} = this.state;
-    const {index} = this.state;
+    const { perPage, notifyMessage } = this.props;
+    const { images, index } = this.state;
     if ((index + 1) + (perPage - 1) > images.length - 1) {
+      notifyMessage("This is last page.")
       return;
     }
 

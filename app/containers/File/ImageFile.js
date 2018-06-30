@@ -4,6 +4,9 @@ import {
   filePerPageChanged,
   fileLoadError,
 } from './../../actions/file.js';
+import {
+  notifyMessage,
+} from './../../actions/snackbar.js';
 import ImageFile from './../../components/File/ImageFile.js';
 
 function mapStateToProps(state, {file}) {
@@ -19,6 +22,7 @@ function mapDispatchToProps(dispatch) {
     {
       filePerPageChanged,
       fileLoadError,
+      notifyMessage,
     },
     dispatch
   );

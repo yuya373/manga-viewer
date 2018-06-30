@@ -9,6 +9,7 @@ import {
 } from './../actions/directory.js';
 import {
   SNACKBAR_HIDE,
+  SNACKBAR_NOTIFY_MESSAGE,
 } from './../actions/snackbar.js';
 
 const initialState = {
@@ -24,6 +25,7 @@ const displayMessage = (state, {message}) => ({
 
 export default function(state = initialState, {type, payload}) {
   switch(type) {
+  case SNACKBAR_NOTIFY_MESSAGE:
   case FILE_DELETE_SUCCESS:
     return displayMessage(state, payload);
   case FILE_DELETE_FAILED:
