@@ -40,7 +40,7 @@ export default function(state = initialState, {type, payload}) {
       ...state,
       thumbnailUrls: {
         ...state.thumbnailUrls,
-        [payload.file.path]: [payload.thumbnailUrl],
+        [payload.file.path]: payload.thumbnailUrl,
       },
     });
   default:
