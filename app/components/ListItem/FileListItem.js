@@ -20,6 +20,7 @@ import { allowedExts } from './../File/ImageFile.js';
 import Avatar from 'material-ui/Avatar';
 import Popover from 'material-ui/Popover';
 import ListItem from './LazyListItem.js';
+import DeleteIcon from '@material-ui/icons/Delete';
 
 const styles = theme => ({
   avater: {
@@ -199,6 +200,15 @@ class FileListItem extends Component {
     );
   }
 
+  handleClickDeleteFile = () => {
+    const {
+      onClickDelete,
+      file,
+      directory,
+    } = this.props;
+    onClickDelete({ file, directory });
+  }
+
   componentDidMount() {
     this.mounted = true;
     // this.loadThumbnail();
@@ -287,6 +297,11 @@ class FileListItem extends Component {
               favorite={favorite}
               onClick={this.handleClickFavorite(favorite)}
               />
+            <IconButton
+              onClick={this.handleClickDeleteFile}
+              >
+              <DeleteIcon />
+            </IconButton>
           </ListItemSecondaryAction>
         </ListItem>
       </React.Fragment>

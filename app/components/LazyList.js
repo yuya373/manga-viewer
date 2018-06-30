@@ -187,10 +187,19 @@ export default class LazyList extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (this.props.page !== nextProps.page ||
-        this.props.searchQuery !== nextProps.searchQuery ||
-        this.props.sort !== nextProps.sort ||
-        this.props.location.pathname !== nextProps.location.pathname) {
+    const {
+      page,
+      searchQuery,
+      sort,
+      location,
+      files,
+    } = this.props;
+
+    if (page !== nextProps.page ||
+        searchQuery !== nextProps.searchQuery ||
+        sort !== nextProps.sort ||
+        location.pathname !== nextProps.location.pathname ||
+        files.length !== nextProps.files.length) {
       this.setState({
         items: this.paginateItems(nextProps),
       });

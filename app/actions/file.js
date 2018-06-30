@@ -6,6 +6,7 @@ import D from './../models/directory.js';
 import Worker from './../workers/load_file.worker.js'
 import { persist } from './persist.js';
 import { loadDirectory } from './directory.js';
+import fs from 'fs';
 
 export const LOAD_FILE = "LOAD_FILE";
 export const FILE_LOADING = "FILE_LOADING";
@@ -14,6 +15,9 @@ export const FILE_LOAD_ERROR = "FILE_LOAD_ERROR";
 export const FILE_PER_PAGE_CHANGED = "FILE_PER_PAGE_CHANGED";
 export const FILE_FAVORITE_CHANGED = "FILE_FAVORITE_CHANGED";
 export const FILE_SAVE_THUMBNAIL_URL = "FILE_SAVE_THUMBNAIL_URL";
+export const FILE_DELETE = "FILE_DELETE";
+export const FILE_DELETE_SUCCESS = "FILE_DELETE_SUCCESS";
+export const FILE_DELETE_FAILED = "FILE_DELETE_FAILED";
 
 export const fileLoading = createAction(FILE_LOADING);
 export const filePerPageChanged = createAction(FILE_PER_PAGE_CHANGED);
@@ -143,3 +147,29 @@ export function saveThumbnailUrl({ file, directory, thumbnailUrl }) {
     }
   }
 }
+
+export function deleteFile({ file, directory }) {
+  return (dispatch) => {
+    return new Promise((resolve, reject) => {
+      const path = file.path;
+
+      fs.unlink(path, (err) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve();
+        }
+      })
+    });
+  }
+}
+
+export const deleteFileSuccess = createAction(
+  FILE_DELETE_SUCCESS,
+  ({file, directory, message }) => ({ message, file, directory }),
+);
+
+export const deleteFileFailed = createAction(
+  FILE_DELETE_FAILED,
+  (err) => ({ error: { message: err.message } }),
+);

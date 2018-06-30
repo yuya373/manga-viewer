@@ -7,6 +7,7 @@ import {
 import {
   FILE_LOADED,
   FILE_LOAD_ERROR,
+  FILE_DELETE_SUCCESS,
 } from './../actions/file.js';
 import D from './../models/directory.js';
 import F from './../models/file.js';
@@ -60,6 +61,15 @@ export default function(state = initialState, {type, payload}) {
         filter((e) => !D.isEqual(e, payload.directory)).
         concat([D.removeFile(payload.directory, payload.file)]),
     });
+  case FILE_DELETE_SUCCESS:
+    return ({
+      ...state,
+      directories: state.directories.map((e) => {
+        if (D.isEqual(e, payload.directory)) {
+          return D.removeFile(e, payload.file);
+        } else return e;
+      })
+    })
   default:
     return state;
   }

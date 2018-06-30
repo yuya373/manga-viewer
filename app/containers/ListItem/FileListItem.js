@@ -3,6 +3,11 @@ import {
   addTag,
   deleteTag,
 } from './../../actions/tag.js';
+import {
+  deleteFile,
+  deleteFileSuccess,
+  deleteFileFailed,
+} from './../../actions/file.js';
 import { fileFavoriteChanged, gotoFile, saveThumbnailUrl } from './../../actions/file.js';
 import FileListItem from './../../components/ListItem/FileListItem.js';
 
@@ -64,6 +69,12 @@ function mapDispatchToProps(dispatch, { onClick, file, directory, queryParams = 
     })),
     saveThumbnailUrl: ({ thumbnailUrl }) =>
       dispatch(saveThumbnailUrl({ file, directory, thumbnailUrl })),
+    onClickDelete: ({ file, directory }) => dispatch(deleteFile({ file, directory })).
+      then(() => dispatch(deleteFileSuccess({
+        file,
+        directory,
+        message: `DELETED: ${file.name}`,
+      }))).catch((err) => dispatch(deleteFileFailed(err))),
   };
 }
 
