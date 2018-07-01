@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import classNames from 'classnames';
 import { withStyles } from 'material-ui/styles';
 import List, {
   // ListItem,
@@ -16,24 +15,11 @@ import FavoriteButton from './../FavoriteButton.js';
 import TagsDialog from './../../containers/ListItem/TagsDialog.js';
 import * as zip from './../../lib/zip.js';
 import * as image from './../../lib/image.js';
-import { allowedExts } from './../File/ImageFile.js';
-import Avatar from 'material-ui/Avatar';
-import Popover from 'material-ui/Popover';
 import ListItem from './LazyListItem.js';
 import DeleteIcon from '@material-ui/icons/Delete';
+import Thumbnail from './Thumbnail.js';
 
 const styles = theme => ({
-  avater: {
-    width: 50,
-    height: 50,
-    borderRadius: 0,
-  },
-  avaterWithPopover: {
-    zIndex: theme.zIndex.modal + 1,
-  },
-  avaterImg: {
-    objectFit: "contain",
-  },
   secondaryAction: {
     paddingRight: theme.spacing.unit * 4 * 4,
   },
@@ -42,159 +28,28 @@ const styles = theme => ({
 class FileListItem extends Component {
   state = {
     isDialogOpen: false,
-    thumbnailUrl: null,
-    popoverAnchorEl: null,
-    popoverOpen: false,
   };
-  mounted = false;
   openDialog = () => this.setState({isDialogOpen: true});
   closeDialog = () => this.setState({isDialogOpen: false});
-  handleClickFavorite = (favorite) => () => this.props.onClickFavorite(!favorite);
+  handleClickFavorite = (favorite) => () =>
+    this.props.onClickFavorite(!favorite);
   handleAddTag = (tag) => this.props.addTag(tag);
   handleDeleteTag = (tag) => this.props.deleteTag(tag);
-  ext = (name) => {
-    if (name) {
-      return require("path").extname(name).
-        substring(1).toLowerCase();
-    }
-    return null;
-  }
-  loadZipFile = () => {
-    const {path} = this.props.file;
-    return zip.read(path);
-  }
-  getFirstImage = (zip) => {
-    return new Promise((resolve) => {
-      const nullValue = { base64: null, ext: null };
-
-      if (this.mounted) {
-        const ext = this.ext;
-        const cover = Object.keys(zip.files).
-              map((e) => ({ name: e, ext: ext(e) })).
-              filter(({ name, ext }) => allowedExts.includes(ext)).
-              sort((a, b) => image.sort(a.name, b.name))[0];
-
-        if (cover) {
-          return zip.files[cover.name].async("base64").
-            then((base64) => ({base64, ext: ext(cover.name)})).
-            then((ret) => resolve(ret));
-        } else {
-          resolve(nullValue);
-        }
-      } else {
-        resolve(nullValue);
-      }
-    });
-  }
-  storeImage = ({ base64, ext }) => {
-    return new Promise((resolve) => {
-      if (this.mounted) {
-        const url = image.base64Url(base64, ext);
-        if (url) {
-          const { saveThumbnailUrl } = this.props;
-          resolve();
-          window.setTimeout(() => {
-            saveThumbnailUrl({ thumbnailUrl: url });
-            this.mounted && this.setState({thumbnailUrl: url})
-          });
-        } else {
-          resolve();
-        }
-      } else {
-        resolve();
-      }
-    })
-  }
-  loadThumbnail = () => {
-    return new Promise((resolve, reject) => {
-      const { thumbnailUrl, file } = this.props;
-      const { path } = file;
-      if (this.mounted && this.ext(path) === "zip") {
-        if (thumbnailUrl) {
-          resolve();
-          window.setTimeout(() => this.mounted && this.setState({thumbnailUrl}));
-          console.log("thumbnailUrl exists");
-        } else {
-          console.log("thumbnailUrl NOT exists");
-          this.loadZipFile().
-            then(this.getFirstImage).
-            then(this.storeImage).
-            then(() => resolve()).
-            catch((e) => {
-              console.error(path, "DISPLAY ERROR", e);
-              resolve();
-            });
-        }
-      } else {
-        resolve();
-      }
-    })
-  }
-
   renderAvater = () => {
-    const { classes, file } = this.props;
-    const { thumbnailUrl, popoverOpen } = this.state;
+    const {
+      file,
+      thumbnailUrl,
+      addThumbnailQueue,
+      saveThumbnailUrl,
+    } = this.props;
 
     return (
-      <Avatar
-        classes={{img: classes.avaterImg}}
-        className={classNames(
-          classes.avater,
-          { [classes.avaterWithPopover] : popoverOpen }
-        )}
-        src={thumbnailUrl || ""}
-        onMouseOver={this.handlePopoverOpen}
-        onMouseLeave={this.handlePopoverClose}
+      <Thumbnail
+        file={file}
+        thumbnailUrl={thumbnailUrl}
+        saveThumbnailUrl={saveThumbnailUrl}
+        addThumbnailQueue={addThumbnailQueue}
         />
-    );
-  }
-
-  handlePopoverClose = () => this.setState({
-    popoverOpen: false,
-  });
-  handlePopoverOpen = (event) => this.setState({
-    popoverAnchorEl: event.target,
-    popoverOpen: true,
-  });
-
-  renderPopover = () => {
-    const { popoverAnchorEl, popoverOpen, thumbnailUrl } = this.state;
-    const { classes } = this.props;
-    const getLeftOffset = () => {
-      if (!popoverAnchorEl) {
-        return 0;
-      }
-      return popoverAnchorEl.getBoundingClientRect().right;
-    };
-
-    const getImgStyle = () => {
-      const leftOffset = getLeftOffset();
-      const margin = 16;
-      return {
-        maxHeight: (window.innerHeight - margin),
-        maxWidth: (window.innerWidth - margin) - leftOffset,
-      };
-    };
-
-    return (
-      <Popover
-        open={popoverOpen}
-        anchorEl={popoverAnchorEl}
-        anchorOrigin={{
-          vertical: 'center',
-          horizontal: 'right',
-        }}
-        transformOrigin={{
-          vertical: 'center',
-          horizontal: 'left',
-        }}
-        marginThreshold={16}
-        >
-        <img
-          src={thumbnailUrl}
-          style={getImgStyle()}
-          />
-      </Popover>
     );
   }
 
@@ -205,16 +60,6 @@ class FileListItem extends Component {
       directory,
     } = this.props;
     onClickDelete({ file, directory });
-  }
-
-  componentDidMount() {
-    this.mounted = true;
-    // this.loadThumbnail();
-    this.props.addThumbnailQueue(this.loadThumbnail);
-  }
-
-  componentWillUnmount() {
-    this.mounted = false;
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -228,22 +73,6 @@ class FileListItem extends Component {
     }
     if (this.state.isDialogOpen !== nextState.isDialogOpen) {
       console.log("shouldComponentUpdate: ", "state.isDialogOpen changed");
-      return true;
-    }
-    if (this.state.popoverAnchorEl !== nextState.popoverAnchorEl) {
-      console.log("shouldComponentUpdate: ", "state.popoverAnchorEl changed");
-      return true;
-    }
-    if (this.state.popoverOpen !== nextState.popoverOpen) {
-      console.log("shouldComponentUpdate: ", "state.popoverOpen changed");
-      return true;
-    }
-    if (this.state.thumbnailUrl !== nextState.thumbnailUrl) {
-      console.log("shouldComponentUpdate: ", "state.thumbnailUrl changed");
-      console.log(
-        "this", (this.state.thumbnailUrl || "").length,
-        "next", nextState.thumbnailUrl.length,
-      );
       return true;
     }
     return false;
@@ -273,7 +102,6 @@ class FileListItem extends Component {
           file={file}
           onClose={this.closeDialog}
           />
-        {this.renderPopover()}
         <ListItem
           button
           classes={{secondaryAction: classes.secondaryAction}}
