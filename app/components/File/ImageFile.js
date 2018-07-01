@@ -115,7 +115,10 @@ class ImageFile extends PureComponent {
     const { perPage, notifyMessage } = this.props;
     const { images, index } = this.state;
     if ((index + 1) + (perPage - 1) > images.length - 1) {
-      notifyMessage("This is last page.")
+      notifyMessage({
+        message: "This is last page.",
+        autoHide: true,
+      });
       return;
     }
 

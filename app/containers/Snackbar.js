@@ -7,6 +7,7 @@ function mapStateToProps(state) {
   return {
     message: state.snackbar.message,
     isOpen: state.snackbar.isOpen,
+    autoHide: state.snackbar.autoHide,
   };
 }
 

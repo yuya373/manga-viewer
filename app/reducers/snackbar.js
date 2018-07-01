@@ -15,12 +15,14 @@ import {
 const initialState = {
   isOpen: false,
   message: "",
+  autoHide: false,
 };
 
-const displayMessage = (state, {message}) => ({
+const displayMessage = (state, { message, autoHide = false }) => ({
   ...state,
   isOpen: true,
   message,
+  autoHide,
 });
 
 export default function(state = initialState, {type, payload}) {
