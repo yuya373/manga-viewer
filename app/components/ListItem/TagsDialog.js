@@ -107,7 +107,7 @@ class TagsDialog extends PureComponent {
     )
   }
 
-  render() {
+  renderDialogInner = () => {
     const {
       classes,
       open,
@@ -115,16 +115,17 @@ class TagsDialog extends PureComponent {
       onClose,
       suggestions,
     } = this.props;
+
+    if (!open) return <div />;
+
     const { newTagTextField } = this.state;
     const source = suggestions.map((e) => ({
       label: e,
     }));
+    const selectedItem = newTagTextField.length < 1 ? "" : undefined;
 
     return (
-      <Dialog
-        open={open}
-        onClose={onClose}
-        >
+      <React.Fragment>
         <DialogTitle>
           {title}
         </DialogTitle>
@@ -147,11 +148,27 @@ class TagsDialog extends PureComponent {
               onKeyDown={this.handleTextFieldKeyDown}
               onInputValueChange={this.handleTextFieldChange}
               value={newTagTextField}
-              selectedItem={newTagTextField.length < 1 ? "" : undefined}
+              selectedItem={selectedItem}
               source={source}
               />
           </div>
         </DialogContent>
+      </React.Fragment>
+    )
+  }
+
+  render() {
+    const {
+      open,
+      onClose,
+    } = this.props;
+
+    return (
+      <Dialog
+        open={open}
+        onClose={onClose}
+        >
+        {this.renderDialogInner()}
       </Dialog>
     )
   }
