@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
-import { withStyles } from 'material-ui/styles';
-import Grid from 'material-ui/Grid';
+import { withStyles } from '@material-ui/core/styles';
+import Grid from '@material-ui/core/Grid';
 import Canvas from './Canvas.js';
 import * as zip from './../../lib/zip.js';
 import * as image from './../../lib/image.js';

@@ -1,7 +1,10 @@
 import React from 'react';
-import { withStyles } from 'material-ui/styles';
-import MuiDrawer from 'material-ui/Drawer';
-import List, { ListItem, ListItemIcon, ListItemText } from 'material-ui/List';
+import { withStyles } from '@material-ui/core/styles';
+import MuiDrawer from '@material-ui/core/Drawer';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
 import FolderIcon from '@material-ui/icons/Folder';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import LabelIcon from '@material-ui/icons/Label';

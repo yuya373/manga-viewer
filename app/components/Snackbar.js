@@ -1,5 +1,5 @@
 import React from 'react';
-import MuiSnackbar from 'material-ui/Snackbar';
+import MuiSnackbar from '@material-ui/core/Snackbar';
 
 export default function Snackbar({
   message, autoHide, isOpen,

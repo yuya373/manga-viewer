@@ -1,14 +1,15 @@
 import React, { PureComponent } from 'react';
-import { withStyles } from 'material-ui/styles';
-import IconButton from 'material-ui/IconButton';
-import Menu, { MenuItem } from 'material-ui/Menu';
+import { withStyles } from '@material-ui/core/styles';
+import IconButton from '@material-ui/core/IconButton';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
 import SettingIcon from '@material-ui/icons/Settings';
-import Switch from 'material-ui/Switch';
-import List, {
-  ListItemSecondaryAction,
-  ListItemText,
-} from 'material-ui/List';
-import { FormGroup, FormControlLabel } from 'material-ui/Form';
+import Switch from '@material-ui/core/Switch';
+import List from '@material-ui/core/List';
+import ListItemText from '@material-ui/core/ListItemText';
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
+import FormGroup from '@material-ui/core/FormGroup';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FavoriteButton from './../FavoriteButton.js';
 import LabelIcon from '@material-ui/icons/Label';
 import LabelOutlineIcon from '@material-ui/icons/LabelOutline';

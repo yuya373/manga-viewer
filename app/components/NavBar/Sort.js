@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
-import { withStyles } from 'material-ui/styles';
-import IconButton from 'material-ui/IconButton';
+import { withStyles } from '@material-ui/core/styles';
+import IconButton from '@material-ui/core/IconButton';
 import SwapVertIcon from '@material-ui/icons/SwapVert';
 
 export default class Sort extends PureComponent {

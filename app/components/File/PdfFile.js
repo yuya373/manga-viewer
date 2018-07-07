@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import ReactDOM from 'react-dom';
-import Grid from 'material-ui/Grid';
+import Grid from '@material-ui/core/Grid';
 
 class PdfFile extends PureComponent {
   webviewRef = null;

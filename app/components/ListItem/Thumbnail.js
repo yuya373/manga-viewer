@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import classNames from 'classnames';
-import { withStyles } from 'material-ui/styles';
-import Avatar from 'material-ui/Avatar';
-import Popover from 'material-ui/Popover';
+import { withStyles } from '@material-ui/core/styles';
+import Avatar from '@material-ui/core/Avatar';
+import Popover from '@material-ui/core/Popover';
 import * as zip from './../../lib/zip.js';
 import * as image from './../../lib/image.js';
 import { allowedExts } from './../File/ImageFile.js';

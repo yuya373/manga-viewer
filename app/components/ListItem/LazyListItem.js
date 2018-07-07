@@ -1,9 +1,8 @@
 import React, { PureComponent } from 'react';
 import ReactDOM from 'react-dom';
 import { subscribe } from 'subscribe-ui-event';
-import List, {
-  ListItem,
-} from 'material-ui/List';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
 
 export default class LazyListItem extends PureComponent {
   scrollHandler = null;

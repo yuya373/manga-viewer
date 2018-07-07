@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import List from 'material-ui/List';
-import ListSubheader from 'material-ui/List/ListSubheader';
+import List from '@material-ui/core/List';
+import ListSubheader from '@material-ui/core/ListSubheader';
 import queryString from 'query-string';
 import { subscribe } from 'subscribe-ui-event';
 import FileListItem from './../containers/ListItem/FileListItem.js';

@@ -1,14 +1,13 @@
 import React, { PureComponent } from 'react';
-import { withStyles } from 'material-ui/styles';
-import Chip from 'material-ui/Chip';
-import Dialog, {
-  DialogTitle,
-  DialogContent,
-  DialogContentText,
-} from 'material-ui/Dialog';
-import TextField from 'material-ui/TextField';
-import Typography from 'material-ui/Typography';
-import Input from 'material-ui/Input';
+import { withStyles } from '@material-ui/core/styles';
+import Chip from '@material-ui/core/Chip';
+import Dialog from '@material-ui/core/Dialog';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogContent from '@material-ui/core/DialogContent';
+import TextField from '@material-ui/core/TextField';
+import Typography from '@material-ui/core/Typography';
+import Input from '@material-ui/core/Input';
 import Autocomplete from './../Autocomplete.js';
 
 

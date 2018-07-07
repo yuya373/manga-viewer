@@ -1,11 +1,12 @@
 import React, { PureComponent } from 'react';
-import { withStyles } from 'material-ui/styles';
-import Input, { InputAdornment } from 'material-ui/Input';
-import { FormControl } from 'material-ui/Form';
-import Grid from 'material-ui/Grid';
+import { withStyles } from '@material-ui/core/styles';
+import Input from '@material-ui/core/Input';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import FormControl from '@material-ui/core/FormControl';
+import Grid from '@material-ui/core/Grid';
 import SearchIcon from '@material-ui/icons/Search';
-import IconButton from 'material-ui/IconButton';
-import Fade from 'material-ui/transitions/Fade';
+import IconButton from '@material-ui/core/IconButton';
+import Fade from '@material-ui/core/Fade';
 import ClearIcon from '@material-ui/icons/Clear';
 
 const styles = theme => ({
