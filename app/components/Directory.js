@@ -4,6 +4,7 @@ import Grid from '@material-ui/core/Grid';
 import NavBar from './../containers/NavBar/Index.js';
 import DirectoryMenu from './NavBar/DirectoryMenu.js';
 import LazyList from './../containers/LazyList.js';
+import VirtualizedList from './../containers/VirtualizedList.js';
 
 const styles = theme => ({
   root: {
@@ -83,7 +84,7 @@ class Directory extends PureComponent {
           />
         <Grid container className={classes.root} spacing={16}>
           <Grid item xs={12}>
-            <LazyList
+            <VirtualizedList
               location={location}
               directory={directory}
               files={files}

@@ -16,7 +16,7 @@ function mapStateToProps(state, { directory }) {
 function mapDispatchToProps(dispatch, { onClick, directory, queryParams = {} }) {
   return {
     onClick: () => {
-      onClick();
+      if (onClick) onClick();
       dispatch(gotoDirectory(directory.path, queryParams));
     },
     onClickFavorite: (favorite) => dispatch(directoryFavoriteChanged({

@@ -9,8 +9,6 @@ import { allowedExts } from './../File/ImageFile.js';
 
 const styles = (theme) => ({
   avater: {
-    width: 50,
-    height: 50,
     borderRadius: 0,
   },
   avaterWithPopover: {
@@ -49,20 +47,16 @@ class Thumbnail extends Component {
     return new Promise((resolve) => {
       const nullValue = { base64: null, ext: null };
 
-      if (this.mounted) {
-        const ext = this.ext;
-        const cover = Object.keys(zip.files).
-              map((e) => ({ name: e, ext: ext(e) })).
-              filter(({ name, ext }) => allowedExts.includes(ext)).
-              sort((a, b) => image.sort(a.name, b.name))[0];
+      const ext = this.ext;
+      const cover = Object.keys(zip.files).
+            map((e) => ({ name: e, ext: ext(e) })).
+            filter(({ name, ext }) => allowedExts.includes(ext)).
+            sort((a, b) => image.sort(a.name, b.name))[0];
 
-        if (cover) {
-          return zip.files[cover.name].async("base64").
-            then((base64) => ({base64, ext: ext(cover.name)})).
-            then((ret) => resolve(ret));
-        } else {
-          resolve(nullValue);
-        }
+      if (cover) {
+        return zip.files[cover.name].async("base64").
+          then((base64) => ({base64, ext: ext(cover.name)})).
+          then((ret) => resolve(ret));
       } else {
         resolve(nullValue);
       }
@@ -70,19 +64,15 @@ class Thumbnail extends Component {
   }
   storeImage = ({ base64, ext }) => {
     return new Promise((resolve) => {
-      if (this.mounted) {
-        const url = image.base64Url(base64, ext);
-        if (url) {
-          resolve();
+      const url = image.base64Url(base64, ext);
+      if (url) {
+        resolve();
 
-          window.setTimeout(() => {
-            const { saveThumbnailUrl } = this.props;
-            saveThumbnailUrl({ thumbnailUrl: url });
-            this.storeThumbnail(url);
-          });
-        } else {
-          resolve();
-        }
+        window.setTimeout(() => {
+          const { saveThumbnailUrl } = this.props;
+          saveThumbnailUrl({ thumbnailUrl: url });
+          this.storeThumbnail(url);
+        });
       } else {
         resolve();
       }
@@ -92,7 +82,7 @@ class Thumbnail extends Component {
     return new Promise((resolve, reject) => {
       const { thumbnailUrl, file } = this.props;
       const { path } = file;
-      if (this.mounted && this.ext(path) === "zip") {
+      if (this.ext(path) === "zip") {
         if (thumbnailUrl) {
           resolve();
           window.setTimeout(() => this.storeThumbnail(thumbnailUrl));
@@ -165,12 +155,21 @@ class Thumbnail extends Component {
     );
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (this.props.isScrolling === true &&
+        nextProps.isScrolling === false) {
+      this.loadThumbnail();
+    }
+  }
 
   componentDidMount() {
     this.mounted = true;
-    // this.loadThumbnail();
-    const { addThumbnailQueue } = this.props;
-    addThumbnailQueue(this.loadThumbnail);
+    const { addThumbnailQueue, isScrolling } = this.props;
+    if (addThumbnailQueue) {
+      addThumbnailQueue(this.loadThumbnail);
+    } else {
+      if (!isScrolling) this.loadThumbnail();
+    }
   }
 
   componentWillUnmount() {

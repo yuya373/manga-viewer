@@ -7,11 +7,13 @@ import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import Avatar from '@material-ui/core/Avatar';
 import FolderIcon from '@material-ui/icons/Folder';
 import FavoriteButton from './../FavoriteButton.js';
-import ListItem from './LazyListItem.js';
+import ListItem from '@material-ui/core/ListItem';
 
 export default function DirectoryListItem({
   directory,
   favorite,
+  primaryTypographyProps,
+  isScrolling,
   onClick,
   onClickFavorite,
   onDisplay,
@@ -19,18 +21,27 @@ export default function DirectoryListItem({
 
   const handleClickFavorite = () => onClickFavorite(!favorite);
 
+  const buttonBaseProps = {
+    disableRipple: isScrolling,
+    disableTouchRipple: isScrolling,
+  };
+
+
   return (
     <ListItem
-      button
+      button={true}
       onClick={onClick}
-      onDisplay={onDisplay}
+      ContainerComponent="div"
+      {...buttonBaseProps}
       >
       <ListItemAvatar>
         <Avatar>
           <FolderIcon />
         </Avatar>
       </ListItemAvatar>
-      <ListItemText>
+      <ListItemText
+        primaryTypographyProps={primaryTypographyProps}
+        >
         {directory.name}
       </ListItemText>
       <ListItemSecondaryAction>

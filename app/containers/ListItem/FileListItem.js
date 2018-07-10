@@ -41,11 +41,11 @@ function areStatePropsEqual(prevProps, nextProps) {
   return true;
 }
 
-function mapStateToProps(state, { file }) {
-  const favorite = state.favorite.files.includes(file.path);
-  const tags = Object.keys(state.tag.tags).filter((e) => {
-    return state.tag.tags[e].includes(file.path);
-  });
+function mapStateToProps(state, { file, isScrolling }) {
+  const favorite = isScrolling ? false :
+        state.favorite.files.includes(file.path);
+  const tags = isScrolling ? [] : Object.keys(state.tag.tags).
+        filter((e) => state.tag.tags[e].includes(file.path));
   const thumbnailUrl = state.file.thumbnailUrls[file.path];
 
   return {
@@ -59,7 +59,7 @@ function mapStateToProps(state, { file }) {
 function mapDispatchToProps(dispatch, { onClick, file, directory, queryParams = {} }) {
   return {
     onClick: () => {
-      onClick();
+      if (onClick) onClick();
       console.log("location: ", window.location, window.scrollY);
       dispatch(gotoFile(file, directory, queryParams));
     },

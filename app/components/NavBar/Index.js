@@ -78,6 +78,7 @@ class NavBar extends PureComponent {
                 className={classes.title}
                 variant="title"
                 color="inherit"
+                noWrap={true}
                 >
                 {title}
               </Typography>

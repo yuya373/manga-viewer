@@ -13,13 +13,14 @@ import FavoriteButton from './../FavoriteButton.js';
 import TagsDialog from './../../containers/ListItem/TagsDialog.js';
 import * as zip from './../../lib/zip.js';
 import * as image from './../../lib/image.js';
-import ListItem from './LazyListItem.js';
+import ListItem from '@material-ui/core/ListItem';
 import DeleteIcon from '@material-ui/icons/Delete';
 import Thumbnail from './Thumbnail.js';
 
 const styles = theme => ({
   secondaryAction: {
-    paddingRight: theme.spacing.unit * 4 * 4,
+    paddingRight: theme.spacing.unit * 17,
+    paddingLeft: theme.spacing.unit * 2,
   },
 });
 
@@ -39,10 +40,12 @@ class FileListItem extends Component {
       thumbnailUrl,
       addThumbnailQueue,
       saveThumbnailUrl,
+      isScrolling,
     } = this.props;
 
     return (
       <Thumbnail
+        isScrolling={isScrolling}
         file={file}
         thumbnailUrl={thumbnailUrl}
         saveThumbnailUrl={saveThumbnailUrl}
@@ -73,7 +76,34 @@ class FileListItem extends Component {
       console.log("shouldComponentUpdate: ", "state.isDialogOpen changed");
       return true;
     }
+    if (this.props.isScrolling !== nextProps.isScrolling) {
+      console.log("shouldComponentUpdate: ", "isScrolling changed");
+      return true;
+    }
     return false;
+  }
+
+  renderTagsDialog = () => {
+    const {
+      isScrolling,
+      tags,
+      file,
+    } = this.props;
+
+    if (isScrolling) return null;
+
+    const {
+      isDialogOpen,
+    } = this.state;
+
+    return (
+      <TagsDialog
+        tags={tags}
+        open={isDialogOpen}
+        file={file}
+        onClose={this.closeDialog}
+        />
+    );
   }
 
   render() {
@@ -83,31 +113,32 @@ class FileListItem extends Component {
       onClick,
       favorite,
       tags,
+      primaryTypographyProps,
+      isScrolling,
     } = this.props
-    const {
-      isDialogOpen,
-    } = this.state;
 
     const tagIcon = tags.length > 0 ?
           (<LabelIcon />) : (<LabelOutlineIcon />);
 
+    const buttonBaseProps = {
+      disableRipple: isScrolling,
+      disableTouchRipple: isScrolling,
+    };
 
     return (
       <React.Fragment>
-        <TagsDialog
-          tags={tags}
-          open={isDialogOpen}
-          file={file}
-          onClose={this.closeDialog}
-          />
+        {this.renderTagsDialog()}
         <ListItem
-          button
+          button={true}
           classes={{secondaryAction: classes.secondaryAction}}
           onClick={onClick}
-          onDisplay={this.props.onDisplay}
+          ContainerComponent="div"
+          {...buttonBaseProps}
           >
           {this.renderAvater()}
-          <ListItemText>
+          <ListItemText
+            primaryTypographyProps={primaryTypographyProps}
+            >
             {file.name}
           </ListItemText>
           <ListItemSecondaryAction>
