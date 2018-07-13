@@ -44,6 +44,13 @@ class Directory extends PureComponent {
       gotoDirectory(parent);
     }
   }
+  loadThumbnails = ({loadThumbnails, directory}) => {
+    const {
+      files = []
+    } = directory;
+
+    loadThumbnails({ files });
+  }
 
   componentWillMount() {
     this.redirectIfDirectoryNotExists(this.props);
@@ -51,6 +58,13 @@ class Directory extends PureComponent {
 
   componentWillReceiveProps(nextProps) {
     this.redirectIfDirectoryNotExists(nextProps);
+    if (this.props.directory.path !== nextProps.directory.path) {
+      this.loadThumbnails(nextProps);
+    }
+  }
+
+  componentDidMount() {
+    this.loadThumbnails(this.props);
   }
 
   render() {

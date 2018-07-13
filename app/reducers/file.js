@@ -5,6 +5,8 @@ import {
   FILE_LOAD_ERROR,
   FILE_PER_PAGE_CHANGED,
   FILE_SAVE_THUMBNAIL_URL,
+  FILE_THUMBNAIL_URL_READY,
+  FILE_THUMBNAIL_URL_NOT_READY,
 } from './../actions/file.js';
 
 const initialState = {
@@ -35,12 +37,28 @@ export default function(state = initialState, {type, payload}) {
       ...state,
       loading: false,
     });
-  case FILE_SAVE_THUMBNAIL_URL:
+  // case FILE_SAVE_THUMBNAIL_URL:
+  //   return ({
+  //     ...state,
+  //     thumbnailUrls: {
+  //       ...state.thumbnailUrls,
+  //       [payload.file.path]: payload.thumbnailUrl,
+  //     },
+  //   });
+  case FILE_THUMBNAIL_URL_READY:
     return ({
       ...state,
       thumbnailUrls: {
         ...state.thumbnailUrls,
-        [payload.file.path]: payload.thumbnailUrl,
+        [payload.filePath]: true,
+      },
+    });
+  case FILE_THUMBNAIL_URL_NOT_READY:
+    return ({
+      ...state,
+      thumbnailUrls: {
+        ...state.thumbnailUrls,
+        [payload.filePath]: false,
       },
     });
   default:

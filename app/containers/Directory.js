@@ -4,6 +4,7 @@ import { push, goBack } from 'react-router-redux';
 import Directory from './../components/Directory.js';
 import * as actions from './../actions/directory.js';
 import queryString from 'query-string';
+import { loadThumbnails } from './../actions/file.js';
 
 function mapStateToProps(state, { match }) {
   const path = decodeURIComponent(match.params.path || "");
@@ -23,7 +24,10 @@ function mapDispatchToProps(dispatch, {location}) {
   const backTo = qs.backTo;
 
   return {
-    ...bindActionCreators(actions, dispatch),
+    ...bindActionCreators({
+      ...actions,
+      loadThumbnails,
+    }, dispatch),
     ...(backTo ? {goBack: () => dispatch(push(backTo))} : {}),
   };
 }

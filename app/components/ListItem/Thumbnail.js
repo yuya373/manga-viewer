@@ -6,6 +6,7 @@ import Popover from '@material-ui/core/Popover';
 import * as zip from './../../lib/zip.js';
 import * as image from './../../lib/image.js';
 import { allowedExts } from './../File/ImageFile.js';
+import { getThumbnailUrl } from './../../db/ThumbnailUrls.js';
 
 const styles = (theme) => ({
   avater: {
@@ -35,7 +36,7 @@ class Thumbnail extends Component {
     return null;
   }
   storeThumbnail = (url) => {
-    if (this.mounted) {
+    if (this.mounted && url) {
       this.setState({thumbnailUrl: url})
     }
   }
@@ -155,20 +156,46 @@ class Thumbnail extends Component {
     );
   }
 
+  getThumbnailUrl = () => {
+    const {
+      thumbnailUrl,
+    } = this.state;
+
+    if (thumbnailUrl) return;
+
+    const {
+      thumbnailUrlNotReady,
+      file,
+    } = this.props;
+    const { path } = file;
+
+    getThumbnailUrl(path).then((thumbnailUrl) => {
+      if (thumbnailUrl) {
+        this.storeThumbnail(thumbnailUrl)
+      } else {
+        thumbnailUrlNotReady();
+      }
+    });
+  }
+
   componentWillReceiveProps(nextProps) {
-    if (this.props.isScrolling === true &&
-        nextProps.isScrolling === false) {
-      this.loadThumbnail();
+    // console.log("componentWillReceiveProps", this.props, nextProps);
+    if (nextProps.isScrolling === false &&
+        nextProps.isThumbnailUrlReady === true) {
+      console.log("componentWillReceiveProps: getThumbnailUrl");
+      this.getThumbnailUrl();
     }
   }
 
   componentDidMount() {
     this.mounted = true;
-    const { addThumbnailQueue, isScrolling } = this.props;
-    if (addThumbnailQueue) {
-      addThumbnailQueue(this.loadThumbnail);
-    } else {
-      if (!isScrolling) this.loadThumbnail();
+    const {
+      isScrolling,
+    } = this.props;
+
+    if (!isScrolling) {
+      console.log("componentDidMount: getThumbnailUrl");
+      this.getThumbnailUrl();
     }
   }
 

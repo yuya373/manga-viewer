@@ -15,7 +15,7 @@ import * as zip from './../../lib/zip.js';
 import * as image from './../../lib/image.js';
 import ListItem from '@material-ui/core/ListItem';
 import DeleteIcon from '@material-ui/icons/Delete';
-import Thumbnail from './Thumbnail.js';
+import Thumbnail from './../../containers/ListItem/Thumbnail.js';
 
 const styles = theme => ({
   secondaryAction: {

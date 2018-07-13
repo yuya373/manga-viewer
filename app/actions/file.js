@@ -7,6 +7,7 @@ import Worker from './../workers/load_file.worker.js'
 import { persist } from './persist.js';
 import { loadDirectory } from './directory.js';
 import fs from 'fs';
+import ThumbnailWorker from './../workers/load_thumbnails.worker.js';
 
 export const LOAD_FILE = "LOAD_FILE";
 export const FILE_LOADING = "FILE_LOADING";
@@ -18,6 +19,15 @@ export const FILE_SAVE_THUMBNAIL_URL = "FILE_SAVE_THUMBNAIL_URL";
 export const FILE_DELETE = "FILE_DELETE";
 export const FILE_DELETE_SUCCESS = "FILE_DELETE_SUCCESS";
 export const FILE_DELETE_FAILED = "FILE_DELETE_FAILED";
+export const FILE_THUMBNAIL_URL_READY = "FILE_THUMBNAIL_URL_READY";
+export const FILE_THUMBNAIL_URL_NOT_READY = "FILE_THUMBNAIL_URL_NOT_READY";
+
+export const fileThumbnailUrlNotReady = createAction(
+  FILE_THUMBNAIL_URL_NOT_READY,
+  (filePath) => ({
+    filePath,
+  })
+);
 
 export const fileLoading = createAction(FILE_LOADING);
 export const filePerPageChanged = createAction(FILE_PER_PAGE_CHANGED);
@@ -173,3 +183,41 @@ export const deleteFileFailed = createAction(
   FILE_DELETE_FAILED,
   (err) => ({ error: { message: err.message } }),
 );
+
+const fileThumbnailUrlReady = createAction(
+  FILE_THUMBNAIL_URL_READY,
+  (filePath) => ({
+    filePath,
+  })
+);
+
+export function loadThumbnails({ files }) {
+  return (dispatch, _getState) => {
+    return new Promise((resolve, reject) => {
+      if (files.length <= 0) {
+        resolve();
+      } else {
+        console.warn("files: ", files.length);
+
+        const worker = new ThumbnailWorker();
+        worker.onmessage = ({data}) => {
+          if (data.success) {
+            switch(data.type) {
+            case "STEP":
+              dispatch(fileThumbnailUrlReady(data.path));
+              break;
+            case "COMPLETED":
+              console.warn("COMPLETED");
+              resolve();
+              break;
+            }
+          } else {
+            reject(data);
+          }
+        };
+        // worker.postMessage({ files: files.slice(0, 5) });
+        worker.postMessage({ files });
+      }
+    });
+  }
+}
