@@ -3,24 +3,15 @@
     "target": "es5",
     "module": "commonjs",
     "sourceMap": true,
-    "outDir": "./build-backend",
+    "outDir": "./../build-backend",
     "removeComments": true,
 
     "strict": true,
-
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true,
 
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true
 
-  },
-  "include": [
-    "./index.ts",
-    "./backend/**/*"
-  ]
+  }
 }
 
