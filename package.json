@@ -16,8 +16,11 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "build-backend": "tsc --project tsconfig-carlo.json",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "run-carlo-dev": "ts-node-dev --project ./tsconfig-carlo.json ./index.ts",
+    "run-react-dev": "react-scripts start"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -35,6 +38,7 @@
     ]
   },
   "devDependencies": {
+    "@types/carlo": "^0.9.0",
     "@typescript-eslint/eslint-plugin": "^2.1.0",
     "@typescript-eslint/parser": "^2.1.0",
     "eslint": "^6",
@@ -45,6 +49,8 @@
     "eslint-plugin-prettier": "^3.1.0",
     "eslint-plugin-react": "^7.14.3",
     "eslint-plugin-react-hooks": "^1.7.0",
-    "prettier": "^1.18.2"
+    "prettier": "^1.18.2",
+    "ts-node": "^8.3.0",
+    "ts-node-dev": "^1.0.0-pre.42"
   }
 }
