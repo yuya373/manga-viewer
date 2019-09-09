@@ -1,5 +1,9 @@
 import { app, BrowserWindow } from "electron";
 import { join } from "path";
+import installExtension, {
+  REACT_DEVELOPER_TOOLS,
+  REDUX_DEVTOOLS
+} from 'electron-devtools-installer';
 
 const isProduction = process.env.NODE_ENV === 'production';
 
@@ -20,4 +24,13 @@ function createWindow() {
   }
 }
 
-app.on("ready", createWindow);
+function setup() {
+  if (!isProduction) {
+    installExtension([REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS]).catch(
+      console.error
+    );
+  }
+  createWindow();
+}
+
+app.on('ready', setup);
