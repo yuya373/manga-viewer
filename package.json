@@ -14,13 +14,19 @@
     "typescript": "3.6.2"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "build-backend": "tsc --project tsconfig-carlo.json",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "run-carlo-dev": "ts-node-dev --project ./tsconfig-carlo.json ./index.ts",
-    "run-react-dev": "react-scripts start"
+
+    "build": "run-p build:*",
+    "build:backend": "tsc --project tsconfig-carlo.json",
+    "build:react": "react-scripts build",
+
+    "carlo": "node ./build-backend/index.js",
+    "start-prod": "NODE_ENV=production run-s build carlo",
+
+    "start": "run-p watch:*",
+    "watch:carlo": "ts-node-dev --project ./tsconfig-carlo.json ./index.ts",
+    "watch:react": "react-scripts start"
   },
   "eslintConfig": {
     "extends": "react-app"
