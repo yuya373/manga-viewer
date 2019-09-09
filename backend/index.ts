@@ -1,5 +1,5 @@
-import { app, BrowserWindow } from "electron";
-import { join } from "path";
+import { app, BrowserWindow } from 'electron';
+import { join } from 'path';
 import installExtension, {
   REACT_DEVELOPER_TOOLS,
   REDUX_DEVTOOLS
@@ -18,9 +18,9 @@ function createWindow() {
   });
 
   if (isProduction) {
-    win.loadFile(join(__dirname, '..', 'build', 'index.html'))
+    win.loadFile(join(__dirname, '..', 'build', 'index.html'));
   } else {
-    win.loadURL("http://localhost:3000");
+    win.loadURL('http://localhost:3000');
   }
 }
 
