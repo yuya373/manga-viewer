@@ -4,9 +4,10 @@ module.exports = {
     es6: true,
   },
   extends: [
-    'airbnb',
-    'plugin:@typescript-eslint/eslint-recommended',
-    'plugin:prettier/recommended',
+    "airbnb",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:prettier/recommended",
+    "prettier/@typescript-eslint",
   ],
   globals: {
     Atomics: 'readonly',
@@ -21,15 +22,15 @@ module.exports = {
     sourceType: 'module',
   },
   plugins: [
-    'react',
+    'prettier',
     '@typescript-eslint',
   ],
   rules: {
+    "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx", ".tsx"] }]
   },
-  overrides: [
-    {
-      files: ["*.ts", "*.tsx", ".*.ts", ".*.tsx"],
-      extends: ["plugin:@typescript-eslint/recommended"],
+  settings: {
+    'import/resolver': {
+      node: { extensions: ['.js', '.ts', '.tsx'] },
     },
-  ],
+  },
 };
