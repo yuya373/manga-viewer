@@ -7205,6 +7205,11 @@ node-releases@^1.1.25:
   dependencies:
     semver "^5.3.0"
 
+node-stream-zip@^1.8.2:
+  version "1.8.2"
+  resolved "https://registry.yarnpkg.com/node-stream-zip/-/node-stream-zip-1.8.2.tgz#1f79e30ab3ff54cbda312cd3a9f0030b15bb3f53"
+  integrity sha512-zwP2F/R28Oqtl0gOLItk5QjJ6jEU8XO4kaUMgeqvCyXPgdCZlm8T/5qLMiNy+moJCBCiMQAaX7aVMRhT0t2vkQ==
+
 nopt@^4.0.1:
   version "4.0.1"
   resolved "https://registry.yarnpkg.com/nopt/-/nopt-4.0.1.tgz#d0d4685afd5415193c8c7505602d0d17cd64474d"
