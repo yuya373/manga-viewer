@@ -1,11 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore
 import * as StreamZip from 'node-stream-zip';
-
-type ImageEntry = {
-  name: string;
-  url: string;
-};
+import { ImageEntry } from '../types';
 
 function isImageEntry(entry: any): boolean {
   return (
@@ -19,12 +15,12 @@ function buildImageEntry(zip: any, entry: any): ImageEntry {
   const fileType = entry.name.endsWith('png') ? 'png' : 'jpeg';
   const buf = zip.entryDataSync(entry);
   const blob = new Blob([buf], {
-    type: `image/${fileType}`
+    type: `image/${fileType}`,
   });
 
   return {
     name: entry.name,
-    url: URL.createObjectURL(blob)
+    url: URL.createObjectURL(blob),
   };
 }
 
@@ -32,7 +28,7 @@ export function readFirstImage(file: string): Promise<string> {
   return new Promise((resolve, reject) => {
     const zip = new StreamZip({
       file,
-      storeEntries: false
+      storeEntries: false,
     });
     zip.on('error', reject);
     zip.on('entry', (entry: any) => {
@@ -49,7 +45,7 @@ export function readAllImages(file: string): Promise<Array<ImageEntry>> {
   return new Promise((resolve, reject) => {
     const zip = new StreamZip({
       file,
-      storeEntries: false
+      storeEntries: false,
     });
     zip.on('error', reject);
 

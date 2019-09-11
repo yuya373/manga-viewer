@@ -5,6 +5,7 @@ module.exports = {
   },
   extends: [
     "airbnb",
+    "airbnb/hooks",
     "plugin:@typescript-eslint/recommended",
     "plugin:prettier/recommended",
     "prettier/@typescript-eslint",
@@ -33,4 +34,12 @@ module.exports = {
       node: { extensions: ['.js', '.ts', '.tsx'] },
     },
   },
+  overrides: [
+    {
+      files: ['**.tsx'],
+      rules: {
+        'react/prop-types': 'off',
+      },
+    },
+  ],
 };
