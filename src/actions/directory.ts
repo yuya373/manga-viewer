@@ -1,5 +1,6 @@
 /* eslint-disable import/prefer-default-export */
 import { Action } from 'redux';
+import { Dirent } from 'fs';
 import { File, Directory, createFile, createDirectory } from '../types';
 import { ThunkAction } from '.';
 import { readDir } from '../utils';
@@ -22,6 +23,14 @@ export interface FetchEntriesFailedAction extends Action {
   error: Error;
 }
 
+function filterEntry(entry: Dirent) {
+  const { name } = entry;
+  if (name.startsWith('.')) return false;
+  if (name.endsWith('.zip')) return true;
+  if (entry.isDirectory()) return true;
+  return false;
+}
+
 export function fetchEntries(
   path: string
 ): ThunkAction<Promise<Array<File | Directory>>> {
@@ -35,7 +44,7 @@ export function fetchEntries(
 
     try {
       const entries = (await readDir(path))
-        .filter(e => !e.name.startsWith('.'))
+        .filter(filterEntry)
         .map(e => (e.isDirectory() ? createDirectory(e) : createFile(e)));
       dispatch({
         type: Types.FETCH_ENTRIES_DONE,
