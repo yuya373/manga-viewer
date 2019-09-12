@@ -1,24 +1,30 @@
 import React from 'react';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import { BrowserRouter, Route, Redirect } from 'react-router-dom';
+import * as os from 'os';
+import { createMuiTheme } from '@material-ui/core';
+import { ThemeProvider } from '@material-ui/styles';
+import Header from './components/Header';
+import EntryList from './components/EntryList';
+import { serializePath } from './utils';
+
+const homedir = os.homedir();
+
+const theme = createMuiTheme();
 
 const App: React.FC = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <CssBaseline />
+      <ThemeProvider theme={theme}>
+        <Header />
+        <BrowserRouter>
+          <Route path="/entryList/:serializedPath+" component={EntryList} />
+          <Redirect path="/" to={`/entryList/${serializePath(homedir)}`} />
+        </BrowserRouter>
+      </ThemeProvider>
+    </>
   );
-}
+};
 
 export default App;

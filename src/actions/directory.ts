@@ -5,19 +5,22 @@ import { ThunkAction } from '.';
 import { readDir } from '../utils';
 import { Types } from './types';
 
-type FetchEntriesActionBase = Action & {
-  type: Types.FETCH_ENTRIES;
+export interface FetchEntriesStartedAction extends Action {
+  type: Types.FETCH_ENTRIES_STARTED;
   meta: { path: string };
-};
+}
 
-export type FetchEntriesAction =
-  | FetchEntriesActionBase & {
-      payload:
-        | { isLoading: true }
-        | { isLoading: false; entries: Array<File | Directory> };
-      error: false;
-    }
-  | FetchEntriesActionBase & { payload: Error; error: true };
+export interface FetchEntriesDoneAction extends Action {
+  type: Types.FETCH_ENTRIES_DONE;
+  meta: { path: string };
+  payload: { entries: Array<File | Directory> };
+}
+
+export interface FetchEntriesFailedAction extends Action {
+  type: Types.FETCH_ENTRIES_FAILED;
+  meta: { path: string };
+  error: Error;
+}
 
 export function fetchEntries(
   path: string
@@ -26,24 +29,18 @@ export function fetchEntries(
     const meta = { path };
 
     dispatch({
-      type: Types.FETCH_ENTRIES,
+      type: Types.FETCH_ENTRIES_STARTED,
       meta,
-      error: false,
-      payload: {
-        isLoading: true,
-      },
     });
 
     try {
-      const entries = (await readDir(path)).map(e =>
-        e.isDirectory() ? createDirectory(e) : createFile(e)
-      );
+      const entries = (await readDir(path))
+        .filter(e => !e.name.startsWith('.'))
+        .map(e => (e.isDirectory() ? createDirectory(e) : createFile(e)));
       dispatch({
-        type: Types.FETCH_ENTRIES,
+        type: Types.FETCH_ENTRIES_DONE,
         meta,
-        error: false,
         payload: {
-          isLoading: false,
           entries,
         },
       });
@@ -51,14 +48,16 @@ export function fetchEntries(
       return entries;
     } catch (err) {
       dispatch({
-        type: Types.FETCH_ENTRIES,
+        type: Types.FETCH_ENTRIES_FAILED,
         meta,
-        error: true,
-        payload: err,
+        error: err,
       });
       throw err;
     }
   };
 }
 
-export type DirectoryActions = FetchEntriesAction;
+export type DirectoryActions =
+  | FetchEntriesStartedAction
+  | FetchEntriesDoneAction
+  | FetchEntriesFailedAction;

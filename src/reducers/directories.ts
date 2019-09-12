@@ -1,6 +1,7 @@
+import { Actions } from '../actions';
 import { Directory, createDirectory } from '../types';
 import { Types } from '../actions/types';
-import { FetchEntriesAction, DirectoryActions } from '../actions/directory';
+import { FetchEntriesDoneAction } from '../actions/directory';
 
 export type DirectoriesState = {
   byPath: { [path: string]: Directory };
@@ -14,30 +15,16 @@ const initialState: DirectoriesState = {
 
 function setDirectory(
   state: DirectoriesState,
-  action: FetchEntriesAction
+  action: FetchEntriesDoneAction
 ): DirectoriesState {
   const { path } = action.meta;
   const isLoading = { ...state.isLoading };
-
-  if (action.error) {
-    delete isLoading[path];
-
-    return {
-      ...state,
-      isLoading,
-    };
-  }
+  delete isLoading[path];
 
   const byPath = { ...state.byPath };
-
-  if (action.payload.isLoading) {
-    isLoading[path] = true;
-  } else {
-    delete isLoading[path];
-    const directory: Directory = byPath[path] || createDirectory(path);
-    directory.entries = action.payload.entries;
-    byPath[path] = directory;
-  }
+  const directory: Directory = byPath[path] || createDirectory(path);
+  directory.entries = action.payload.entries;
+  byPath[path] = directory;
 
   return {
     ...state,
@@ -46,13 +33,35 @@ function setDirectory(
   };
 }
 
+function setIsLoading(
+  state: DirectoriesState,
+  path: string,
+  value: boolean
+): DirectoriesState {
+  const isLoading = { ...state.isLoading };
+  if (value) {
+    isLoading[path] = true;
+  } else {
+    delete isLoading[path];
+  }
+
+  return {
+    ...state,
+    isLoading,
+  };
+}
+
 export default function(
   state: DirectoriesState = initialState,
-  action: DirectoryActions
+  action: Actions
 ): DirectoriesState {
   switch (action.type) {
-    case Types.FETCH_ENTRIES:
+    case Types.FETCH_ENTRIES_STARTED:
+      return setIsLoading(state, action.meta.path, true);
+    case Types.FETCH_ENTRIES_DONE:
       return setDirectory(state, action);
+    case Types.FETCH_ENTRIES_FAILED:
+      return setIsLoading(state, action.meta.path, false);
     default:
       return state;
   }
