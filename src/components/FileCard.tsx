@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Card from '@material-ui/core/Card';
 import CardActionArea from '@material-ui/core/CardActionArea';
 import CardActions from '@material-ui/core/CardActions';
@@ -9,6 +9,10 @@ import IconButton from '@material-ui/core/IconButton';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
 import { makeStyles } from '@material-ui/styles';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchThumbnail } from '../actions/file';
+import { RootState } from '../reducers';
+import preloadImg from '../preload.svg';
 
 const mediaWidth = 174;
 const mediaRatio = 1.4;
@@ -20,6 +24,7 @@ const useStyles = makeStyles({
   },
   media: {
     height: mediaHeight,
+    backgroundSize: 'contain',
   },
 });
 
@@ -29,6 +34,15 @@ type Props = {
 };
 
 const FileCard: React.FC<Props> = ({ path, name }) => {
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(fetchThumbnail(`${path}/${name}`));
+  }, [path, dispatch, name]);
+
+  const thumbnail = useSelector((state: RootState) => {
+    return state.thumbnails.byPath[`${path}/${name}`];
+  });
+
   const classes = useStyles();
 
   return (
@@ -36,8 +50,8 @@ const FileCard: React.FC<Props> = ({ path, name }) => {
       <CardActionArea>
         <CardMedia
           className={classes.media}
-          image="https://material-ui.com/static/images/cards/contemplative-reptile.jpg"
-          title="Contemplative Reptile"
+          image={thumbnail || preloadImg}
+          title={name}
         />
         <CardContent>
           <Typography gutterBottom variant="h5" component="h2">
