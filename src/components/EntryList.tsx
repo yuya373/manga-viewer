@@ -40,14 +40,14 @@ const useStyles = makeStyles({
     justifyContent: 'center',
     padding: 8,
     width: '25%',
-    [theme.breakpoints.up('xl')]: {
-      width: '25%',
-    },
-    [theme.breakpoints.up('lg')]: {
+    [theme.breakpoints.down('lg')]: {
       width: '33%',
     },
     [theme.breakpoints.down('md')]: {
       width: '50%',
+    },
+    [theme.breakpoints.down('xs')]: {
+      width: '100%',
     },
   }),
 });
