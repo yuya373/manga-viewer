@@ -27,9 +27,9 @@ const App: React.FC = () => {
     <>
       <CssBaseline />
       <ThemeProvider theme={theme}>
-        <Header />
         <FileDialogContainer />
         <BrowserRouter>
+          <Route path="/" component={Header} />
           <Route path="/entryList/:serializedPath+" component={EntryList} />
           <Redirect path="/" to={`/entryList/${serializePath(homedir)}`} />
         </BrowserRouter>
