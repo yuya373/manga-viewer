@@ -6,17 +6,21 @@ import {
   ViewerPerPageChangedAction,
 } from '../actions/viewer';
 import { FetchImagesDoneAction } from '../actions/file';
+import { File } from '../types';
+import { FileDialogOpenAction } from '../actions/fileDialog';
 
 export type ViewerState = {
   index: number;
   imagesToDisplay: Array<string>;
   perPage: 1 | 2;
+  files: Array<File>;
 };
 
 const initialState: ViewerState = {
   index: 0,
   imagesToDisplay: [],
   perPage: 2,
+  files: [],
 };
 
 function setImagesToDisplay(
@@ -47,6 +51,18 @@ function setIndex(
   };
 }
 
+function setFiles(
+  state: ViewerState,
+  action: FileDialogOpenAction
+): ViewerState {
+  const { files } = action.payload;
+
+  return {
+    ...state,
+    files,
+  };
+}
+
 export default function(
   state: ViewerState = initialState,
   action: Actions
@@ -57,6 +73,8 @@ export default function(
     case Types.DISPLAY_NEXT_PAGE:
     case Types.DISPLAY_PREV_PAGE:
       return setIndex(setImagesToDisplay(state, action), action);
+    case Types.FILE_DIALOG_OPEN:
+      return setFiles(state, action);
     case Types.FILE_DIALOG_CLOSE:
       return initialState;
     case Types.VIEWER_PER_PAGE_CHANGED:

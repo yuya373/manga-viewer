@@ -11,6 +11,7 @@ import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
 import { makeStyles } from '@material-ui/styles';
 import { join } from 'path';
 import preloadImg from '../preload.svg';
+import { openFileDialog } from '../actions/fileDialog';
 
 const mediaWidth = 174;
 const mediaRatio = 1.4;
@@ -29,6 +30,7 @@ const useStyles = makeStyles({
 export type Props = {
   path: string;
   name: string;
+  fromFavorite?: boolean;
 };
 
 export type StateProps = {
@@ -38,13 +40,18 @@ export type StateProps = {
 
 export type DispatchProps = {
   fetchThumbnail: (path: string) => void;
-  onPress: ({ path, name }: { path: string; name: string }) => void;
+  onPress: (params: {
+    path: string;
+    name: string;
+    fromFavorite?: boolean;
+  }) => void;
   onPressFavorite: (path: string) => void;
 };
 
 const FileCard: React.FC<Props & StateProps & DispatchProps> = ({
   path,
   name,
+  fromFavorite,
   thumbnail,
   isFavorite,
   fetchThumbnail,
@@ -59,7 +66,7 @@ const FileCard: React.FC<Props & StateProps & DispatchProps> = ({
 
   return (
     <Card className={classes.card}>
-      <CardActionArea onClick={() => onPress({ path, name })}>
+      <CardActionArea onClick={() => onPress({ path, name, fromFavorite })}>
         <CardMedia
           className={classes.media}
           image={thumbnail || preloadImg}

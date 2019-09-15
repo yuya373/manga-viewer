@@ -28,7 +28,7 @@ const FavoriteEntry: React.FC<Props & StateProps> = ({
     );
   }
 
-  return <FileCardContainer path={path} name={entry.name} />;
+  return <FileCardContainer fromFavorite path={path} name={entry.name} />;
 };
 
 export default FavoriteEntry;
