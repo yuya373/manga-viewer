@@ -1,6 +1,5 @@
 import React from 'react';
 import { Grid } from '@material-ui/core';
-import { CSSProperties } from '@material-ui/styles';
 import Canvas from './Canvas';
 
 export type StateProps = {
