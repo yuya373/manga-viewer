@@ -12,6 +12,7 @@ import { headerTitleChanged } from '../actions/header';
 import { RootState } from '../reducers';
 import FileCardContainer from '../containers/FileCardContainer';
 import DirectoryCardContainer from '../containers/DirectoryCardContainer';
+import useWindowDimension from '../hooks/useWindowDimension';
 
 const HEADER_HEIGHT = 64;
 
@@ -106,18 +107,11 @@ const EntryList: React.FC<RouteComponentProps<Params>> = ({
   const [listHeight, setListHeight] = useState(
     window.innerHeight - HEADER_HEIGHT
   );
-
-  useEffect(() => {
-    const onResize = () => {
-      const newListHeight = window.innerHeight - HEADER_HEIGHT;
-      setListHeight(newListHeight);
-    };
-
-    window.addEventListener('resize', onResize);
-    return () => {
-      window.removeEventListener('resize', onResize);
-    };
-  }, []);
+  useWindowDimension(params => {
+    requestAnimationFrame(() => {
+      setListHeight(params.height - HEADER_HEIGHT);
+    });
+  });
 
   const classes = useStyles();
 

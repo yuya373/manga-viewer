@@ -1,10 +1,8 @@
 import { useEffect } from 'react';
 
-const useWindowDimension = ({
-  onResize,
-}: {
-  onResize: ({ width, height }: { width: number; height: number }) => void;
-}): void => {
+const useWindowDimension = (
+  onResize: (params: { width: number; height: number }) => void
+): void => {
   useEffect(() => {
     const handleResize = (): void => {
       const { innerWidth, innerHeight } = window;

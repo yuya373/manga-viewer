@@ -64,19 +64,12 @@ const FileDialog: React.FC<Props & DispatchProps> = ({
 
   const [width, setWidth] = useState(window.innerWidth);
   const [height, setHeight] = useState(window.innerHeight);
-  const onResize = ({
-    width: newWidth,
-    height: newHeight,
-  }: {
-    width: number;
-    height: number;
-  }) => {
+  useWindowDimension(param => {
     requestAnimationFrame(() => {
-      setWidth(newWidth);
-      setHeight(newHeight);
+      setWidth(param.width);
+      setHeight(param.height);
     });
-  };
-  useWindowDimension({ onResize });
+  });
 
   const classes = useStyles();
 
