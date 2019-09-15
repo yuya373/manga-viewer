@@ -1,4 +1,5 @@
 import { Dirent } from 'fs';
+import { buildNameFromPath } from './utils';
 
 type Entry = {
   name: string;
@@ -36,17 +37,24 @@ export function sortByName(a: ImageEntry, b: ImageEntry): -1 | 0 | 1 {
 }
 
 export type File = Entry & {
-  images: Array<ImageEntry>;
   isFile: true;
   isDirectory: false;
 };
 
-export function createFile(entry: Dirent): File {
+export function createFile(entry: Dirent): File;
+export function createFile(entry: string): File;
+export function createFile(entry: Dirent | string): File {
+  let name;
+  if (entry instanceof Dirent) {
+    name = entry.name;
+  } else {
+    name = buildNameFromPath(entry);
+  }
+
   return {
-    name: entry.name,
+    name,
     isFile: true,
     isDirectory: false,
-    images: [],
   };
 }
 
@@ -67,9 +75,7 @@ export function createDirectory(entry: Dirent | string): Directory {
   if (entry instanceof Dirent) {
     name = entry.name;
   } else {
-    // entry is file path
-    const parts = entry.split('/');
-    name = parts[parts.length - 1];
+    name = buildNameFromPath(entry);
   }
 
   return {

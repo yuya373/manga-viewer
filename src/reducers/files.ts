@@ -2,6 +2,7 @@ import { ImageEntry } from '../types';
 import { Actions } from '../actions';
 import { Types } from '../actions/types';
 import { FetchImagesDoneAction } from '../actions/file';
+import { buildNameFromPath } from '../utils';
 
 type FileState = {
   name: string;
@@ -22,12 +23,6 @@ const initialFileState: FileState = {
 const initialState: FilesState = {
   byPath: {},
 };
-
-function buildName(path: string): string {
-  const parts = path.split('/');
-  const name = parts[parts.length - 1];
-  return name;
-}
 
 function setImages(
   state: FilesState,
@@ -79,7 +74,7 @@ export default function(
           ...state.byPath,
           [action.payload.path]: {
             ...initialFileState,
-            name: buildName(action.payload.path),
+            name: buildNameFromPath(action.payload.path),
             isLoaded: false,
           },
         },

@@ -5,8 +5,10 @@ import { HeaderActions } from './header';
 import { FileActions } from './file';
 import { FileDialogActions } from './fileDialog';
 import { ViewerActions } from './viewer';
+import { FavoriteActions } from './favorite';
 
 export type Actions =
+  | FavoriteActions
   | ViewerActions
   | DirectoryActions
   | HeaderActions

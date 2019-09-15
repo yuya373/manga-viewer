@@ -6,6 +6,7 @@ import thumbnails, { ThumbnailsState } from './thumbnails';
 import fileDialog, { FileDialogState } from './fileDialog';
 import viewer, { ViewerState } from './viewer';
 import files, { FilesState } from './files';
+import favorites, { FavoritesState } from './favorites';
 
 export type RootState = {
   directories: DirectoriesState;
@@ -14,6 +15,7 @@ export type RootState = {
   files: FilesState;
   fileDialog: FileDialogState;
   viewer: ViewerState;
+  favorites: FavoritesState;
 };
 
 export default combineReducers<RootState, Actions>({
@@ -23,4 +25,5 @@ export default combineReducers<RootState, Actions>({
   files,
   fileDialog,
   viewer,
+  favorites,
 });
