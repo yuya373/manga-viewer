@@ -2,6 +2,7 @@ import { Action } from 'redux';
 import { Types } from './types';
 import { Directory, File, createFile, createDirectory } from '../types';
 import { ThunkAction } from '.';
+import { save } from './store';
 
 export interface AddFileToFavoriteAction extends Action {
   type: Types.ADD_FILE_TO_FAVORITE;
@@ -60,6 +61,7 @@ export function toggleFavorite(path: string, isFile = true): ThunkAction<void> {
 
     requestAnimationFrame(() => {
       dispatch(action(path));
+      dispatch(save());
     });
   };
 }
