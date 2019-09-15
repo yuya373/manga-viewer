@@ -1,6 +1,7 @@
 import { Action } from 'redux';
 import { Types } from './types';
 import { Directory, File, createFile, createDirectory } from '../types';
+import { ThunkAction } from '.';
 
 export interface AddFileToFavoriteAction extends Action {
   type: Types.ADD_FILE_TO_FAVORITE;
@@ -49,6 +50,19 @@ export const removeFromFavorite = (path: string): RemoveFromFavoriteAction => ({
     path,
   },
 });
+
+export function toggleFavorite(path: string, isFile = true): ThunkAction<void> {
+  return (dispatch, getState) => {
+    const isFavorite = Boolean(getState().favorites.byPath[path]);
+
+    const addAction = isFile ? addFileToFavorite : addDirectoryToFavorite;
+    const action = isFavorite ? removeFromFavorite : addAction;
+
+    requestAnimationFrame(() => {
+      dispatch(action(path));
+    });
+  };
+}
 
 export type FavoriteActions =
   | AddFileToFavoriteAction

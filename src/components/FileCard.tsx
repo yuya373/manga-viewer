@@ -9,11 +9,7 @@ import IconButton from '@material-ui/core/IconButton';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
 import { makeStyles } from '@material-ui/styles';
-import { useDispatch, useSelector } from 'react-redux';
-import { fetchThumbnail } from '../actions/file';
-import { RootState } from '../reducers';
 import preloadImg from '../preload.svg';
-import { fileDialogOpen } from '../actions/fileDialog';
 
 const mediaWidth = 174;
 const mediaRatio = 1.4;
@@ -29,30 +25,40 @@ const useStyles = makeStyles({
   },
 });
 
-type Props = {
+export type Props = {
   path: string;
   name: string;
 };
 
-const FileCard: React.FC<Props> = ({ path, name }) => {
-  const dispatch = useDispatch();
+export type StateProps = {
+  thumbnail?: string;
+  isFavorite?: boolean;
+};
+
+export type DispatchProps = {
+  fetchThumbnail: (path: string) => void;
+  onPress: ({ path, name }: { path: string; name: string }) => void;
+  onPressFavorite: (path: string) => void;
+};
+
+const FileCard: React.FC<Props & StateProps & DispatchProps> = ({
+  path,
+  name,
+  thumbnail,
+  isFavorite,
+  fetchThumbnail,
+  onPress,
+  onPressFavorite,
+}) => {
   useEffect(() => {
-    dispatch(fetchThumbnail(`${path}/${name}`));
-  }, [path, dispatch, name]);
-
-  const thumbnail = useSelector((state: RootState) => {
-    return state.thumbnails.byPath[`${path}/${name}`];
-  });
-
-  const onPress = () => {
-    dispatch(fileDialogOpen({ path, name }));
-  };
+    fetchThumbnail(`${path}/${name}`);
+  }, [path, name, fetchThumbnail]);
 
   const classes = useStyles();
 
   return (
     <Card className={classes.card}>
-      <CardActionArea onClick={onPress}>
+      <CardActionArea onClick={() => onPress({ path, name })}>
         <CardMedia
           className={classes.media}
           image={thumbnail || preloadImg}
@@ -65,12 +71,10 @@ const FileCard: React.FC<Props> = ({ path, name }) => {
         </CardContent>
       </CardActionArea>
       <CardActions>
-        <IconButton>
-          <FavoriteIcon />
+        <IconButton onClick={() => onPressFavorite(`${path}/${name}`)}>
+          {isFavorite ? <FavoriteIcon /> : <FavoriteBorderIcon />}
         </IconButton>
-        <IconButton>
-          <FavoriteBorderIcon />
-        </IconButton>
+        <IconButton />
       </CardActions>
     </Card>
   );

@@ -10,8 +10,8 @@ import { fetchEntries } from '../actions/directory';
 import { deserializePath, serializePath } from '../utils';
 import { headerTitleChanged } from '../actions/header';
 import { RootState } from '../reducers';
-import FileCard from './FileCard';
 import DirectoryCard from './DirectoryCard';
+import FileCardContainer from '../containers/FileCardContainer';
 
 const HEADER_HEIGHT = 64;
 
@@ -96,7 +96,7 @@ const EntryList: React.FC<RouteComponentProps<Params>> = ({
         );
       }
 
-      return <FileCard path={path} name={entry.name} />;
+      return <FileCardContainer path={path} name={entry.name} />;
     },
     [entries, onPressDirectoryCard, path]
   );
