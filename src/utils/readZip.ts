@@ -55,7 +55,7 @@ export function readAllImages(file: string): Promise<Array<ImageEntry>> {
 
     const images: Array<ImageEntry> = [];
     zip.on('entry', (entry: any) => {
-      if (isImageEntry) {
+      if (isImageEntry(entry)) {
         const image = buildImageEntry(zip, entry);
         images.push(image);
       }
