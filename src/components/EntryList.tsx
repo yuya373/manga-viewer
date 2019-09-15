@@ -2,7 +2,7 @@ import React, { useEffect, useCallback, useState } from 'react';
 import { RouteComponentProps } from 'react-router';
 import { useDispatch, useSelector } from 'react-redux';
 import { VirtuosoGrid } from 'react-virtuoso';
-import { makeStyles, useTheme } from '@material-ui/styles';
+import { makeStyles, createStyles } from '@material-ui/styles';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Container from '@material-ui/core/Container';
 import { Theme } from '@material-ui/core';
@@ -15,42 +15,40 @@ import DirectoryCardContainer from '../containers/DirectoryCardContainer';
 
 const HEADER_HEIGHT = 64;
 
-type StyleProps = {
-  theme: Theme;
-};
-
-const useStyles = makeStyles({
-  progressWrapper: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  list: {
-    width: '100%',
-    height: '100%',
-  },
-  itemsWrapper: {
-    display: 'flex',
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-  },
-  item: ({ theme }: StyleProps) => ({
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 8,
-    width: '25%',
-    [theme.breakpoints.down('lg')]: {
-      width: '33%',
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    progressWrapper: {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
     },
-    [theme.breakpoints.down('md')]: {
-      width: '50%',
-    },
-    [theme.breakpoints.down('xs')]: {
+    list: {
       width: '100%',
+      height: '100%',
     },
-  }),
-});
+    itemsWrapper: {
+      display: 'flex',
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+    },
+    item: {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: 8,
+      width: '25%',
+      [theme.breakpoints.down('lg')]: {
+        width: '33%',
+      },
+      [theme.breakpoints.down('md')]: {
+        width: '50%',
+      },
+      [theme.breakpoints.down('sm')]: {
+        width: '100%',
+      },
+    },
+  })
+);
 
 interface Params {
   serializedPath: string;
@@ -121,8 +119,7 @@ const EntryList: React.FC<RouteComponentProps<Params>> = ({
     };
   }, []);
 
-  const theme = useTheme<Theme>();
-  const classes = useStyles({ theme });
+  const classes = useStyles();
 
   if (isLoading) {
     return (

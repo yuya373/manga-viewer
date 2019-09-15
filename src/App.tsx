@@ -10,8 +10,17 @@ import { serializePath } from './utils';
 import FileDialogContainer from './containers/FileDialogContainer';
 
 const homedir = os.homedir();
-
-const theme = createMuiTheme();
+const theme = createMuiTheme({
+  breakpoints: {
+    values: {
+      xs: 0,
+      sm: 344,
+      md: 648,
+      lg: 1032,
+      xl: 1376,
+    },
+  },
+});
 
 const App: React.FC = () => {
   return (
