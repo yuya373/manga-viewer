@@ -64,6 +64,12 @@ export function toggleFavorite(path: string, isFile = true): ThunkAction<void> {
   };
 }
 
+export function toggleDirectoryFavorite(path: string): ThunkAction<void> {
+  return dispatch => {
+    dispatch(toggleFavorite(path, false));
+  };
+}
+
 export type FavoriteActions =
   | AddFileToFavoriteAction
   | AddDirectoryToFavoriteAction

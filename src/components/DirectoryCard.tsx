@@ -25,13 +25,27 @@ const useStyles = makeStyles({
   },
 });
 
-type Props = {
+export type Props = {
   path: string;
   name: string;
   onPress: (path: string) => void;
 };
 
-const DirectoryCard: React.FC<Props> = ({ path, name, onPress }) => {
+export type StateProps = {
+  isFavorite: boolean;
+};
+
+export type DispatchProps = {
+  onPressFavorite: (path: string) => void;
+};
+
+const DirectoryCard: React.FC<Props & StateProps & DispatchProps> = ({
+  path,
+  name,
+  isFavorite,
+  onPress,
+  onPressFavorite,
+}) => {
   const classes = useStyles();
 
   return (
@@ -45,11 +59,8 @@ const DirectoryCard: React.FC<Props> = ({ path, name, onPress }) => {
         </CardContent>
       </CardActionArea>
       <CardActions>
-        <IconButton>
-          <FavoriteIcon />
-        </IconButton>
-        <IconButton>
-          <FavoriteBorderIcon />
+        <IconButton onClick={() => onPressFavorite(`${path}/${name}`)}>
+          {isFavorite ? <FavoriteIcon /> : <FavoriteBorderIcon />}
         </IconButton>
       </CardActions>
     </Card>

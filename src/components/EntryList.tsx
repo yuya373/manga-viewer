@@ -10,8 +10,8 @@ import { fetchEntries } from '../actions/directory';
 import { deserializePath, serializePath } from '../utils';
 import { headerTitleChanged } from '../actions/header';
 import { RootState } from '../reducers';
-import DirectoryCard from './DirectoryCard';
 import FileCardContainer from '../containers/FileCardContainer';
+import DirectoryCardContainer from '../containers/DirectoryCardContainer';
 
 const HEADER_HEIGHT = 64;
 
@@ -88,7 +88,7 @@ const EntryList: React.FC<RouteComponentProps<Params>> = ({
 
       if (entry.isDirectory) {
         return (
-          <DirectoryCard
+          <DirectoryCardContainer
             path={path}
             name={entry.name}
             onPress={onPressDirectoryCard}
