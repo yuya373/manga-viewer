@@ -1,4 +1,5 @@
 import { Dirent } from 'fs';
+import { basename } from 'path';
 import { buildNameFromPath } from './utils';
 
 type Entry = {
@@ -10,8 +11,8 @@ export type ImageEntry = {
 } & Entry;
 
 export function sortByName(a: ImageEntry, b: ImageEntry): -1 | 0 | 1 {
-  const ANumStrings = a.name.match(/\d+/);
-  const BNumStrings = b.name.match(/\d+/);
+  const ANumStrings = basename(a.name).match(/\d+/);
+  const BNumStrings = basename(b.name).match(/\d+/);
 
   if (ANumStrings !== null && BNumStrings !== null) {
     const ANumStr = ANumStrings[0];

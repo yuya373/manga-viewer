@@ -1,3 +1,5 @@
+import { basename } from 'path';
+
 export function serializePath(path: string): string {
   return encodeURIComponent(path);
 }
@@ -7,7 +9,5 @@ export function deserializePath(path: string): string {
 }
 
 export function buildNameFromPath(path: string): string {
-  const parts = path.split('/');
-  const name = parts[parts.length - 1];
-  return name;
+  return basename(path);
 }

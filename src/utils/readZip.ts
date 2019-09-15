@@ -1,13 +1,17 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore
 import * as StreamZip from 'node-stream-zip';
+import { basename } from 'path';
 import { ImageEntry, sortByName } from '../types';
 
 function isImageEntry(entry: any): boolean {
+  const baseName = basename(entry.name);
+
   return (
-    entry.name.endsWith('jpg') ||
-    entry.name.endsWith('jpeg') ||
-    entry.name.endsWith('png')
+    !baseName.startsWith('.') &&
+    (baseName.endsWith('jpg') ||
+      baseName.endsWith('jpeg') ||
+      baseName.endsWith('png'))
   );
 }
 
