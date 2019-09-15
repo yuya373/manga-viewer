@@ -11,7 +11,6 @@ import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
 import { makeStyles } from '@material-ui/styles';
 import { join } from 'path';
 import preloadImg from '../preload.svg';
-import { openFileDialog } from '../actions/fileDialog';
 
 const mediaWidth = 174;
 const mediaRatio = 1.4;
