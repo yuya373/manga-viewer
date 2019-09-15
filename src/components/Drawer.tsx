@@ -12,8 +12,14 @@ type Props = {
   isOpen: boolean;
   onClose: () => void;
   onPressHome: () => void;
+  onPressFavorite: () => void;
 };
-const Drawer: React.FC<Props> = ({ isOpen, onClose, onPressHome }) => {
+const Drawer: React.FC<Props> = ({
+  isOpen,
+  onClose,
+  onPressHome,
+  onPressFavorite,
+}) => {
   return (
     <MuiDrawer anchor="right" open={isOpen} onClose={onClose}>
       <div style={{ width: 250 }}>
@@ -24,7 +30,7 @@ const Drawer: React.FC<Props> = ({ isOpen, onClose, onPressHome }) => {
             </ListItemIcon>
             <ListItemText primary="HOME" />
           </ListItem>
-          <ListItem button>
+          <ListItem button onClick={onPressFavorite}>
             <ListItemIcon>
               <FavoriteIcon />
             </ListItemIcon>

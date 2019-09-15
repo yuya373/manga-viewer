@@ -3,10 +3,12 @@ import { Types } from '../actions/types';
 
 export type HeaderState = {
   title: string;
+  isBackButtonHidden: boolean;
 };
 
 const initialState: HeaderState = {
   title: '',
+  isBackButtonHidden: false,
 };
 
 export default function(
@@ -18,6 +20,16 @@ export default function(
       return {
         ...state,
         title: action.payload.title,
+      };
+    case Types.HEADER_HIDE_BACK_BUTTON:
+      return {
+        ...state,
+        isBackButtonHidden: true,
+      };
+    case Types.HEADER_DISPLAY_BACK_BUTTON:
+      return {
+        ...state,
+        isBackButtonHidden: false,
       };
     default:
       return state;

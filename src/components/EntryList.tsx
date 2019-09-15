@@ -8,15 +8,15 @@ import Container from '@material-ui/core/Container';
 import { Theme } from '@material-ui/core';
 import { fetchEntries } from '../actions/directory';
 import { deserializePath, serializePath } from '../utils';
-import { headerTitleChanged } from '../actions/header';
+import { headerTitleChanged, headerDisplayBackButton } from '../actions/header';
 import { RootState } from '../reducers';
 import FileCardContainer from '../containers/FileCardContainer';
 import DirectoryCardContainer from '../containers/DirectoryCardContainer';
 import useWindowDimension from '../hooks/useWindowDimension';
 
-const HEADER_HEIGHT = 64;
+export const HEADER_HEIGHT = 64;
 
-const useStyles = makeStyles((theme: Theme) =>
+export const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     progressWrapper: {
       display: 'flex',
@@ -67,6 +67,9 @@ const EntryList: React.FC<RouteComponentProps<Params>> = ({
     dispatch(fetchEntries(path));
     dispatch(headerTitleChanged(path));
   }, [dispatch, path]);
+  useEffect(() => {
+    dispatch(headerDisplayBackButton());
+  }, [dispatch]);
 
   const entries = useSelector((state: RootState) => {
     const directory = state.directories.byPath[path];

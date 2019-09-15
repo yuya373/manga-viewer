@@ -8,6 +8,7 @@ import Header from './components/Header';
 import EntryList from './components/EntryList';
 import { serializePath } from './utils';
 import FileDialogContainer from './containers/FileDialogContainer';
+import FavoriteListContainer from './containers/FavoriteListContainer';
 
 const homedir = os.homedir();
 const theme = createMuiTheme({
@@ -31,6 +32,7 @@ const App: React.FC = () => {
         <BrowserRouter>
           <Route path="/" component={Header} />
           <Route path="/entryList/:serializedPath+" component={EntryList} />
+          <Route path="/favoriteList" component={FavoriteListContainer} />
           <Redirect path="/" to={`/entryList/${serializePath(homedir)}`} />
         </BrowserRouter>
       </ThemeProvider>

@@ -30,6 +30,9 @@ const useStyles = makeStyles((theme: Theme) =>
 const homedir = os.homedir();
 
 const Header: React.FC<RouteComponentProps> = ({ history }) => {
+  const isBackButtonHidden = useSelector((state: RootState) => {
+    return state.header.isBackButtonHidden;
+  });
   const title = useSelector((state: RootState) => {
     return state.header.title;
   });
@@ -49,7 +52,12 @@ const Header: React.FC<RouteComponentProps> = ({ history }) => {
 
   const onPressHome = useCallback(() => {
     setIsDrawerOpen(false);
-    history.replace(`/entryList/${serializePath(homedir)}`);
+    history.push(`/entryList/${serializePath(homedir)}`);
+  }, [history]);
+
+  const onPressFavorite = useCallback(() => {
+    setIsDrawerOpen(false);
+    history.push('/favoriteList');
   }, [history]);
 
   const classes = useStyles();
@@ -58,15 +66,17 @@ const Header: React.FC<RouteComponentProps> = ({ history }) => {
     <>
       <AppBar position="static">
         <Toolbar>
-          <IconButton
-            edge="start"
-            className={classes.menuButton}
-            color="inherit"
-            aria-label="back"
-            onClick={onPressBack}
-          >
-            <ArrowBackIcon />
-          </IconButton>
+          {isBackButtonHidden ? null : (
+            <IconButton
+              edge="start"
+              className={classes.menuButton}
+              color="inherit"
+              aria-label="back"
+              onClick={onPressBack}
+            >
+              <ArrowBackIcon />
+            </IconButton>
+          )}
           <Typography variant="h6" noWrap className={classes.title}>
             {title || 'MangaViewer'}
           </Typography>
@@ -84,6 +94,7 @@ const Header: React.FC<RouteComponentProps> = ({ history }) => {
         isOpen={isDrawerOpen}
         onClose={onDrawerClose}
         onPressHome={onPressHome}
+        onPressFavorite={onPressFavorite}
       />
     </>
   );
