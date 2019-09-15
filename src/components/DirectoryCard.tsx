@@ -9,6 +9,7 @@ import IconButton from '@material-ui/core/IconButton';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
 import { makeStyles } from '@material-ui/styles';
+import Folder from '../folder.svg';
 
 const mediaWidth = 174;
 const mediaRatio = 1.4;
@@ -20,6 +21,7 @@ const useStyles = makeStyles({
   },
   media: {
     height: mediaHeight,
+    backgroundSize: 'contain',
   },
 });
 
@@ -35,11 +37,7 @@ const DirectoryCard: React.FC<Props> = ({ path, name, onPress }) => {
   return (
     <Card className={classes.card}>
       <CardActionArea onClick={() => onPress(`${path}/${name}`)}>
-        <CardMedia
-          className={classes.media}
-          image="https://material-ui.com/static/images/cards/contemplative-reptile.jpg"
-          title="Contemplative Reptile"
-        />
+        <CardMedia className={classes.media} image={Folder} title={name} />
         <CardContent>
           <Typography gutterBottom variant="h5" component="h2">
             {name}
