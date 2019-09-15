@@ -10,7 +10,7 @@ export interface FileDialogOpenAction extends Action {
   };
 }
 
-export const fileDialogOpen = ({
+export const openFileDialog = ({
   path,
   name,
 }: {
@@ -28,7 +28,7 @@ export interface FileDialogCloseAction extends Action {
   type: Types.FILE_DIALOG_CLOSE;
 }
 
-export const fileDialogClose = (): FileDialogCloseAction => ({
+export const closeFileDialog = (): FileDialogCloseAction => ({
   type: Types.FILE_DIALOG_CLOSE,
 });
 

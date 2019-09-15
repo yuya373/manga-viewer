@@ -6,7 +6,7 @@ import FileCard, {
   StateProps,
   DispatchProps,
 } from '../components/FileCard';
-import { fileDialogOpen } from '../actions/fileDialog';
+import { openFileDialog } from '../actions/fileDialog';
 import { fetchThumbnail } from '../actions/file';
 import { toggleFavorite } from '../actions/favorite';
 
@@ -23,7 +23,7 @@ const mapStateToProps = (state: RootState, ownProps: Props): StateProps => {
 
 const mapDispatchToProps: DispatchProps = {
   fetchThumbnail,
-  onPress: fileDialogOpen,
+  onPress: openFileDialog,
   onPressFavorite: toggleFavorite,
 };
 

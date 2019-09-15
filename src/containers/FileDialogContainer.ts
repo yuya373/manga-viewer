@@ -2,7 +2,7 @@ import { connect } from 'react-redux';
 import { join } from 'path';
 import { RootState } from '../reducers';
 import {
-  fileDialogClose,
+  closeFileDialog,
   fileDialogHideAppBar,
   fileDialogDisplayAppBar,
 } from '../actions/fileDialog';
@@ -24,7 +24,7 @@ const mapStateToProps = (state: RootState): Props => {
 };
 
 const mapDispatchToProps = {
-  onClose: fileDialogClose,
+  onClose: closeFileDialog,
   fetchImages,
   onMouseOver: fileDialogHideAppBar,
   onMouseLeave: fileDialogDisplayAppBar,
