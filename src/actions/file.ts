@@ -88,45 +88,59 @@ export interface FetchImagesFailedAction extends Action {
   };
 }
 
+const fetchImagesStarted = (path: string): FetchImagesStartedAction => ({
+  type: Types.FETCH_IMAGES_STARTED,
+  payload: { path },
+});
+
+const fetchImageFailed = (
+  path: string,
+  error: Error
+): FetchImagesFailedAction => ({
+  type: Types.FETCH_IMAGES_FAILED,
+  payload: {
+    path,
+    error,
+  },
+});
+
 export function fetchImages(path: string): ThunkAction<Promise<void>> {
   return async (dispatch, getState) => {
-    dispatch({
-      type: Types.FETCH_IMAGES_STARTED,
-      payload: {
-        path,
-      },
-    });
+    const file = getState().files.byPath[path];
 
-    try {
-      const images = await readAllImages(path);
-      const state = getState();
-      const { perPage, index } = state.viewer;
+    dispatch(fetchImagesStarted(path));
 
-      let { imagesToDisplay } = state.viewer;
-      if (imagesToDisplay.length !== perPage) {
-        imagesToDisplay = getImagesToDisplay({ index, perPage, images }).map(
-          e => e.url
-        );
+    let images: Array<ImageEntry>;
+    if (file && file.isLoaded) {
+      images = file.images;
+    } else {
+      try {
+        images = await readAllImages(path);
+      } catch (err) {
+        dispatch(fetchImageFailed(path, err));
+        return;
       }
-      requestAnimationFrame(() => {
-        dispatch({
-          type: Types.FETCH_IMAGES_DONE,
-          payload: {
-            path,
-            images,
-            imagesToDisplay,
-          },
-        });
-      });
-    } catch (error) {
+    }
+
+    const state = getState();
+    const { perPage, index } = state.viewer;
+
+    let { imagesToDisplay } = state.viewer;
+    if (imagesToDisplay.length !== perPage) {
+      imagesToDisplay = getImagesToDisplay({ index, perPage, images }).map(
+        e => e.url
+      );
+    }
+    requestAnimationFrame(() => {
       dispatch({
-        type: Types.FETCH_IMAGES_FAILED,
+        type: Types.FETCH_IMAGES_DONE,
         payload: {
           path,
-          error,
+          images,
+          imagesToDisplay,
         },
       });
-    }
+    });
   };
 }
 
