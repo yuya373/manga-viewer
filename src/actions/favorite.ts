@@ -16,7 +16,7 @@ export const addFileToFavorite = (path: string): AddFileToFavoriteAction => ({
   type: Types.ADD_FILE_TO_FAVORITE,
   payload: {
     path,
-    entry: createFile(path),
+    entry: createFile({ entry: path }),
   },
 });
 
@@ -34,7 +34,7 @@ export const addDirectoryToFavorite = (
   type: Types.ADD_DIRECTORY_TO_FAVORITE,
   payload: {
     path,
-    entry: createDirectory(path),
+    entry: createDirectory({ entry: path }),
   },
 });
 

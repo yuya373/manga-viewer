@@ -1,14 +1,16 @@
 import { Dirent } from 'fs';
-import { basename } from 'path';
+import { basename, dirname } from 'path';
 import { buildNameFromPath } from './utils';
 
 type Entry = {
+  path: string;
   name: string;
 };
 
 export type ImageEntry = {
+  name: string;
   url: string;
-} & Entry;
+};
 
 export function sortByName(a: ImageEntry, b: ImageEntry): -1 | 0 | 1 {
   const ANumStrings = basename(a.name).match(/\d+/);
@@ -42,17 +44,27 @@ export type File = Entry & {
   isDirectory: false;
 };
 
-export function createFile(entry: Dirent): File;
-export function createFile(entry: string): File;
-export function createFile(entry: Dirent | string): File {
+export function createFile(param: { entry: Dirent; path: string }): File;
+export function createFile(param: { entry: string }): File;
+export function createFile(
+  param: { entry: string } | { entry: Dirent; path: string }
+): File {
   let name;
-  if (entry instanceof Dirent) {
-    name = entry.name;
+  if (param.entry instanceof Dirent) {
+    name = param.entry.name;
   } else {
-    name = buildNameFromPath(entry);
+    name = buildNameFromPath(param.entry);
+  }
+
+  let path;
+  if ('path' in param) {
+    path = param.path;
+  } else {
+    path = dirname(param.entry);
   }
 
   return {
+    path,
     name,
     isFile: true,
     isDirectory: false,
@@ -69,18 +81,36 @@ export type Directory = Entry & {
   entries: Array<File | Directory>;
 };
 
-export function createDirectory(entry: Dirent): Directory;
-export function createDirectory(entry: string): Directory;
-export function createDirectory(entry: Dirent | string): Directory {
+export function createDirectory(param: {
+  entry: Dirent;
+  path: string;
+}): Directory;
+export function createDirectory(param: { entry: string }): Directory;
+export function createDirectory(
+  param:
+    | {
+        entry: Dirent;
+        path: string;
+      }
+    | { entry: string }
+): Directory {
   let name;
-  if (entry instanceof Dirent) {
-    name = entry.name;
+  if (param.entry instanceof Dirent) {
+    name = param.entry.name;
   } else {
-    name = buildNameFromPath(entry);
+    name = buildNameFromPath(param.entry);
+  }
+
+  let path;
+  if ('path' in param) {
+    path = param.path;
+  } else {
+    path = dirname(param.entry);
   }
 
   return {
     name,
+    path,
     isFile: false,
     isDirectory: true,
     entries: [],

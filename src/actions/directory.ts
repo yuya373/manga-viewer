@@ -43,9 +43,10 @@ export function fetchEntries(
     });
 
     try {
-      const entries = (await readDir(path))
-        .filter(filterEntry)
-        .map(e => (e.isDirectory() ? createDirectory(e) : createFile(e)));
+      const entries = (await readDir(path)).filter(filterEntry).map(entry => {
+        const param = { entry, path };
+        return entry.isDirectory() ? createDirectory(param) : createFile(param);
+      });
       dispatch({
         type: Types.FETCH_ENTRIES_DONE,
         meta,
