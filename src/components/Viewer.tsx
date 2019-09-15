@@ -15,8 +15,16 @@ const Viewer: React.FC<Props & DispatchProps> = ({
   onNextPage,
   onPrevPage,
   onPerPageChanged,
+  onNextFile,
+  onPrevFile,
 }) => {
-  useViewerKeyMapping({ onNextPage, onPrevPage, onPerPageChanged });
+  useViewerKeyMapping({
+    onNextPage,
+    onPrevPage,
+    onPerPageChanged,
+    onNextFile,
+    onPrevFile,
+  });
 
   return <ViewerContentContainer width={width} height={height} />;
 };

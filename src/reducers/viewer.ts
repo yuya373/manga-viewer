@@ -74,14 +74,26 @@ export default function(
     case Types.DISPLAY_PREV_PAGE:
       return setIndex(setImagesToDisplay(state, action), action);
     case Types.FILE_DIALOG_OPEN:
-      return setFiles(state, action);
+      return {
+        ...initialState,
+        perPage: state.perPage,
+        ...setFiles(state, action),
+      };
     case Types.FILE_DIALOG_CLOSE:
-      return initialState;
+      return {
+        ...initialState,
+        perPage: state.perPage,
+      };
     case Types.VIEWER_PER_PAGE_CHANGED:
       return {
         ...state,
         ...setImagesToDisplay(state, action),
         perPage: action.payload.perPage,
+      };
+    case Types.FILE_DIALOG_FILE_CHANGED:
+      return {
+        ...state,
+        index: 0,
       };
     default:
       return state;

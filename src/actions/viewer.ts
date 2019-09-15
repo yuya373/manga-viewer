@@ -107,6 +107,42 @@ export function perPageChanged(): ThunkAction<void> {
   };
 }
 
+function displayFile(direction: 'up' | 'down'): ThunkAction<Promise<void>> {
+  return async (dispatch, getState) => {
+    const { path, name } = getState().fileDialog;
+    const { files } = getState().viewer;
+    const currentIndex = files.findIndex(
+      e => e.path === path && e.name === name
+    );
+    if (currentIndex < 0) return;
+
+    const index = direction === 'down' ? currentIndex + 1 : currentIndex - 1;
+    const file = files[index];
+    if (file == null) return;
+    const { path: nextPath, name: nextName } = file;
+
+    dispatch({
+      type: Types.FILE_DIALOG_FILE_CHANGED,
+      payload: {
+        path: nextPath,
+        name: nextName,
+      },
+    });
+  };
+}
+
+export function displayNextFile(): ThunkAction<Promise<void>> {
+  return async dispatch => {
+    await dispatch(displayFile('down'));
+  };
+}
+
+export function displayPrevFile(): ThunkAction<Promise<void>> {
+  return async dispatch => {
+    await dispatch(displayFile('up'));
+  };
+}
+
 export type ViewerActions =
   | DisplayNextPageAction
   | DisplayPrevPageAction

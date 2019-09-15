@@ -4,12 +4,16 @@ export type Handlers = {
   onNextPage: () => void;
   onPrevPage: () => void;
   onPerPageChanged: () => void;
+  onNextFile: () => void;
+  onPrevFile: () => void;
 };
 
 const useViewerKeyMapping = ({
   onNextPage,
   onPrevPage,
   onPerPageChanged,
+  onNextFile,
+  onPrevFile,
 }: Handlers): void => {
   useEffect(() => {
     const handleKeyUp = (event: KeyboardEvent) => {
@@ -37,6 +41,14 @@ const useViewerKeyMapping = ({
           case 39:
             event.preventDefault();
             onPrevPage();
+            return;
+          case 38: // ↑
+            event.preventDefault();
+            onPrevFile();
+            return;
+          case 40: // ↓
+            event.preventDefault();
+            onNextFile();
             return;
           default:
             return;
@@ -67,7 +79,7 @@ const useViewerKeyMapping = ({
     return () => {
       document.removeEventListener('keyup', handleKeyUp);
     };
-  }, [onNextPage, onPerPageChanged, onPrevPage]);
+  }, [onNextFile, onNextPage, onPerPageChanged, onPrevFile, onPrevPage]);
 };
 
 export default useViewerKeyMapping;

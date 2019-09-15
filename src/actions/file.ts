@@ -1,4 +1,5 @@
 import { Action } from 'redux';
+import { join } from 'path';
 import { ThunkAction } from '.';
 import { readFirstImage, readAllImages } from '../utils';
 import { Types } from './types';
@@ -107,13 +108,11 @@ const fetchImageFailed = (
 export function fetchImages(path: string): ThunkAction<Promise<void>> {
   return async (dispatch, getState) => {
     const file = getState().files.byPath[path];
-
-    dispatch(fetchImagesStarted(path));
-
     let images: Array<ImageEntry>;
     if (file && file.isLoaded) {
       images = file.images;
     } else {
+      dispatch(fetchImagesStarted(path));
       try {
         images = await readAllImages(path);
       } catch (err) {
@@ -124,9 +123,10 @@ export function fetchImages(path: string): ThunkAction<Promise<void>> {
 
     const state = getState();
     const { perPage, index } = state.viewer;
+    const { fileDialog } = state;
 
     let { imagesToDisplay } = state.viewer;
-    if (imagesToDisplay.length !== perPage) {
+    if (join(fileDialog.path, fileDialog.name) === path) {
       imagesToDisplay = getImagesToDisplay({ index, perPage, images }).map(
         e => e.url
       );

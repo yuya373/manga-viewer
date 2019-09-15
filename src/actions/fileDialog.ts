@@ -98,7 +98,16 @@ export const fileDialogDisplayAppBar = (): ThunkAction<void> => {
   };
 };
 
+export interface FileDialogFileChangedAction extends Action {
+  type: Types.FILE_DIALOG_FILE_CHANGED;
+  payload: {
+    path: string;
+    name: string;
+  };
+}
+
 export type FileDialogActions =
+  | FileDialogFileChangedAction
   | FileDialogOpenAction
   | FileDialogCloseAction
   | FileDialogHideAppBarAction

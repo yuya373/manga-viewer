@@ -39,6 +39,12 @@ export default function(
         ...state,
         isAppBarHidden: true,
       };
+    case Types.FILE_DIALOG_FILE_CHANGED:
+      return {
+        ...state,
+        path: action.payload.path,
+        name: action.payload.name,
+      };
     default:
       return state;
   }
