@@ -1,5 +1,5 @@
 import React from 'react';
-import useViewerKeyMapping from '../hooks/useViewerKeyMapping';
+import useViewerKeyMapping, { Handlers } from '../hooks/useViewerKeyMapping';
 import ViewerContentContainer from '../containers/ViewerContentContainer';
 
 export type Props = {
@@ -7,18 +7,16 @@ export type Props = {
   height: number;
 };
 
-export type DispatchProps = {
-  onNextPage: () => void;
-  onPrevPage: () => void;
-};
+export type DispatchProps = Handlers;
 
 const Viewer: React.FC<Props & DispatchProps> = ({
   width,
   height,
   onNextPage,
   onPrevPage,
+  onPerPageChanged,
 }) => {
-  useViewerKeyMapping({ onNextPage, onPrevPage });
+  useViewerKeyMapping({ onNextPage, onPrevPage, onPerPageChanged });
 
   return <ViewerContentContainer width={width} height={height} />;
 };

@@ -1,12 +1,16 @@
 import { useEffect } from 'react';
 
+export type Handlers = {
+  onNextPage: () => void;
+  onPrevPage: () => void;
+  onPerPageChanged: () => void;
+};
+
 const useViewerKeyMapping = ({
   onNextPage,
   onPrevPage,
-}: {
-  onNextPage: () => void;
-  onPrevPage: () => void;
-}): void => {
+  onPerPageChanged,
+}: Handlers): void => {
   useEffect(() => {
     const handleKeyUp = (event: KeyboardEvent) => {
       const { altKey, ctrlKey, keyCode, metaKey, shiftKey } = event;
@@ -52,6 +56,7 @@ const useViewerKeyMapping = ({
         switch (keyCode) {
           case 83: // S
             event.preventDefault();
+            onPerPageChanged();
             break;
           default:
         }
@@ -62,7 +67,7 @@ const useViewerKeyMapping = ({
     return () => {
       document.removeEventListener('keyup', handleKeyUp);
     };
-  }, [onNextPage, onPrevPage]);
+  }, [onNextPage, onPerPageChanged, onPrevPage]);
 };
 
 export default useViewerKeyMapping;

@@ -1,10 +1,15 @@
 import { connect } from 'react-redux';
-import { displayNextPage, displayPrevPage } from '../actions/viewer';
+import {
+  displayNextPage,
+  displayPrevPage,
+  perPageChanged,
+} from '../actions/viewer';
 import Viewer, { DispatchProps } from '../components/Viewer';
 
 const mapDispatchToProps: DispatchProps = {
   onNextPage: displayNextPage,
   onPrevPage: displayPrevPage,
+  onPerPageChanged: perPageChanged,
 };
 
 export default connect(

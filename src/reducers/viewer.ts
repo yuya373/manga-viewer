@@ -3,6 +3,7 @@ import { Types } from '../actions/types';
 import {
   DisplayNextPageAction,
   DisplayPrevPageAction,
+  ViewerPerPageChangedAction,
 } from '../actions/viewer';
 import { FetchImagesDoneAction } from '../actions/file';
 
@@ -20,7 +21,11 @@ const initialState: ViewerState = {
 
 function setImagesToDisplay(
   state: ViewerState,
-  action: FetchImagesDoneAction | DisplayNextPageAction | DisplayPrevPageAction
+  action:
+    | FetchImagesDoneAction
+    | DisplayNextPageAction
+    | DisplayPrevPageAction
+    | ViewerPerPageChangedAction
 ): ViewerState {
   const { imagesToDisplay } = action.payload;
 
@@ -54,6 +59,12 @@ export default function(
       return setIndex(setImagesToDisplay(state, action), action);
     case Types.FILE_DIALOG_CLOSE:
       return initialState;
+    case Types.VIEWER_PER_PAGE_CHANGED:
+      return {
+        ...state,
+        ...setImagesToDisplay(state, action),
+        perPage: action.payload.perPage,
+      };
     default:
       return state;
   }

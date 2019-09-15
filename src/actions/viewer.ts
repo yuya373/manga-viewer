@@ -76,4 +76,38 @@ export const displayPrevPage = (): ThunkAction<void> => {
   };
 };
 
-export type ViewerActions = DisplayNextPageAction | DisplayPrevPageAction;
+export interface ViewerPerPageChangedAction extends Action {
+  type: Types.VIEWER_PER_PAGE_CHANGED;
+  payload: {
+    perPage: 1 | 2;
+    imagesToDisplay: Array<string>;
+  };
+}
+
+export function perPageChanged(): ThunkAction<void> {
+  return (dispatch, getState) => {
+    const { path, name } = getState().fileDialog;
+    const file = getState().files.byPath[join(path, name)];
+    if (file == null) return;
+
+    const { images } = file;
+    const { index, perPage: currentPerPage } = getState().viewer;
+    const perPage = currentPerPage === 1 ? 2 : 1;
+    const imagesToDisplay = getImagesToDisplay({ index, perPage, images }).map(
+      e => e.url
+    );
+
+    dispatch({
+      type: Types.VIEWER_PER_PAGE_CHANGED,
+      payload: {
+        perPage,
+        imagesToDisplay,
+      },
+    });
+  };
+}
+
+export type ViewerActions =
+  | DisplayNextPageAction
+  | DisplayPrevPageAction
+  | ViewerPerPageChangedAction;
