@@ -18,5 +18,5 @@ export function save(): ThunkAction<void> {
 }
 
 export function load(): Pick<RootState, 'favorites'> {
-  return { favorites: store.get('favorites', {}) };
+  return { favorites: store.get('favorites', undefined) };
 }
