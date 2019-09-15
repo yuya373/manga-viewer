@@ -65,7 +65,7 @@ const Header: React.FC<RouteComponentProps> = ({ history }) => {
 
   return (
     <>
-      <AppBar position="static">
+      <AppBar position="sticky">
         <Toolbar>
           {isBackButtonHidden ? null : (
             <IconButton

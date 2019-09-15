@@ -18,7 +18,7 @@ import useWindowDimension from '../hooks/useWindowDimension';
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     appBar: {
-      position: 'relative',
+      position: 'sticky',
     },
     title: {
       marginLeft: theme.spacing(2),
