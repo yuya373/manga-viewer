@@ -1,4 +1,5 @@
 import { connect } from 'react-redux';
+import { join } from 'path';
 import DirectoryCard, {
   StateProps,
   Props,
@@ -9,7 +10,7 @@ import { toggleDirectoryFavorite } from '../actions/favorite';
 
 const mapStateToProps = (state: RootState, ownProps: Props): StateProps => {
   const { path, name } = ownProps;
-  const isFavorite = Boolean(state.favorites.byPath[`${path}/${name}`]);
+  const isFavorite = Boolean(state.favorites.byPath[join(path, name)]);
 
   return {
     isFavorite,

@@ -9,6 +9,7 @@ import IconButton from '@material-ui/core/IconButton';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
 import { makeStyles } from '@material-ui/styles';
+import { join } from 'path';
 import Folder from '../folder.svg';
 
 const mediaWidth = 174;
@@ -50,7 +51,7 @@ const DirectoryCard: React.FC<Props & StateProps & DispatchProps> = ({
 
   return (
     <Card className={classes.card}>
-      <CardActionArea onClick={() => onPress(`${path}/${name}`)}>
+      <CardActionArea onClick={() => onPress(join(path, name))}>
         <CardMedia className={classes.media} image={Folder} title={name} />
         <CardContent>
           <Typography gutterBottom variant="h5" component="h2">
@@ -59,7 +60,7 @@ const DirectoryCard: React.FC<Props & StateProps & DispatchProps> = ({
         </CardContent>
       </CardActionArea>
       <CardActions>
-        <IconButton onClick={() => onPressFavorite(`${path}/${name}`)}>
+        <IconButton onClick={() => onPressFavorite(join(path, name))}>
           {isFavorite ? <FavoriteIcon /> : <FavoriteBorderIcon />}
         </IconButton>
       </CardActions>

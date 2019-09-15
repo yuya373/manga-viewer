@@ -11,6 +11,7 @@ import Slide from '@material-ui/core/Slide';
 // eslint-disable-next-line import/no-unresolved
 import { TransitionProps } from '@material-ui/core/transitions/transition';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import { join } from 'path';
 import ViewerContainer from '../containers/ViewerContainer';
 import useWindowDimension from '../hooks/useWindowDimension';
 
@@ -59,7 +60,7 @@ const FileDialog: React.FC<Props & DispatchProps> = ({
   onMouseLeave,
 }) => {
   useEffect(() => {
-    fetchImages(`${path}/${name}`);
+    fetchImages(join(path, name));
   }, [path, name, fetchImages]);
 
   const [width, setWidth] = useState(window.innerWidth);

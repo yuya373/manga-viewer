@@ -6,6 +6,7 @@ import { makeStyles, createStyles } from '@material-ui/styles';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Container from '@material-ui/core/Container';
 import { Theme } from '@material-ui/core';
+import { join } from 'path';
 import { fetchEntries } from '../actions/directory';
 import { deserializePath, serializePath } from '../utils';
 import { headerTitleChanged, headerDisplayBackButton } from '../actions/header';
@@ -78,7 +79,7 @@ const EntryList: React.FC<RouteComponentProps<Params>> = ({
 
   const onPressDirectoryCard = useCallback(
     (deserializedPath: string) => {
-      history.push(`/entryList/${serializePath(deserializedPath)}`);
+      history.push(join('/entryList', serializePath(deserializedPath)));
     },
     [history]
   );

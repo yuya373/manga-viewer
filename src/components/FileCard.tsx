@@ -9,6 +9,7 @@ import IconButton from '@material-ui/core/IconButton';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
 import { makeStyles } from '@material-ui/styles';
+import { join } from 'path';
 import preloadImg from '../preload.svg';
 
 const mediaWidth = 174;
@@ -51,7 +52,7 @@ const FileCard: React.FC<Props & StateProps & DispatchProps> = ({
   onPressFavorite,
 }) => {
   useEffect(() => {
-    fetchThumbnail(`${path}/${name}`);
+    fetchThumbnail(join(path, name));
   }, [path, name, fetchThumbnail]);
 
   const classes = useStyles();
@@ -71,7 +72,7 @@ const FileCard: React.FC<Props & StateProps & DispatchProps> = ({
         </CardContent>
       </CardActionArea>
       <CardActions>
-        <IconButton onClick={() => onPressFavorite(`${path}/${name}`)}>
+        <IconButton onClick={() => onPressFavorite(join(path, name))}>
           {isFavorite ? <FavoriteIcon /> : <FavoriteBorderIcon />}
         </IconButton>
         <IconButton />

@@ -1,4 +1,5 @@
 import { Action } from 'redux';
+import { join } from 'path';
 import { Types } from './types';
 import { ThunkAction } from '.';
 import { getImagesToDisplay } from '../utils/viewer';
@@ -14,7 +15,7 @@ export interface DisplayNextPageAction extends Action {
 export const displayNextPage = (): ThunkAction<void> => {
   return (dispatch, getState) => {
     const { path, name } = getState().fileDialog;
-    const file = getState().files.byPath[`${path}/${name}`];
+    const file = getState().files.byPath[join(path, name)];
     if (file == null) return;
 
     const { images } = file;
@@ -52,7 +53,7 @@ export interface DisplayPrevPageAction extends Action {
 export const displayPrevPage = (): ThunkAction<void> => {
   return (dispatch, getState) => {
     const { path, name } = getState().fileDialog;
-    const file = getState().files.byPath[`${path}/${name}`];
+    const file = getState().files.byPath[join(path, name)];
     if (file == null) return;
 
     const { images } = file;

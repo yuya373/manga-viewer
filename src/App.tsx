@@ -4,6 +4,7 @@ import { BrowserRouter, Route, Redirect } from 'react-router-dom';
 import * as os from 'os';
 import { createMuiTheme } from '@material-ui/core';
 import { ThemeProvider } from '@material-ui/styles';
+import { join } from 'path';
 import Header from './components/Header';
 import EntryList from './components/EntryList';
 import { serializePath } from './utils';
@@ -33,7 +34,7 @@ const App: React.FC = () => {
           <Route path="/" component={Header} />
           <Route path="/entryList/:serializedPath+" component={EntryList} />
           <Route path="/favoriteList" component={FavoriteListContainer} />
-          <Redirect path="/" to={`/entryList/${serializePath(homedir)}`} />
+          <Redirect path="/" to={join('/entryList', serializePath(homedir))} />
         </BrowserRouter>
       </ThemeProvider>
     </>

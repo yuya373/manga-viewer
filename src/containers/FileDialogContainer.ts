@@ -1,4 +1,5 @@
 import { connect } from 'react-redux';
+import { join } from 'path';
 import { RootState } from '../reducers';
 import {
   fileDialogClose,
@@ -10,7 +11,7 @@ import { fetchImages } from '../actions/file';
 
 const mapStateToProps = (state: RootState): Props => {
   const { isOpen, name, path, isAppBarHidden } = state.fileDialog;
-  const file = state.files.byPath[`${path}/${name}`];
+  const file = state.files.byPath[join(path, name)];
   const isLoading = file ? !file.isLoaded : true;
 
   return {

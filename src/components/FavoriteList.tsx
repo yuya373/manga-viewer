@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { VirtuosoGrid } from 'react-virtuoso';
 import { RouteComponentProps } from 'react-router';
+import { join } from 'path';
 import { useStyles, HEADER_HEIGHT } from './EntryList';
 import useWindowDimension from '../hooks/useWindowDimension';
 import { serializePath } from '../utils';
@@ -33,7 +34,7 @@ const FavoriteList: React.FC<
   const onPressDirectory = useCallback(
     (deserializedPath: string) => {
       const path = serializePath(deserializedPath);
-      history.push(`/entryList/${path}`);
+      history.push(join('/entryList', path));
     },
     [history]
   );

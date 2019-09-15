@@ -9,6 +9,7 @@ import { useSelector } from 'react-redux';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { RouteComponentProps } from 'react-router';
 import * as os from 'os';
+import { join } from 'path';
 import { RootState } from '../reducers';
 import Drawer from './Drawer';
 import { serializePath } from '../utils';
@@ -52,7 +53,7 @@ const Header: React.FC<RouteComponentProps> = ({ history }) => {
 
   const onPressHome = useCallback(() => {
     setIsDrawerOpen(false);
-    history.push(`/entryList/${serializePath(homedir)}`);
+    history.push(join('/entryList', serializePath(homedir)));
   }, [history]);
 
   const onPressFavorite = useCallback(() => {

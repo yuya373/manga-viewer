@@ -1,4 +1,5 @@
 import { connect } from 'react-redux';
+import { join } from 'path';
 import { RootState } from '../reducers';
 import FileCard, {
   Props,
@@ -11,8 +12,8 @@ import { toggleFavorite } from '../actions/favorite';
 
 const mapStateToProps = (state: RootState, ownProps: Props): StateProps => {
   const { path, name } = ownProps;
-  const thumbnail = state.thumbnails.byPath[`${path}/${name}`];
-  const isFavorite = Boolean(state.favorites.byPath[`${path}/${name}`]);
+  const thumbnail = state.thumbnails.byPath[join(path, name)];
+  const isFavorite = Boolean(state.favorites.byPath[join(path, name)]);
 
   return {
     thumbnail,
