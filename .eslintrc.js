@@ -29,6 +29,8 @@ module.exports = {
   rules: {
     "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx", ".tsx"] }],
     "import/prefer-default-export": "off",
+    "react/state-in-constructor": ["error", "never"],
+    "react/jsx-props-no-spreading": "off",
   },
   settings: {
     'import/resolver': {

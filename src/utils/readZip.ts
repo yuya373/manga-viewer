@@ -1,7 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore
 import * as StreamZip from 'node-stream-zip';
-import { ImageEntry } from '../types';
+import { ImageEntry, sortByName } from '../types';
 
 function isImageEntry(entry: any): boolean {
   return (
@@ -49,7 +49,7 @@ export function readAllImages(file: string): Promise<Array<ImageEntry>> {
     });
     zip.on('error', reject);
 
-    const images: ImageEntry[] = [];
+    const images: Array<ImageEntry> = [];
     zip.on('entry', (entry: any) => {
       if (isImageEntry) {
         const image = buildImageEntry(zip, entry);
@@ -59,7 +59,7 @@ export function readAllImages(file: string): Promise<Array<ImageEntry>> {
 
     zip.on('ready', () => {
       zip.close();
-      resolve(images);
+      resolve(images.sort(sortByName));
     });
   });
 }

@@ -13,6 +13,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchThumbnail } from '../actions/file';
 import { RootState } from '../reducers';
 import preloadImg from '../preload.svg';
+import { fileDialogOpen } from '../actions/fileDialog';
 
 const mediaWidth = 174;
 const mediaRatio = 1.4;
@@ -43,11 +44,15 @@ const FileCard: React.FC<Props> = ({ path, name }) => {
     return state.thumbnails.byPath[`${path}/${name}`];
   });
 
+  const onPress = () => {
+    dispatch(fileDialogOpen({ path, name }));
+  };
+
   const classes = useStyles();
 
   return (
     <Card className={classes.card}>
-      <CardActionArea>
+      <CardActionArea onClick={onPress}>
         <CardMedia
           className={classes.media}
           image={thumbnail || preloadImg}

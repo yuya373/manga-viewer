@@ -7,6 +7,7 @@ import { ThemeProvider } from '@material-ui/styles';
 import Header from './components/Header';
 import EntryList from './components/EntryList';
 import { serializePath } from './utils';
+import FileDialogContainer from './containers/FileDialogContainer';
 
 const homedir = os.homedir();
 
@@ -18,6 +19,7 @@ const App: React.FC = () => {
       <CssBaseline />
       <ThemeProvider theme={theme}>
         <Header />
+        <FileDialogContainer />
         <BrowserRouter>
           <Route path="/entryList/:serializedPath+" component={EntryList} />
           <Redirect path="/" to={`/entryList/${serializePath(homedir)}`} />
