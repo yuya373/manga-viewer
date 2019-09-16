@@ -12,6 +12,8 @@ import Slide from '@material-ui/core/Slide';
 import { TransitionProps } from '@material-ui/core/transitions/transition';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { join } from 'path';
+import FavoriteIcon from '@material-ui/icons/Favorite';
+import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
 import ViewerContainer from '../containers/ViewerContainer';
 import useWindowDimension from '../hooks/useWindowDimension';
 
@@ -39,6 +41,7 @@ export type Props = {
   isAppBarHidden: boolean;
   path: string;
   name: string;
+  isFavorite?: boolean;
 };
 
 type DispatchProps = {
@@ -46,6 +49,7 @@ type DispatchProps = {
   fetchImages: (path: string) => void;
   onMouseOver: () => void;
   onMouseLeave: () => void;
+  onPressFavorite: (path: string) => void;
 };
 
 const FileDialog: React.FC<Props & DispatchProps> = ({
@@ -54,10 +58,12 @@ const FileDialog: React.FC<Props & DispatchProps> = ({
   isAppBarHidden,
   path,
   name,
+  isFavorite,
   onClose,
   fetchImages,
   onMouseOver,
   onMouseLeave,
+  onPressFavorite,
 }) => {
   useEffect(() => {
     fetchImages(join(path, name));
@@ -95,6 +101,14 @@ const FileDialog: React.FC<Props & DispatchProps> = ({
             <Typography variant="h6" className={classes.title}>
               {name}
             </Typography>
+            <IconButton
+              edge="end"
+              aria-label="favorite"
+              color="inherit"
+              onClick={() => onPressFavorite(join(path, name))}
+            >
+              {isFavorite ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+            </IconButton>
           </Toolbar>
         </AppBar>
       </Slide>

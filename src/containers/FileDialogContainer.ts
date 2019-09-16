@@ -8,11 +8,13 @@ import {
 } from '../actions/fileDialog';
 import FileDialog, { Props } from '../components/FileDialog';
 import { fetchImages } from '../actions/file';
+import { toggleFavorite } from '../actions/favorite';
 
 const mapStateToProps = (state: RootState): Props => {
   const { isOpen, name, path, isAppBarHidden } = state.fileDialog;
   const fullpath = join(path, name);
   const isLoading = Boolean(state.files.isLoading[fullpath]);
+  const isFavorite = Boolean(state.favorites.byPath[fullpath]);
 
   return {
     isOpen,
@@ -20,6 +22,7 @@ const mapStateToProps = (state: RootState): Props => {
     isAppBarHidden,
     path,
     name,
+    isFavorite,
   };
 };
 
@@ -28,6 +31,7 @@ const mapDispatchToProps = {
   fetchImages,
   onMouseOver: fileDialogHideAppBar,
   onMouseLeave: fileDialogDisplayAppBar,
+  onPressFavorite: toggleFavorite,
 };
 
 export default connect(
