@@ -5,6 +5,7 @@ import {
   closeFileDialog,
   fileDialogHideAppBar,
   fileDialogDisplayAppBar,
+  deleteFileFromDialog,
 } from '../actions/fileDialog';
 import FileDialog, { Props } from '../components/FileDialog';
 import { fetchImages } from '../actions/file';
@@ -32,6 +33,7 @@ const mapDispatchToProps = {
   onMouseOver: fileDialogHideAppBar,
   onMouseLeave: fileDialogDisplayAppBar,
   onPressFavorite: toggleFavorite,
+  onPressDelete: deleteFileFromDialog,
 };
 
 export default connect(

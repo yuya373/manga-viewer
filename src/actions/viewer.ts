@@ -107,18 +107,18 @@ export function perPageChanged(): ThunkAction<void> {
   };
 }
 
-function displayFile(direction: 'up' | 'down'): ThunkAction<Promise<void>> {
+function displayFile(direction: 'up' | 'down'): ThunkAction<Promise<boolean>> {
   return async (dispatch, getState) => {
     const { path, name } = getState().fileDialog;
     const { files } = getState().viewer;
     const currentIndex = files.findIndex(
       e => e.path === path && e.name === name
     );
-    if (currentIndex < 0) return;
+    if (currentIndex < 0) return false;
 
     const index = direction === 'down' ? currentIndex + 1 : currentIndex - 1;
     const file = files[index];
-    if (file == null) return;
+    if (file == null) return false;
     const { path: nextPath, name: nextName } = file;
 
     dispatch({
@@ -128,18 +128,19 @@ function displayFile(direction: 'up' | 'down'): ThunkAction<Promise<void>> {
         name: nextName,
       },
     });
+    return true;
   };
 }
 
-export function displayNextFile(): ThunkAction<Promise<void>> {
+export function displayNextFile(): ThunkAction<Promise<boolean>> {
   return async dispatch => {
-    await dispatch(displayFile('down'));
+    return dispatch(displayFile('down'));
   };
 }
 
-export function displayPrevFile(): ThunkAction<Promise<void>> {
+export function displayPrevFile(): ThunkAction<Promise<boolean>> {
   return async dispatch => {
-    await dispatch(displayFile('up'));
+    return dispatch(displayFile('up'));
   };
 }
 

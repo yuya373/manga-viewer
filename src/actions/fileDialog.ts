@@ -2,6 +2,8 @@ import { Action } from 'redux';
 import { Types } from './types';
 import { ThunkAction } from '.';
 import { File, isFile } from '../types';
+import { deleteFile } from './file';
+import { displayNextFile, displayPrevFile } from './viewer';
 
 export interface FileDialogOpenAction extends Action {
   type: Types.FILE_DIALOG_OPEN;
@@ -103,6 +105,18 @@ export interface FileDialogFileChangedAction extends Action {
   payload: {
     path: string;
     name: string;
+  };
+}
+
+export function deleteFileFromDialog(path: string): ThunkAction<Promise<void>> {
+  return async (dispatch, getState) => {
+    if (
+      !(await dispatch(displayNextFile())) &&
+      !(await dispatch(displayPrevFile()))
+    ) {
+      dispatch(closeFileDialog());
+    }
+    await dispatch(deleteFile(path));
   };
 }
 

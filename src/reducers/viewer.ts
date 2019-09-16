@@ -1,3 +1,4 @@
+import { join } from 'path';
 import { Actions } from '../actions';
 import { Types } from '../actions/types';
 import {
@@ -94,6 +95,13 @@ export default function(
       return {
         ...state,
         index: 0,
+      };
+    case Types.DELETE_FILE_DONE:
+      return {
+        ...state,
+        files: state.files.filter(
+          e => join(e.path, e.name) !== action.payload.path
+        ),
       };
     default:
       return state;

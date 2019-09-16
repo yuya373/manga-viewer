@@ -14,6 +14,8 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import { join } from 'path';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
+import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
+import DeleteIcon from '@material-ui/icons/Delete';
 import ViewerContainer from '../containers/ViewerContainer';
 import useWindowDimension from '../hooks/useWindowDimension';
 
@@ -42,6 +44,7 @@ export type Props = {
   path: string;
   name: string;
   isFavorite?: boolean;
+  isDeleting?: boolean;
 };
 
 type DispatchProps = {
@@ -50,6 +53,7 @@ type DispatchProps = {
   onMouseOver: () => void;
   onMouseLeave: () => void;
   onPressFavorite: (path: string) => void;
+  onPressDelete: (path: string) => void;
 };
 
 const FileDialog: React.FC<Props & DispatchProps> = ({
@@ -59,11 +63,13 @@ const FileDialog: React.FC<Props & DispatchProps> = ({
   path,
   name,
   isFavorite,
+  isDeleting,
   onClose,
   fetchImages,
   onMouseOver,
   onMouseLeave,
   onPressFavorite,
+  onPressDelete,
 }) => {
   useEffect(() => {
     fetchImages(join(path, name));
@@ -101,6 +107,13 @@ const FileDialog: React.FC<Props & DispatchProps> = ({
             <Typography variant="h6" className={classes.title}>
               {name}
             </Typography>
+            <IconButton
+              aria-label="delete"
+              color="inherit"
+              onClick={() => onPressDelete(join(path, name))}
+            >
+              {isDeleting ? <DeleteIcon /> : <DeleteOutlineIcon />}
+            </IconButton>
             <IconButton
               edge="end"
               aria-label="favorite"
