@@ -6,6 +6,7 @@ import {
   AddDirectoryToFavoriteAction,
   RemoveFromFavoriteAction,
 } from '../actions/favorite';
+import { DeleteFileDoneAction } from '../actions/file';
 
 export type FavoritesState = {
   favorites: Array<string>;
@@ -37,7 +38,7 @@ function addToFavorite(
 
 function removeFromFavorite(
   state: FavoritesState,
-  action: RemoveFromFavoriteAction
+  action: RemoveFromFavoriteAction | DeleteFileDoneAction
 ): FavoritesState {
   const { path } = action.payload;
 
@@ -62,6 +63,7 @@ export default function(
     case Types.ADD_DIRECTORY_TO_FAVORITE:
       return addToFavorite(state, action);
     case Types.REMOVE_FROM_FAVORITE:
+    case Types.DELETE_FILE_DONE:
       return removeFromFavorite(state, action);
     default:
       return state;

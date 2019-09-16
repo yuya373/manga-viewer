@@ -1,7 +1,7 @@
 import { ImageEntry } from '../types';
 import { Actions } from '../actions';
 import { Types } from '../actions/types';
-import { FetchImagesDoneAction } from '../actions/file';
+import { FetchImagesDoneAction, DeleteFileDoneAction } from '../actions/file';
 import { buildNameFromPath } from '../utils';
 
 type FileState = {
@@ -12,6 +12,7 @@ type FileState = {
 
 export type FilesState = {
   byPath: { [path: string]: FileState };
+  isDeleting: { [path: string]: boolean };
 };
 
 const initialFileState: FileState = {
@@ -22,6 +23,7 @@ const initialFileState: FileState = {
 
 const initialState: FilesState = {
   byPath: {},
+  isDeleting: {},
 };
 
 function setImages(
@@ -62,6 +64,39 @@ function updateFile(
   };
 }
 
+function updateIsDeleting(
+  state: FilesState,
+  path: string,
+  value: boolean
+): FilesState {
+  const isDeleting = { ...state.isDeleting };
+
+  if (value) {
+    isDeleting[path] = true;
+  } else {
+    delete isDeleting[path];
+  }
+
+  return {
+    ...state,
+    isDeleting,
+  };
+}
+
+function deleteFile(
+  state: FilesState,
+  action: DeleteFileDoneAction
+): FilesState {
+  const byPath = { ...state.byPath };
+
+  delete byPath[action.payload.path];
+
+  return {
+    ...state,
+    byPath,
+  };
+}
+
 export default function(
   state: FilesState = initialState,
   action: Actions
@@ -86,6 +121,16 @@ export default function(
         ...s,
         isLoaded: true,
       }));
+    case Types.DELETE_FILE_STARTED:
+      return updateIsDeleting(state, action.payload.path, true);
+    case Types.DELETE_FILE_DONE:
+      return updateIsDeleting(
+        deleteFile(state, action),
+        action.payload.path,
+        false
+      );
+    case Types.DELETE_FILE_FAILED:
+      return updateIsDeleting(state, action.payload.path, false);
     default:
       return state;
   }

@@ -1,7 +1,7 @@
 import { Action } from 'redux';
 import { join } from 'path';
 import { ThunkAction } from '.';
-import { readFirstImage, readAllImages } from '../utils';
+import { readFirstImage, readAllImages, unlink } from '../utils';
 import { Types } from './types';
 import { ImageEntry } from '../types';
 import { getImagesToDisplay } from '../utils/viewer';
@@ -144,7 +144,63 @@ export function fetchImages(path: string): ThunkAction<Promise<void>> {
   };
 }
 
+export interface DeleteFileStartedAction extends Action {
+  type: Types.DELETE_FILE_STARTED;
+  payload: {
+    path: string;
+  };
+}
+
+export interface DeleteFileDoneAction extends Action {
+  type: Types.DELETE_FILE_DONE;
+  payload: {
+    path: string;
+  };
+}
+
+export interface DeleteFileFailedAction extends Action {
+  type: Types.DELETE_FILE_FAILED;
+  payload: {
+    path: string;
+    error: Error;
+  };
+}
+
+export function deleteFile(path: string): ThunkAction<Promise<void>> {
+  return async (dispatch, getState) => {
+    if (getState().files.isDeleting[path]) return;
+
+    dispatch({
+      type: Types.DELETE_FILE_STARTED,
+      payload: {
+        path,
+      },
+    });
+
+    try {
+      await unlink(path);
+      dispatch({
+        type: Types.DELETE_FILE_DONE,
+        payload: {
+          path,
+        },
+      });
+    } catch (error) {
+      dispatch({
+        type: Types.DELETE_FILE_FAILED,
+        payload: {
+          path,
+          error,
+        },
+      });
+    }
+  };
+}
+
 export type FileActions =
+  | DeleteFileStartedAction
+  | DeleteFileDoneAction
+  | DeleteFileFailedAction
   | FetchImagesStartedAction
   | FetchImagesDoneAction
   | FetchImagesFailedAction

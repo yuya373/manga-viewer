@@ -1,7 +1,9 @@
+import { dirname, basename } from 'path';
 import { Actions } from '../actions';
 import { Directory, createDirectory } from '../types';
 import { Types } from '../actions/types';
 import { FetchEntriesDoneAction } from '../actions/directory';
+import { DeleteFileDoneAction } from '../actions/file';
 
 export type DirectoriesState = {
   byPath: { [path: string]: Directory };
@@ -51,6 +53,29 @@ function setIsLoading(
   };
 }
 
+function removeFileFromDirectory(
+  state: DirectoriesState,
+  action: DeleteFileDoneAction
+): DirectoriesState {
+  const { path } = action.payload;
+  const dirName = dirname(path);
+
+  const directory = state.byPath[dirName];
+  if (directory == null) return state;
+  const fileName = basename(path);
+
+  return {
+    ...state,
+    byPath: {
+      ...state.byPath,
+      [dirName]: {
+        ...directory,
+        entries: directory.entries.filter(e => e.name !== fileName),
+      },
+    },
+  };
+}
+
 export default function(
   state: DirectoriesState = initialState,
   action: Actions
@@ -62,6 +87,8 @@ export default function(
       return setDirectory(state, action);
     case Types.FETCH_ENTRIES_FAILED:
       return setIsLoading(state, action.meta.path, false);
+    case Types.DELETE_FILE_DONE:
+      return removeFileFromDirectory(state, action);
     default:
       return state;
   }
