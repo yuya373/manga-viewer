@@ -53,23 +53,6 @@ function setImages(
   };
 }
 
-function updateFile(
-  state: FilesState,
-  path: string,
-  updater: (file: FileState) => FileState
-): FilesState {
-  const file = state.byPath[path];
-  if (file == null) return state;
-
-  return {
-    ...state,
-    byPath: {
-      ...state.byPath,
-      [path]: updater(file),
-    },
-  };
-}
-
 function updateIsDeleting(
   state: FilesState,
   path: string,
