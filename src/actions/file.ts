@@ -1,11 +1,14 @@
 import { Action } from 'redux';
 import { join } from 'path';
 import { ThunkAction } from '.';
-import { readFirstImage, readAllImages, unlink } from '../utils';
+import { readFirstImage, unlink } from '../utils';
 import { Types } from './types';
 import { ImageEntry } from '../types';
 import { getImagesToDisplay } from '../utils/viewer';
 import { isFavorite, removeFromFavorite } from './favorite';
+import ReadAllImagesWorker, {
+  OutgoingMessage,
+} from '../workers/readAllImages.worker';
 
 export interface FetchThumbnailStartedAction extends Action {
   type: Types.FETCH_THUMBNAIL_STARTED;
@@ -95,10 +98,13 @@ const fetchImagesStarted = (path: string): FetchImagesStartedAction => ({
   payload: { path },
 });
 
-const fetchImageFailed = (
-  path: string,
-  error: Error
-): FetchImagesFailedAction => ({
+const fetchImageFailed = ({
+  path,
+  error,
+}: {
+  path: string;
+  error: Error;
+}): FetchImagesFailedAction => ({
   type: Types.FETCH_IMAGES_FAILED,
   payload: {
     path,
@@ -106,27 +112,14 @@ const fetchImageFailed = (
   },
 });
 
-export function fetchImages(path: string): ThunkAction<Promise<void>> {
-  return async (dispatch, getState) => {
-    if (getState().files.isLoading[path]) return;
-
-    dispatch(fetchImagesStarted(path));
-
-    const file = getState().files.byPath[path];
-    if (file == null) return;
-
-    let images: Array<ImageEntry>;
-    if (file.isLoaded) {
-      images = file.images;
-    } else {
-      try {
-        images = await readAllImages(path);
-      } catch (err) {
-        dispatch(fetchImageFailed(path, err));
-        return;
-      }
-    }
-
+function fetchImagesSuccess({
+  path,
+  images,
+}: {
+  path: string;
+  images: Array<ImageEntry>;
+}): ThunkAction<void> {
+  return (dispatch, getState) => {
     const state = getState();
     const { perPage, index } = state.viewer;
     const { fileDialog } = state;
@@ -147,6 +140,36 @@ export function fetchImages(path: string): ThunkAction<Promise<void>> {
         },
       });
     });
+  };
+}
+
+const worker = new ReadAllImagesWorker();
+
+export function fetchImages(path: string): ThunkAction<Promise<void>> {
+  return async (dispatch, getState) => {
+    if (getState().files.isLoading[path]) return;
+
+    dispatch(fetchImagesStarted(path));
+
+    const file = getState().files.byPath[path];
+    if (file == null) return;
+
+    if (file.isLoaded) {
+      const { images } = file;
+      dispatch(fetchImagesSuccess({ path, images }));
+    } else {
+      worker.onmessage = (ev: { data: OutgoingMessage }) => {
+        const { data } = ev;
+        if (data.success) {
+          const { payload } = data;
+          dispatch(fetchImagesSuccess(payload));
+        } else {
+          const { payload } = data;
+          dispatch(fetchImageFailed(payload));
+        }
+      };
+      worker.postMessage({ path });
+    }
   };
 }
 
