@@ -5,6 +5,7 @@ import { readFirstImage, readAllImages, unlink } from '../utils';
 import { Types } from './types';
 import { ImageEntry } from '../types';
 import { getImagesToDisplay } from '../utils/viewer';
+import { isFavorite, removeFromFavorite } from './favorite';
 
 export interface FetchThumbnailStartedAction extends Action {
   type: Types.FETCH_THUMBNAIL_STARTED;
@@ -184,6 +185,9 @@ export function deleteFile(path: string): ThunkAction<Promise<void>> {
 
     try {
       await unlink(path);
+      if (dispatch(isFavorite(path))) {
+        dispatch(removeFromFavorite(path));
+      }
       dispatch({
         type: Types.DELETE_FILE_DONE,
         payload: {

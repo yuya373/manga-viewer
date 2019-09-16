@@ -4,6 +4,12 @@ import { Directory, File, createFile, createDirectory } from '../types';
 import { ThunkAction } from '.';
 import { save } from './store';
 
+export function isFavorite(path: string): ThunkAction<boolean> {
+  return (_dispatch, getState) => {
+    return Boolean(getState().favorites.byPath[path]);
+  };
+}
+
 export interface AddFileToFavoriteAction extends Action {
   type: Types.ADD_FILE_TO_FAVORITE;
   payload: {
@@ -12,13 +18,18 @@ export interface AddFileToFavoriteAction extends Action {
   };
 }
 
-export const addFileToFavorite = (path: string): AddFileToFavoriteAction => ({
-  type: Types.ADD_FILE_TO_FAVORITE,
-  payload: {
-    path,
-    entry: createFile({ entry: path }),
-  },
-});
+function addFileToFavorite(path: string): ThunkAction<void> {
+  return dispatch => {
+    dispatch({
+      type: Types.ADD_FILE_TO_FAVORITE,
+      payload: {
+        path,
+        entry: createFile({ entry: path }),
+      },
+    });
+    dispatch(save());
+  };
+}
 
 export interface AddDirectoryToFavoriteAction extends Action {
   type: Types.ADD_DIRECTORY_TO_FAVORITE;
@@ -28,15 +39,18 @@ export interface AddDirectoryToFavoriteAction extends Action {
   };
 }
 
-export const addDirectoryToFavorite = (
-  path: string
-): AddDirectoryToFavoriteAction => ({
-  type: Types.ADD_DIRECTORY_TO_FAVORITE,
-  payload: {
-    path,
-    entry: createDirectory({ entry: path }),
-  },
-});
+function addDirectoryToFavorite(path: string): ThunkAction<void> {
+  return dispatch => {
+    dispatch({
+      type: Types.ADD_DIRECTORY_TO_FAVORITE,
+      payload: {
+        path,
+        entry: createDirectory({ entry: path }),
+      },
+    });
+    dispatch(save());
+  };
+}
 
 export interface RemoveFromFavoriteAction extends Action {
   type: Types.REMOVE_FROM_FAVORITE;
@@ -45,23 +59,25 @@ export interface RemoveFromFavoriteAction extends Action {
   };
 }
 
-export const removeFromFavorite = (path: string): RemoveFromFavoriteAction => ({
-  type: Types.REMOVE_FROM_FAVORITE,
-  payload: {
-    path,
-  },
-});
+export function removeFromFavorite(path: string): ThunkAction<void> {
+  return dispatch => {
+    dispatch({
+      type: Types.REMOVE_FROM_FAVORITE,
+      payload: {
+        path,
+      },
+    });
+    dispatch(save());
+  };
+}
 
 export function toggleFavorite(path: string, isFile = true): ThunkAction<void> {
   return (dispatch, getState) => {
-    const isFavorite = Boolean(getState().favorites.byPath[path]);
-
     const addAction = isFile ? addFileToFavorite : addDirectoryToFavorite;
-    const action = isFavorite ? removeFromFavorite : addAction;
+    const action = dispatch(isFavorite(path)) ? removeFromFavorite : addAction;
 
     requestAnimationFrame(() => {
       dispatch(action(path));
-      dispatch(save());
     });
   };
 }
