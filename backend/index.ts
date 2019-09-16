@@ -2,10 +2,13 @@ import { app, BrowserWindow } from 'electron';
 import { join } from 'path';
 import installExtension, {
   REACT_DEVELOPER_TOOLS,
-  REDUX_DEVTOOLS
+  REDUX_DEVTOOLS,
 } from 'electron-devtools-installer';
+import unhandled from 'electron-unhandled';
 
-const isProduction = process.env.NODE_ENV === 'production';
+unhandled();
+
+const isProduction = app.isPackaged || process.env.NODE_ENV === 'production';
 
 let win: BrowserWindow | null = null;
 
@@ -15,12 +18,12 @@ function createWindow() {
     width: 800,
     height: 600,
     webPreferences: {
-      nodeIntegration: true
-    }
+      nodeIntegration: true,
+    },
   });
 
   if (isProduction) {
-    win.loadFile(join(__dirname, '..', 'build', 'index.html'));
+    win.loadFile(join(__dirname, 'index.html'));
   } else {
     win.loadURL('http://localhost:3000');
   }

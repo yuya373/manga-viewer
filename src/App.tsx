@@ -1,6 +1,6 @@
 import React from 'react';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import { BrowserRouter, Route, Redirect } from 'react-router-dom';
+import { HashRouter, Route, Redirect } from 'react-router-dom';
 import * as os from 'os';
 import { createMuiTheme } from '@material-ui/core';
 import { ThemeProvider } from '@material-ui/styles';
@@ -30,12 +30,12 @@ const App: React.FC = () => {
       <CssBaseline />
       <ThemeProvider theme={theme}>
         <FileDialogContainer />
-        <BrowserRouter>
+        <HashRouter>
           <Route path="/" component={Header} />
           <Route path="/entryList/:serializedPath+" component={EntryList} />
           <Route path="/favoriteList" component={FavoriteListContainer} />
           <Redirect path="/" to={join('/entryList', serializePath(homedir))} />
-        </BrowserRouter>
+        </HashRouter>
       </ThemeProvider>
     </>
   );

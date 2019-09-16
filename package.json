@@ -2,14 +2,16 @@
   "name": "mv",
   "version": "0.1.0",
   "private": true,
-  "homepage": ".",
+  "homepage": "./",
   "dependencies": {
     "@material-ui/core": "^4.4.1",
     "@material-ui/icons": "^4.4.1",
     "@material-ui/styles": "^4.4.1",
     "customize-cra": "^0.6.0",
     "electron": "^6.0.7",
+    "electron-devtools-installer": "^2.2.4",
     "electron-store": "^5.0.0",
+    "electron-unhandled": "^3.0.0",
     "node-stream-zip": "^1.8.2",
     "npm-run-all": "^4.1.5",
     "react": "^16.9.0",
@@ -24,19 +26,23 @@
     "redux-thunk": "^2.3.0",
     "typescript": "3.5"
   },
+  "main": "./index.js",
   "scripts": {
     "test": "react-app-rewired test",
     "eject": "react-app-rewired eject",
     "build": "run-p build:*",
-    "build:backend": "cd backend && tsc",
+    "build:backend": "webpack-cli --config webpack.backend.js",
     "build:react": "react-app-rewired build",
-    "electron": "electron ./build-backend",
+    "electron": "electron ./build",
     "start-prod": "NODE_ENV=production run-s build electron",
     "start": "run-p watch:*",
     "watch:electron": "electron .",
     "watch:react": "BROWSER=none react-app-rewired start",
     "lint": "eslint './src/**/*.{js,ts,tsx}'",
-    "lint:fix": "eslint --fix './src/**/*.{js,ts,tsx}'"
+    "lint:fix": "eslint --fix './src/**/*.{js,ts,tsx}'",
+    "package": "NODE_ENV=production run-s build package:*",
+    "package:copy": "cp ./package.json ./build/package.json",
+    "package:electron": "electron-packager build MangaViewer --platform=darwin --arc=x64 --overwrite=true --out=release"
   },
   "browserslist": {
     "production": [
@@ -61,7 +67,7 @@
     "@types/react-router-dom": "^4.3.5",
     "@typescript-eslint/eslint-plugin": "^2.1.0",
     "@typescript-eslint/parser": "^2.1.0",
-    "electron-devtools-installer": "^2.2.4",
+    "electron-packager": "^14.0.6",
     "eslint": "6.3.0",
     "eslint-config-airbnb": "18.0.1",
     "eslint-config-prettier": "^6.2.0",
@@ -74,8 +80,10 @@
     "husky": "^3.0.5",
     "lint-staged": "^9.2.5",
     "prettier": "^1.18.2",
+    "ts-loader": "^6.1.0",
     "ts-node": "^8.3.0",
-    "ts-node-dev": "^1.0.0-pre.42"
+    "ts-node-dev": "^1.0.0-pre.42",
+    "webpack-cli": "^3.3.8"
   },
   "husky": {
     "hooks": {
