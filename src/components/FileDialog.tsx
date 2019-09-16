@@ -72,8 +72,9 @@ const FileDialog: React.FC<Props & DispatchProps> = ({
   onPressDelete,
 }) => {
   useEffect(() => {
+    if (!isOpen) return;
     fetchImages(join(path, name));
-  }, [path, name, fetchImages]);
+  }, [path, name, fetchImages, isOpen]);
 
   const [width, setWidth] = useState(window.innerWidth);
   const [height, setHeight] = useState(window.innerHeight);
