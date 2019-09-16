@@ -1,7 +1,11 @@
 import { ImageEntry } from '../types';
 import { Actions } from '../actions';
 import { Types } from '../actions/types';
-import { FetchImagesDoneAction, DeleteFileDoneAction } from '../actions/file';
+import {
+  FetchImagesDoneAction,
+  DeleteFileDoneAction,
+  FetchImagesStartedAction,
+} from '../actions/file';
 import { buildNameFromPath } from '../utils';
 
 type FileState = {
@@ -13,6 +17,7 @@ type FileState = {
 export type FilesState = {
   byPath: { [path: string]: FileState };
   isDeleting: { [path: string]: boolean };
+  isLoading: { [path: string]: boolean };
 };
 
 const initialFileState: FileState = {
@@ -24,6 +29,7 @@ const initialFileState: FileState = {
 const initialState: FilesState = {
   byPath: {},
   isDeleting: {},
+  isLoading: {},
 };
 
 function setImages(
@@ -97,30 +103,64 @@ function deleteFile(
   };
 }
 
+function updateIsLoading(
+  state: FilesState,
+  path: string,
+  value: boolean
+): FilesState {
+  const isLoading = { ...state.isLoading };
+
+  if (value) {
+    isLoading[path] = true;
+  } else {
+    delete isLoading[path];
+  }
+
+  return {
+    ...state,
+    isLoading,
+  };
+}
+
+function initFile(
+  state: FilesState,
+  action: FetchImagesStartedAction
+): FilesState {
+  const { path } = action.payload;
+
+  if (state.byPath[path] != null) return state;
+  const byPath = { ...state.byPath };
+
+  byPath[path] = {
+    ...initialFileState,
+    name: buildNameFromPath(path),
+  };
+
+  return {
+    ...state,
+    byPath,
+  };
+}
+
 export default function(
   state: FilesState = initialState,
   action: Actions
 ): FilesState {
   switch (action.type) {
     case Types.FETCH_IMAGES_STARTED:
-      return {
-        ...state,
-        byPath: {
-          ...state.byPath,
-          [action.payload.path]: {
-            ...initialFileState,
-            name: buildNameFromPath(action.payload.path),
-            isLoaded: false,
-          },
-        },
-      };
+      return updateIsLoading(
+        initFile(state, action),
+        action.payload.path,
+        true
+      );
     case Types.FETCH_IMAGES_DONE:
-      return setImages(state, action);
+      return updateIsLoading(
+        setImages(state, action),
+        action.payload.path,
+        false
+      );
     case Types.FETCH_IMAGES_FAILED:
-      return updateFile(state, action.payload.path, s => ({
-        ...s,
-        isLoaded: true,
-      }));
+      return updateIsLoading(state, action.payload.path, false);
     case Types.DELETE_FILE_STARTED:
       return updateIsDeleting(state, action.payload.path, true);
     case Types.DELETE_FILE_DONE:

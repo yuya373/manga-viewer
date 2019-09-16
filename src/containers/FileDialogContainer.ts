@@ -11,8 +11,8 @@ import { fetchImages } from '../actions/file';
 
 const mapStateToProps = (state: RootState): Props => {
   const { isOpen, name, path, isAppBarHidden } = state.fileDialog;
-  const file = state.files.byPath[join(path, name)];
-  const isLoading = file ? !file.isLoaded : true;
+  const fullpath = join(path, name);
+  const isLoading = Boolean(state.files.isLoading[fullpath]);
 
   return {
     isOpen,

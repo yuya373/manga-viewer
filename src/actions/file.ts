@@ -107,12 +107,17 @@ const fetchImageFailed = (
 
 export function fetchImages(path: string): ThunkAction<Promise<void>> {
   return async (dispatch, getState) => {
+    if (getState().files.isLoading[path]) return;
+
+    dispatch(fetchImagesStarted(path));
+
     const file = getState().files.byPath[path];
+    if (file == null) return;
+
     let images: Array<ImageEntry>;
-    if (file && file.isLoaded) {
+    if (file.isLoaded) {
       images = file.images;
     } else {
-      dispatch(fetchImagesStarted(path));
       try {
         images = await readAllImages(path);
       } catch (err) {
