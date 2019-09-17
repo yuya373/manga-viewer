@@ -15,17 +15,42 @@ function isImageEntry(entry: any): boolean {
   );
 }
 
-function buildImageEntry(zip: any, entry: any): ImageEntry {
-  const fileType = entry.name.endsWith('png') ? 'png' : 'jpeg';
-  const buf = zip.entryDataSync(entry);
-  const blob = new Blob([buf], {
-    type: `image/${fileType}`,
-  });
+function buildImageEntry(zip: any, entry: any): Promise<ImageEntry> {
+  return new Promise((resolve, reject) => {
+    const fileType = entry.name.endsWith('png') ? 'png' : 'jpeg';
+    zip.stream(entry, (err: Error, stream: any) => {
+      if (err) {
+        reject(err);
+        return;
+      }
 
-  return {
-    name: entry.name,
-    url: URL.createObjectURL(blob),
-  };
+      stream.on('error', (e: Error) => {
+        reject(e);
+        stream.destroy();
+      });
+
+      const chunks: Array<Buffer> = [];
+      let nread = 0;
+      stream.on('data', (chunk: Buffer) => {
+        chunks.push(chunk);
+        nread += chunk.length;
+      });
+
+      stream.on('end', () => {
+        stream.destroy();
+
+        const buf = Buffer.concat(chunks, nread);
+        const blob = new Blob([buf], {
+          type: `image/${fileType}`,
+        });
+
+        resolve({
+          name: entry.name,
+          url: URL.createObjectURL(blob),
+        });
+      });
+    });
+  });
 }
 
 export function readAllImages(file: string): Promise<Array<ImageEntry>> {
@@ -36,15 +61,17 @@ export function readAllImages(file: string): Promise<Array<ImageEntry>> {
     });
     zip.on('error', reject);
 
-    const images: Array<ImageEntry> = [];
+    const entries: Array<any> = [];
     zip.on('entry', (entry: any) => {
       if (isImageEntry(entry)) {
-        const image = buildImageEntry(zip, entry);
-        images.push(image);
+        entries.push(entry);
       }
     });
 
-    zip.on('ready', () => {
+    zip.on('ready', async () => {
+      const images = await Promise.all(
+        entries.map(async entry => buildImageEntry(zip, entry))
+      );
       zip.close();
       resolve(images.sort(sortByName));
     });
@@ -52,10 +79,33 @@ export function readAllImages(file: string): Promise<Array<ImageEntry>> {
 }
 
 export async function readFirstImage(file: string): Promise<string> {
-  const images = await readAllImages(file);
-  const result = images.shift();
-  images.forEach(e => {
-    URL.revokeObjectURL(e.url);
+  return new Promise((resolve, reject) => {
+    const zip = new StreamZip({
+      file,
+      storeEntries: false,
+    });
+    zip.on('error', reject);
+
+    const entries: Array<any> = [];
+    zip.on('entry', (entry: any) => {
+      if (isImageEntry(entry)) {
+        entries.push(entry);
+      }
+    });
+
+    zip.on('ready', async () => {
+      entries.sort((a, b) => sortByName(a.name, b.name));
+      const entry = entries[0];
+
+      if (entry == null) {
+        zip.close();
+        resolve('');
+        return;
+      }
+
+      const image = await buildImageEntry(zip, entry);
+      zip.close();
+      resolve(image.url);
+    });
   });
-  return result ? result.url : '';
 }

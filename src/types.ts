@@ -12,9 +12,16 @@ export type ImageEntry = {
   url: string;
 };
 
-export function sortByName(a: ImageEntry, b: ImageEntry): -1 | 0 | 1 {
-  const ANumStrings = basename(a.name).match(/\d+/);
-  const BNumStrings = basename(b.name).match(/\d+/);
+export function sortByName(a: ImageEntry, b: ImageEntry): -1 | 0 | 1;
+export function sortByName(a: string, b: string): -1 | 0 | 1;
+export function sortByName(
+  a: ImageEntry | string,
+  b: ImageEntry | string
+): -1 | 0 | 1 {
+  const aName = typeof a === 'string' ? a : a.name;
+  const bName = typeof b === 'string' ? b : b.name;
+  const ANumStrings = basename(aName).match(/\d+/);
+  const BNumStrings = basename(bName).match(/\d+/);
 
   if (ANumStrings !== null && BNumStrings !== null) {
     const ANumStr = ANumStrings[0];
@@ -32,8 +39,8 @@ export function sortByName(a: ImageEntry, b: ImageEntry): -1 | 0 | 1 {
     }
   }
 
-  const aLowerName = a.name.toLowerCase();
-  const bLowerName = a.name.toLowerCase();
+  const aLowerName = aName.toLowerCase();
+  const bLowerName = bName.toLowerCase();
   if (aLowerName < bLowerName) return -1;
   if (aLowerName > bLowerName) return 1;
   return 0;
