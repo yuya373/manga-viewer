@@ -1,7 +1,7 @@
 import { Action } from 'redux';
 import { join } from 'path';
 import { ThunkAction } from '.';
-import { readFirstImage, unlink } from '../utils';
+import { unlink } from '../utils';
 import { Types } from './types';
 import { ImageEntry } from '../types';
 import { getImagesToDisplay } from '../utils/viewer';
@@ -9,6 +9,9 @@ import { isFavorite, removeFromFavorite } from './favorite';
 import ReadAllImagesWorker, {
   OutgoingMessage,
 } from '../workers/readAllImages.worker';
+import ReadThumbnailWorker, {
+  OutgoingMessage as ThumnailOutgoinMessage,
+} from '../workers/readThumbnail.worker';
 
 export interface FetchThumbnailStartedAction extends Action {
   type: Types.FETCH_THUMBNAIL_STARTED;
@@ -33,9 +36,46 @@ export interface FetchThumbnailFailedAction extends Action {
   };
 }
 
+function fetchThumbnailDone({
+  path,
+  thumbnail,
+}: {
+  path: string;
+  thumbnail: string;
+}): FetchThumbnailDoneAction {
+  return {
+    type: Types.FETCH_THUMBNAIL_DONE,
+    payload: {
+      path,
+      thumbnail,
+    },
+  };
+}
+
+function fetchThumbnailFailed({
+  path,
+  error,
+}: {
+  path: string;
+  error: Error;
+}): FetchThumbnailFailedAction {
+  return {
+    type: Types.FETCH_THUMBNAIL_FAILED,
+    payload: {
+      path,
+      error,
+    },
+  };
+}
+
+const thumbnailWorker = new ReadThumbnailWorker();
+
 export function fetchThumbnail(path: string): ThunkAction<Promise<void>> {
   return async (dispatch, getState) => {
     if (getState().thumbnails.isLoading[path]) {
+      return;
+    }
+    if (getState().thumbnails.byPath[path]) {
       return;
     }
 
@@ -46,26 +86,18 @@ export function fetchThumbnail(path: string): ThunkAction<Promise<void>> {
       },
     });
 
-    try {
-      const thumbnail = await readFirstImage(path);
-      requestAnimationFrame(() => {
-        dispatch({
-          type: Types.FETCH_THUMBNAIL_DONE,
-          payload: {
-            path,
-            thumbnail,
-          },
+    thumbnailWorker.onmessage = (ev: { data: ThumnailOutgoinMessage }) => {
+      if (ev.data.success) {
+        const { payload } = ev.data;
+        requestAnimationFrame(() => {
+          dispatch(fetchThumbnailDone(payload));
         });
-      });
-    } catch (err) {
-      dispatch({
-        type: Types.FETCH_THUMBNAIL_FAILED,
-        payload: {
-          path,
-          error: err,
-        },
-      });
-    }
+      } else {
+        const { payload } = ev.data;
+        dispatch(fetchThumbnailFailed(payload));
+      }
+    };
+    thumbnailWorker.postMessage({ path });
   };
 }
 

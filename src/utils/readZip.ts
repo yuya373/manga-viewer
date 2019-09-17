@@ -28,23 +28,6 @@ function buildImageEntry(zip: any, entry: any): ImageEntry {
   };
 }
 
-export function readFirstImage(file: string): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const zip = new StreamZip({
-      file,
-      storeEntries: false,
-    });
-    zip.on('error', reject);
-    zip.on('entry', (entry: any) => {
-      if (isImageEntry(entry)) {
-        const { url } = buildImageEntry(zip, entry);
-        resolve(url);
-        zip.close();
-      }
-    });
-  });
-}
-
 export function readAllImages(file: string): Promise<Array<ImageEntry>> {
   return new Promise((resolve, reject) => {
     const zip = new StreamZip({
@@ -66,4 +49,13 @@ export function readAllImages(file: string): Promise<Array<ImageEntry>> {
       resolve(images.sort(sortByName));
     });
   });
+}
+
+export async function readFirstImage(file: string): Promise<string> {
+  const images = await readAllImages(file);
+  const result = images.shift();
+  images.forEach(e => {
+    URL.revokeObjectURL(e.url);
+  });
+  return result ? result.url : '';
 }
