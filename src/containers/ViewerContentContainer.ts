@@ -6,7 +6,7 @@ const mapStateToProps = (state: RootState): StateProps => {
   const { imagesToDisplay, perPage } = state.viewer;
 
   return {
-    images: imagesToDisplay,
+    imageCount: imagesToDisplay.length,
     perPage,
   };
 };

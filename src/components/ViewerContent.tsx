@@ -1,9 +1,9 @@
 import React from 'react';
 import { Grid } from '@material-ui/core';
-import Canvas from './Canvas';
+import CanvasContainer from '../containers/CanvasContainer';
 
 export type StateProps = {
-  images: Array<string>;
+  imageCount: number;
   perPage: 1 | 2;
 };
 
@@ -13,26 +13,24 @@ type Props = {
 };
 
 const ViewerContent: React.FC<Props & StateProps> = ({
-  images,
+  imageCount,
   width,
   height,
   perPage,
 }) => {
-  const drawCount = Math.min(images.length, perPage);
-
-  const canvases = images.map((e, i) => {
+  const drawCount = Math.min(imageCount, perPage);
+  const canvases = [];
+  for (let i = 0; i < imageCount; i += 1) {
     let justify: 'center' | 'flex-end' | 'flex-start' = 'center';
-    let transformOrigin = 'center';
     let xs: 6 | 12 = 12;
 
     if (drawCount === 2) {
       justify = i === 0 ? 'flex-end' : 'flex-start';
-      transformOrigin = i === 0 ? 'center right' : 'center left';
       xs = 6;
     }
 
-    return (
-      <Grid item xs={xs} key={e}>
+    canvases.push(
+      <Grid item xs={xs} key={i}>
         <Grid
           container
           wrap="nowrap"
@@ -40,16 +38,11 @@ const ViewerContent: React.FC<Props & StateProps> = ({
           alignItems="center"
           justify={justify}
         >
-          <Canvas
-            image={e}
-            width={width / drawCount}
-            height={height}
-            transformOrigin={transformOrigin}
-          />
+          <CanvasContainer i={i} width={width} height={height} />
         </Grid>
       </Grid>
     );
-  });
+  }
 
   return <>{canvases}</>;
 };

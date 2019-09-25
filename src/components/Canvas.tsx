@@ -1,4 +1,8 @@
 import React, { Component, ReactNode } from 'react';
+import RenderImageWorker, {
+  OutgoingMessage,
+  IncomingData,
+} from '../workers/renderImage.worker';
 
 interface Props {
   image: string;
@@ -14,14 +18,16 @@ interface State {
 export default class Canvas extends Component<Props, State> {
   private canvas = React.createRef<HTMLCanvasElement>();
 
-  private image: HTMLImageElement | null = null;
+  private offscreenCanvas: OffscreenCanvas | null = null;
+
+  private worker: any | null = null;
 
   public state = {
     scale: null,
   };
 
   public componentDidMount(): void {
-    this.loadImageToCanvas(this.props);
+    this.renderImage(this.props);
   }
 
   public shouldComponentUpdate(nextProps: Props, nextState: State): boolean {
@@ -47,56 +53,73 @@ export default class Canvas extends Component<Props, State> {
     const { width, height, image } = this.props;
 
     if (image !== prevProps.image) {
-      this.image = null;
-      this.loadImageToCanvas(this.props);
+      this.renderImage(this.props);
       return;
     }
 
     if (prevProps.width !== width || prevProps.height !== height) {
-      this.renderImage();
+      this.renderImage(this.props);
     }
   }
 
-  private loadImageToCanvas = ({ image }: { image: string }): void => {
-    this.image = new Image();
-    this.image.onload = () => {
-      console.log('Load Success. URL: ', image);
-      this.renderImage();
-    };
-    this.image.onerror = ev => {
-      console.error('Load failed. URL: ', image);
-    };
-    this.image.src = image;
-  };
+  public componentWillUnmount(): void {
+    this.offscreenCanvas = null;
+    this.worker.terminate();
+    this.worker = null;
+  }
 
-  private renderImage = (): void => {
-    const { image } = this;
-    if (!image) return;
-
-    if (!this.canvas) return;
-
-    const canvas = this.canvas.current;
-    if (canvas == null) return;
-
-    const ctx = canvas.getContext('2d', {
-      alpha: false,
-    });
-
-    canvas.height = image.height;
-    canvas.width = image.width;
-    if (ctx) {
-      ctx.drawImage(
-        image, // source
-        0,
-        0 // source point (x, y)
-      );
+  private getWorker = (): any => {
+    if (this.worker == null) {
+      this.worker = new RenderImageWorker();
     }
 
+    return this.worker;
+  };
+
+  private isCanvasTransferred = (): boolean => {
+    if (this.offscreenCanvas == null) return false;
+    return true;
+  };
+
+  private transferCanvas = (): OffscreenCanvas => {
+    const canvas = this.canvas.current;
+    if (canvas == null) throw new Error('no current canvas');
+
+    this.offscreenCanvas = canvas.transferControlToOffscreen();
+    return this.offscreenCanvas;
+  };
+
+  private renderImage = ({ image }: { image: string }): void => {
     const { width, height } = this.props;
-    const scaleX = width / image.width;
-    const scaleY = height / image.height;
-    const scaleToFit = Math.min(scaleX, scaleY);
-    this.setState({ scale: scaleToFit });
+    const baseMessage = {
+      image,
+      width,
+      height,
+    };
+    const worker = this.getWorker();
+
+    worker.onmessage = (ev: { data: OutgoingMessage }): void => {
+      if (ev.data.success) {
+        this.setState({ scale: ev.data.scale });
+      } else {
+        throw ev.data.error;
+      }
+    };
+
+    if (this.isCanvasTransferred()) {
+      const message: IncomingData = {
+        ...baseMessage,
+      };
+      this.worker.postMessage(message);
+    } else {
+      const canvas = this.transferCanvas();
+
+      const message: IncomingData = {
+        ...baseMessage,
+        canvas,
+      };
+      worker.postMessage(message, [canvas]);
+    }
   };
 
   public render(): ReactNode {
