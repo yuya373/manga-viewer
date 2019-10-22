@@ -1,14 +1,28 @@
+import { join } from 'path';
 import { Actions } from '../actions';
 import { Types } from '../actions/types';
+import {
+  HitomiScrapeStartedAction,
+  HitomiScrapeDoneAction,
+  HitomiScrapeFailedAction,
+} from '../actions/hitomi';
+import { File } from '../types';
+import { DeleteFileDoneAction } from '../actions/file';
 
 export type HitomiState = {
   url: string;
   isScraping: { [url: string]: boolean };
+  urls: Array<string>;
+  fileByUrl: { [url: string]: File };
+  errorByUrl: { [url: string]: Error };
 };
 
 const initialState: HitomiState = {
   url: '',
   isScraping: {},
+  urls: [],
+  fileByUrl: {},
+  errorByUrl: {},
 };
 
 function setIsScraping(
@@ -30,6 +44,129 @@ function setIsScraping(
   };
 }
 
+function addUrl(
+  state: HitomiState,
+  action: HitomiScrapeStartedAction
+): HitomiState {
+  const { url } = action.payload;
+  const urls = [url].concat(state.urls.filter(e => e !== url));
+
+  return {
+    ...state,
+    urls,
+  };
+}
+
+function setFile(
+  state: HitomiState,
+  action: HitomiScrapeDoneAction
+): HitomiState {
+  const fileByUrl = { ...state.fileByUrl };
+
+  fileByUrl[action.payload.url] = action.payload.file;
+
+  return {
+    ...state,
+    fileByUrl,
+  };
+}
+
+function deleteFile(state: HitomiState, url: string): HitomiState {
+  const fileByUrl = { ...state.fileByUrl };
+
+  delete fileByUrl[url];
+
+  return {
+    ...state,
+    fileByUrl,
+  };
+}
+
+function resetUrl(state: HitomiState): HitomiState {
+  return {
+    ...state,
+    url: '',
+  };
+}
+
+function updateErrorByUrl(
+  state: HitomiState,
+  url: string,
+  error?: Error
+): HitomiState {
+  const errorByUrl = { ...state.errorByUrl };
+
+  if (error) {
+    errorByUrl[url] = error;
+  } else {
+    delete errorByUrl[url];
+  }
+
+  return {
+    ...state,
+    errorByUrl,
+  };
+}
+
+function scrapeStarted(
+  state: HitomiState,
+  action: HitomiScrapeStartedAction
+): HitomiState {
+  const { url } = action.payload;
+  let s = state;
+
+  s = resetUrl(s);
+  s = addUrl(s, action);
+  s = setIsScraping(s, url, true);
+  s = deleteFile(s, url);
+  s = updateErrorByUrl(s, url);
+
+  return s;
+}
+
+function scrapeDone(
+  state: HitomiState,
+  action: HitomiScrapeDoneAction
+): HitomiState {
+  const { url } = action.payload;
+  let s = state;
+
+  s = setIsScraping(s, url, false);
+  s = setFile(s, action);
+
+  return s;
+}
+
+function scrapeFailed(
+  state: HitomiState,
+  action: HitomiScrapeFailedAction
+): HitomiState {
+  const { url, error } = action.payload;
+  let s = state;
+
+  s = setIsScraping(s, url, false);
+  s = updateErrorByUrl(s, url, error);
+
+  return s;
+}
+
+function deleteFileByPath(
+  state: HitomiState,
+  action: DeleteFileDoneAction
+): HitomiState {
+  const { path } = action.payload;
+  const url = Object.keys(state.fileByUrl).find(e => {
+    const file = state.fileByUrl[e];
+    return path === join(file.path, file.name);
+  });
+
+  if (url == null) return state;
+
+  const urls = state.urls.filter(e => e !== url);
+
+  return deleteFile({ ...state, urls }, url);
+}
+
 export default function(
   state: HitomiState = initialState,
   action: Actions
@@ -41,17 +178,13 @@ export default function(
         url: action.payload.url,
       };
     case Types.HITOMI_SCRAPE_STARTED:
-      return setIsScraping(
-        {
-          ...state,
-          url: '',
-        },
-        action.payload.url,
-        true
-      );
+      return scrapeStarted(state, action);
     case Types.HITOMI_SCRAPE_DONE:
+      return scrapeDone(state, action);
     case Types.HITOMI_SCRAPE_FAILED:
-      return setIsScraping(state, action.payload.url, false);
+      return scrapeFailed(state, action);
+    case Types.DELETE_FILE_DONE:
+      return deleteFileByPath(state, action);
     default:
       return state;
   }

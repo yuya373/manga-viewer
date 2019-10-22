@@ -2,23 +2,32 @@ import React, { useEffect } from 'react';
 import { makeStyles } from '@material-ui/styles';
 import { Theme } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
-import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
+import List from '@material-ui/core/List';
+import HitomiListItemContainer from '../containers/HitomiListItemContainer';
 
 const useStyles = makeStyles((theme: Theme) => ({
   container: {
     paddingTop: theme.spacing(2),
     paddingBottom: theme.spacing(2),
   },
-  buttonContainer: {
+  formContainer: {
     display: 'flex',
-    paddingTop: theme.spacing(2),
-    paddingBottom: theme.spacing(2),
+    flexDirection: 'column',
+  },
+  listContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    marginTop: theme.spacing(4),
+  },
+  list: {
+    backgroundColor: theme.palette.background.paper,
   },
 }));
 
 export type StateProps = {
   url: string;
+  urls: Array<string>;
 };
 
 type DispatchProps = {
@@ -30,6 +39,7 @@ type DispatchProps = {
 
 const Hitomi: React.FC<StateProps & DispatchProps> = ({
   url,
+  urls,
   onUrlChanged,
   setHeaderTitle,
   hideHeaderBackButton,
@@ -45,29 +55,36 @@ const Hitomi: React.FC<StateProps & DispatchProps> = ({
     const { value } = e.target;
     onUrlChanged(value);
   };
-  const handleScrapeClicked = () => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     onScrapeClicked();
   };
 
+  const list =
+    urls.length > 0 ? (
+      <List className={classes.list}>
+        {urls.map(e => (
+          <HitomiListItemContainer key={e} url={e} />
+        ))}
+      </List>
+    ) : (
+      <div />
+    );
+
   return (
     <Container className={classes.container} maxWidth="lg">
-      <Container maxWidth="md">
-        <TextField
-          fullWidth
-          placeholder="URL"
-          onChange={handleTextChanged}
-          value={url}
-        />
-
-        <div className={classes.buttonContainer}>
-          <Button
-            disabled={url.length < 1}
-            variant="outlined"
-            onClick={handleScrapeClicked}
-          >
-            Scrape
-          </Button>
-        </div>
+      <Container className={classes.formContainer} maxWidth="md">
+        <form onSubmit={handleSubmit}>
+          <TextField
+            fullWidth
+            placeholder="URL"
+            onChange={handleTextChanged}
+            value={url}
+          />
+        </form>
+      </Container>
+      <Container className={classes.listContainer} maxWidth="md">
+        {list}
       </Container>
     </Container>
   );

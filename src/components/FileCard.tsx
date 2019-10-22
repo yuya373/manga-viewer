@@ -10,9 +10,8 @@ import FavoriteIcon from '@material-ui/icons/Favorite';
 import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
 import { makeStyles } from '@material-ui/styles';
 import { join } from 'path';
-import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
-import DeleteIcon from '@material-ui/icons/Delete';
 import preloadImg from '../preload.svg';
+import DeleteButtonContainer from '../containers/DeleteButtonContainer';
 
 const mediaWidth = 174;
 const mediaRatio = 1.4;
@@ -37,7 +36,6 @@ export type Props = {
 export type StateProps = {
   thumbnail?: string;
   isFavorite?: boolean;
-  isDeleting?: boolean;
 };
 
 export type DispatchProps = {
@@ -48,7 +46,6 @@ export type DispatchProps = {
     fromFavorite?: boolean;
   }) => void;
   onPressFavorite: (path: string) => void;
-  onPressDelete: (path: string) => void;
 };
 
 const FileCard: React.FC<Props & StateProps & DispatchProps> = ({
@@ -57,11 +54,9 @@ const FileCard: React.FC<Props & StateProps & DispatchProps> = ({
   fromFavorite,
   thumbnail,
   isFavorite,
-  isDeleting,
   fetchThumbnail,
   onPress,
   onPressFavorite,
-  onPressDelete,
 }) => {
   useEffect(() => {
     fetchThumbnail(join(path, name));
@@ -84,9 +79,7 @@ const FileCard: React.FC<Props & StateProps & DispatchProps> = ({
         </CardContent>
       </CardActionArea>
       <CardActions>
-        <IconButton onClick={() => onPressDelete(join(path, name))}>
-          {isDeleting ? <DeleteIcon /> : <DeleteOutlineIcon />}
-        </IconButton>
+        <DeleteButtonContainer path={path} name={name} />
         <IconButton onClick={() => onPressFavorite(join(path, name))}>
           {isFavorite ? <FavoriteIcon /> : <FavoriteBorderIcon />}
         </IconButton>

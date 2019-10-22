@@ -12,6 +12,8 @@ import ReadAllImagesWorker, {
 import ReadThumbnailWorker, {
   OutgoingMessage as ThumnailOutgoinMessage,
 } from '../workers/readThumbnail.worker';
+import { displayNextFile, displayPrevFile } from './viewer';
+import { closeFileDialog } from './fileDialog';
 
 export interface FetchThumbnailStartedAction extends Action {
   type: Types.FETCH_THUMBNAIL_STARTED;
@@ -229,6 +231,15 @@ export interface DeleteFileFailedAction extends Action {
 
 export function deleteFile(path: string): ThunkAction<Promise<void>> {
   return async (dispatch, getState) => {
+    if (getState().fileDialog.isOpen) {
+      if (
+        !(await dispatch(displayNextFile())) &&
+        !(await dispatch(displayPrevFile()))
+      ) {
+        dispatch(closeFileDialog());
+      }
+    }
+
     if (getState().files.isDeleting[path]) return;
 
     dispatch({

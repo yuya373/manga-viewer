@@ -8,6 +8,7 @@ import ArchiveImagesWorker, {
   IncomingData,
   OutgoingMessage,
 } from '../workers/archiveImages.worker';
+import { createFile, File } from '../types';
 
 export interface HitomiUrlChangedAction extends Action {
   type: Types.HITOMI_URL_CHANGED;
@@ -41,13 +42,21 @@ export interface HitomiScrapeDoneAction extends Action {
   type: Types.HITOMI_SCRAPE_DONE;
   payload: {
     url: string;
+    file: File;
   };
 }
 
-const scrapeDone = (url: string): HitomiScrapeDoneAction => ({
+const scrapeDone = ({
+  url,
+  file,
+}: {
+  url: string;
+  file: File;
+}): HitomiScrapeDoneAction => ({
   type: Types.HITOMI_SCRAPE_DONE,
   payload: {
     url,
+    file,
   },
 });
 
@@ -124,7 +133,9 @@ export function scrape(): ThunkAction<Promise<void>> {
       worker.onmessage = (ev: { data: OutgoingMessage }) => {
         const { data } = ev;
         if (data.success) {
-          dispatch(scrapeDone(rawUrl));
+          const { location } = data.payload;
+          const file = createFile({ entry: location });
+          dispatch(scrapeDone({ url: data.payload.url, file }));
         } else {
           console.error(data.payload.error);
           dispatch(

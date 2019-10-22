@@ -2,8 +2,6 @@ import { Action } from 'redux';
 import { Types } from './types';
 import { ThunkAction } from '.';
 import { File, isFile } from '../types';
-import { deleteFile } from './file';
-import { displayNextFile, displayPrevFile } from './viewer';
 
 export interface FileDialogOpenAction extends Action {
   type: Types.FILE_DIALOG_OPEN;
@@ -35,15 +33,19 @@ export function openFileDialog({
   path,
   name,
   fromFavorite,
+  fromHitomi,
 }: {
   path: string;
   name: string;
   fromFavorite?: boolean;
+  fromHitomi?: boolean;
 }): ThunkAction<void> {
   return (dispatch, getState) => {
     let files: Array<File>;
     if (fromFavorite) {
       files = Object.values(getState().favorites.byPath).filter(isFile);
+    } else if (fromHitomi) {
+      files = Object.values(getState().hitomi.fileByUrl);
     } else {
       const directory = getState().directories.byPath[path];
       if (directory == null) return;
@@ -105,18 +107,6 @@ export interface FileDialogFileChangedAction extends Action {
   payload: {
     path: string;
     name: string;
-  };
-}
-
-export function deleteFileFromDialog(path: string): ThunkAction<Promise<void>> {
-  return async (dispatch, getState) => {
-    if (
-      !(await dispatch(displayNextFile())) &&
-      !(await dispatch(displayPrevFile()))
-    ) {
-      dispatch(closeFileDialog());
-    }
-    await dispatch(deleteFile(path));
   };
 }
 

@@ -5,10 +5,11 @@ import { urlChanged, scrape } from '../actions/hitomi';
 import { headerTitleChanged, headerHideBackButton } from '../actions/header';
 
 const mapStateToProps = (state: RootState): StateProps => {
-  const { url } = state.hitomi;
+  const { url, urls } = state.hitomi;
 
   return {
     url,
+    urls,
   };
 };
 
