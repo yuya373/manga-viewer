@@ -1,4 +1,5 @@
 const path = require('path');
+const webpack = require('webpack');
 
 module.exports = {
   mode: 'production',
@@ -24,4 +25,10 @@ module.exports = {
     __dirname: false,
     __filename: false,
   },
+  plugins: [
+    new webpack.EnvironmentPlugin({
+      REACT_APP_ARCHIVE_URL_PARTS: process.env.REACT_APP_ARCHIVE_URL_PARTS,
+      REACT_APP_ARCHIVE_URL_REFER: process.env.REACT_APP_ARCHIVE_URL_REFER,
+    }),
+  ],
 };
