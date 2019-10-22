@@ -4,6 +4,10 @@ import { basename } from 'path';
 import { Types } from './types';
 import { ThunkAction } from '.';
 import { findChromium } from '../utils/findChromium';
+import ArchiveImagesWorker, {
+  IncomingData,
+  OutgoingMessage,
+} from '../workers/archiveImages.worker';
 
 export interface HitomiUrlChangedAction extends Action {
   type: Types.HITOMI_URL_CHANGED;
@@ -81,6 +85,7 @@ async function getBrowser(): Promise<Browser> {
 
   return browser;
 }
+const worker = new ArchiveImagesWorker();
 
 export function scrape(): ThunkAction<Promise<void>> {
   return async (dispatch, getState) => {
@@ -115,6 +120,28 @@ export function scrape(): ThunkAction<Promise<void>> {
 
       const imageUrls = imageSrcs.map(e => `https:${e}`);
       console.log('title', title, 'imageUrls', imageUrls);
+
+      worker.onmessage = (ev: { data: OutgoingMessage }) => {
+        const { data } = ev;
+        if (data.success) {
+          dispatch(scrapeDone(rawUrl));
+        } else {
+          console.error(data.payload.error);
+          dispatch(
+            scrapeFailed({
+              url: data.payload.url,
+              error: new Error(data.payload.error),
+            })
+          );
+        }
+      };
+
+      const data: IncomingData = {
+        url: rawUrl,
+        location: `${process.env.REACT_APP_ARCHIVE_DIR}/${title}-${id}.zip`,
+        imageUrls,
+      };
+      worker.postMessage(data);
     } catch (error) {
       // TODO: handle error
       console.error(error);

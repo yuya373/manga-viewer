@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, session, RequestHeaders } from 'electron';
 import { join } from 'path';
 import installExtension, {
   REACT_DEVELOPER_TOOLS,
@@ -38,6 +38,27 @@ function setup() {
     );
   }
   createWindow();
+
+  if (session.defaultSession) {
+    session.defaultSession.webRequest.onBeforeSendHeaders(
+      (details, callback) => {
+        const headers: RequestHeaders = {
+          ...details.requestHeaders,
+        };
+
+        const urlParts = `${process.env.REACT_APP_ARCHIVE_URL_PARTS}`;
+        const referer = `${process.env.REACT_APP_ARCHIVE_URL_REFER}`;
+
+        if (details.url.includes(urlParts)) {
+          // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+          // @ts-ignore
+          headers.Referer = referer;
+        }
+
+        callback({ requestHeaders: headers });
+      }
+    );
+  }
 }
 
 app.on('ready', setup);
