@@ -10,6 +10,7 @@ import EntryList from './components/EntryList';
 import { serializePath } from './utils';
 import FileDialogContainer from './containers/FileDialogContainer';
 import FavoriteListContainer from './containers/FavoriteListContainer';
+import HitomiContainer from './containers/HitomiContainer';
 
 const homedir = os.homedir();
 const theme = createMuiTheme({
@@ -34,6 +35,7 @@ const App: React.FC = () => {
           <Route path="/" component={Header} />
           <Route path="/entryList/:serializedPath+" component={EntryList} />
           <Route path="/favoriteList" component={FavoriteListContainer} />
+          <Route path="/hitomi" component={HitomiContainer} />
           <Redirect path="/" to={join('/entryList', serializePath(homedir))} />
         </HashRouter>
       </ThemeProvider>

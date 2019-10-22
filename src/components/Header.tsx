@@ -61,6 +61,11 @@ const Header: React.FC<RouteComponentProps> = ({ history }) => {
     history.push('/favoriteList');
   }, [history]);
 
+  const onPressHitomi = useCallback(() => {
+    setIsDrawerOpen(false);
+    history.push('/hitomi');
+  }, [history]);
+
   const classes = useStyles();
 
   return (
@@ -96,6 +101,7 @@ const Header: React.FC<RouteComponentProps> = ({ history }) => {
         onClose={onDrawerClose}
         onPressHome={onPressHome}
         onPressFavorite={onPressFavorite}
+        onPressHitomi={onPressHitomi}
       />
     </>
   );

@@ -7,6 +7,7 @@ import fileDialog, { FileDialogState } from './fileDialog';
 import viewer, { ViewerState } from './viewer';
 import files, { FilesState } from './files';
 import favorites, { FavoritesState } from './favorites';
+import hitomi, { HitomiState } from './hitomi';
 
 export type RootState = {
   directories: DirectoriesState;
@@ -16,6 +17,7 @@ export type RootState = {
   fileDialog: FileDialogState;
   viewer: ViewerState;
   favorites: FavoritesState;
+  hitomi: HitomiState;
 };
 
 export default combineReducers<RootState, Actions>({
@@ -26,4 +28,5 @@ export default combineReducers<RootState, Actions>({
   fileDialog,
   viewer,
   favorites,
+  hitomi,
 });
