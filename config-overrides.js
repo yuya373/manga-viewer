@@ -1,4 +1,5 @@
-const { override, addWebpackModuleRule } = require('customize-cra');
+const path = require('path');
+const { override, addWebpackAlias } = require('customize-cra');
 
 module.exports = override(
   config => {
@@ -7,10 +8,11 @@ module.exports = override(
     config.output.globalObject = 'this';
     config.module.rules.unshift({
       test: /\.worker\.ts$/,
-      use: [
-        { loader: 'worker-loader' },
-      ],
+      use: [{ loader: 'worker-loader' }],
     });
     return config;
   },
+  addWebpackAlias({
+    ws$: path.resolve(__dirname, 'ws.js'),
+  })
 );
