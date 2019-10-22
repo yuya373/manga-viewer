@@ -20,6 +20,7 @@ function createWindow() {
     webPreferences: {
       nodeIntegration: true,
       nodeIntegrationInWorker: true,
+      webSecurity: false,
     },
   });
 
