@@ -25,6 +25,7 @@ type DispatchProps = {
   onUrlChanged: (url: string) => void;
   setHeaderTitle: (title: string) => void;
   hideHeaderBackButton: () => void;
+  onScrapeClicked: () => void;
 };
 
 const Hitomi: React.FC<StateProps & DispatchProps> = ({
@@ -32,6 +33,7 @@ const Hitomi: React.FC<StateProps & DispatchProps> = ({
   onUrlChanged,
   setHeaderTitle,
   hideHeaderBackButton,
+  onScrapeClicked,
 }) => {
   useEffect(() => {
     hideHeaderBackButton();
@@ -44,7 +46,7 @@ const Hitomi: React.FC<StateProps & DispatchProps> = ({
     onUrlChanged(value);
   };
   const handleScrapeClicked = () => {
-    console.log('url', url);
+    onScrapeClicked();
   };
 
   return (
