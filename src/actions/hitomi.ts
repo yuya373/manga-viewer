@@ -90,6 +90,10 @@ async function getBrowser(): Promise<Browser> {
     browser = await puppeteer.launch({
       executablePath,
     });
+    browser.on('disconnected', () => {
+      console.error('disconnected');
+      browser = null;
+    });
   }
 
   return browser;
@@ -116,6 +120,24 @@ export function scrape(): ThunkAction<Promise<void>> {
       const { pathname, origin } = url;
       const fileName = basename(pathname);
       const page = await b.newPage();
+      page.on('error', error => {
+        console.error('error', error);
+        dispatch(
+          scrapeFailed({
+            url: rawUrl,
+            error,
+          })
+        );
+      });
+      page.on('pageerror', error => {
+        console.error('pageerror', error);
+        dispatch(
+          scrapeFailed({
+            url: rawUrl,
+            error,
+          })
+        );
+      });
       const readerUrl = `${origin}/reader/${fileName}`;
       await page.goto(readerUrl);
       const id: string = await page.evaluate(`get_galleryid()`);
