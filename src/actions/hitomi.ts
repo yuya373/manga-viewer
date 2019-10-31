@@ -118,7 +118,9 @@ export function scrape(): ThunkAction<Promise<void>> {
 
       const b = await getBrowser();
       const { pathname, origin } = url;
-      const fileName = basename(pathname);
+      const fileNames = basename(pathname).split('-');
+      const fileName = fileNames[fileNames.length - 1];
+      console.log('fileName', fileName);
       const page = await b.newPage();
       page.on('error', error => {
         console.error('error', error);
@@ -140,7 +142,7 @@ export function scrape(): ThunkAction<Promise<void>> {
       });
       const readerUrl = `${origin}/reader/${fileName}`;
       await page.goto(readerUrl);
-      const id: string = await page.evaluate(`get_galleryid()`);
+      const id: string = await page.evaluate(`galleryid`);
       const title: string = await page.evaluate(
         `document.querySelector("title").text`
       );
