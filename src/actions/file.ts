@@ -1,6 +1,6 @@
 import { Action } from 'redux';
 import { join } from 'path';
-import { ThunkAction } from '.';
+import { ThunkAction, ThunkDispatch } from '.';
 import { unlink } from '../utils';
 import { Types } from './types';
 import { ImageEntry } from '../types';
@@ -70,7 +70,25 @@ function fetchThumbnailFailed({
   };
 }
 
-const thumbnailWorker = new ReadThumbnailWorker();
+let readThumbnailWorker: any = null;
+function getReadThumbnailWorker(dispatch: ThunkDispatch): any {
+  if (readThumbnailWorker == null) {
+    readThumbnailWorker = new ReadThumbnailWorker();
+    readThumbnailWorker.onmessage = (ev: { data: ThumnailOutgoinMessage }) => {
+      if (ev.data.success) {
+        const { payload } = ev.data;
+        requestAnimationFrame(() => {
+          dispatch(fetchThumbnailDone(payload));
+        });
+      } else {
+        const { payload } = ev.data;
+        dispatch(fetchThumbnailFailed(payload));
+      }
+    };
+  }
+
+  return readThumbnailWorker;
+}
 
 export function fetchThumbnail(path: string): ThunkAction<Promise<void>> {
   return async (dispatch, getState) => {
@@ -88,18 +106,8 @@ export function fetchThumbnail(path: string): ThunkAction<Promise<void>> {
       },
     });
 
-    thumbnailWorker.onmessage = (ev: { data: ThumnailOutgoinMessage }) => {
-      if (ev.data.success) {
-        const { payload } = ev.data;
-        requestAnimationFrame(() => {
-          dispatch(fetchThumbnailDone(payload));
-        });
-      } else {
-        const { payload } = ev.data;
-        dispatch(fetchThumbnailFailed(payload));
-      }
-    };
-    thumbnailWorker.postMessage({ path });
+    const worker = getReadThumbnailWorker(dispatch);
+    worker.postMessage({ path });
   };
 }
 
@@ -177,7 +185,25 @@ function fetchImagesSuccess({
   };
 }
 
-const worker = new ReadAllImagesWorker();
+let readAllImagesWorker: any = null;
+
+function getReadAllImagesWorker(dispatch: ThunkDispatch): any {
+  if (readAllImagesWorker == null) {
+    readAllImagesWorker = new ReadAllImagesWorker();
+    readAllImagesWorker.onmessage = (ev: { data: OutgoingMessage }) => {
+      const { data } = ev;
+      if (data.success) {
+        const { payload } = data;
+        dispatch(fetchImagesSuccess(payload));
+      } else {
+        const { payload } = data;
+        dispatch(fetchImageFailed(payload));
+      }
+    };
+  }
+
+  return readAllImagesWorker;
+}
 
 export function fetchImages(path: string): ThunkAction<Promise<void>> {
   return async (dispatch, getState) => {
@@ -192,16 +218,7 @@ export function fetchImages(path: string): ThunkAction<Promise<void>> {
       const { images } = file;
       dispatch(fetchImagesSuccess({ path, images }));
     } else {
-      worker.onmessage = (ev: { data: OutgoingMessage }) => {
-        const { data } = ev;
-        if (data.success) {
-          const { payload } = data;
-          dispatch(fetchImagesSuccess(payload));
-        } else {
-          const { payload } = data;
-          dispatch(fetchImageFailed(payload));
-        }
-      };
+      const worker = getReadAllImagesWorker(dispatch);
       worker.postMessage({ path });
     }
   };

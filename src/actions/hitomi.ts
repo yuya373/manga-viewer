@@ -2,7 +2,7 @@ import { Action } from 'redux';
 import puppeteer, { Browser } from 'puppeteer';
 import { basename } from 'path';
 import { Types } from './types';
-import { ThunkAction } from '.';
+import { ThunkAction, Actions, ThunkDispatch } from '.';
 import { findChromium } from '../utils/findChromium';
 import ArchiveImagesWorker, {
   IncomingData,
@@ -98,7 +98,32 @@ async function getBrowser(): Promise<Browser> {
 
   return browser;
 }
-const worker = new ArchiveImagesWorker();
+
+let archiveWorker: any = null;
+
+function getArchiveWorker(dispatch: ThunkDispatch): any {
+  if (archiveWorker == null) {
+    archiveWorker = new ArchiveImagesWorker();
+    archiveWorker.onmessage = (ev: { data: OutgoingMessage }) => {
+      const { data } = ev;
+      if (data.success) {
+        const { location } = data.payload;
+        const file = createFile({ entry: location });
+        dispatch(scrapeDone({ url: data.payload.url, file }));
+      } else {
+        console.error(data.payload.error);
+        dispatch(
+          scrapeFailed({
+            url: data.payload.url,
+            error: new Error(data.payload.error),
+          })
+        );
+      }
+    };
+  }
+
+  return archiveWorker;
+}
 
 export function scrape(): ThunkAction<Promise<void>> {
   return async (dispatch, getState) => {
@@ -152,30 +177,15 @@ export function scrape(): ThunkAction<Promise<void>> {
       await page.close();
 
       const imageUrls = imageSrcs.map(e => `https:${e}`);
-      console.log('title', title, 'imageUrls', imageUrls);
-
-      worker.onmessage = (ev: { data: OutgoingMessage }) => {
-        const { data } = ev;
-        if (data.success) {
-          const { location } = data.payload;
-          const file = createFile({ entry: location });
-          dispatch(scrapeDone({ url: data.payload.url, file }));
-        } else {
-          console.error(data.payload.error);
-          dispatch(
-            scrapeFailed({
-              url: data.payload.url,
-              error: new Error(data.payload.error),
-            })
-          );
-        }
-      };
+      console.log('title', title, 'imageUrls', imageUrls.length);
 
       const data: IncomingData = {
         url: rawUrl,
         location: `${process.env.REACT_APP_ARCHIVE_DIR}/${title}-${id}.zip`,
         imageUrls,
       };
+
+      const worker = getArchiveWorker(dispatch);
       worker.postMessage(data);
     } catch (error) {
       // TODO: handle error
