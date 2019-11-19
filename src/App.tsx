@@ -11,6 +11,7 @@ import { serializePath } from './utils';
 import FileDialogContainer from './containers/FileDialogContainer';
 import FavoriteListContainer from './containers/FavoriteListContainer';
 import HitomiContainer from './containers/HitomiContainer';
+import ErrorBoundary from './ErrorBoundary';
 
 const homedir = os.homedir();
 const theme = createMuiTheme({
@@ -27,7 +28,7 @@ const theme = createMuiTheme({
 
 const App: React.FC = () => {
   return (
-    <>
+    <ErrorBoundary>
       <CssBaseline />
       <ThemeProvider theme={theme}>
         <FileDialogContainer />
@@ -39,7 +40,7 @@ const App: React.FC = () => {
           <Redirect path="/" to={join('/entryList', serializePath(homedir))} />
         </HashRouter>
       </ThemeProvider>
-    </>
+    </ErrorBoundary>
   );
 };
 
