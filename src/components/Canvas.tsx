@@ -13,6 +13,7 @@ interface Props {
 
 interface State {
   scale: null | number;
+  loading: boolean;
 }
 
 export default class Canvas extends Component<Props, State> {
@@ -22,11 +23,15 @@ export default class Canvas extends Component<Props, State> {
 
   private worker: any | null = null;
 
+  private mounted = false;
+
   public state = {
     scale: null,
+    loading: false,
   };
 
   public componentDidMount(): void {
+    this.mounted = true;
     this.renderImage(this.props);
   }
 
@@ -64,16 +69,42 @@ export default class Canvas extends Component<Props, State> {
 
   public componentWillUnmount(): void {
     this.offscreenCanvas = null;
-    this.worker.terminate();
-    this.worker = null;
+    this.mounted = false;
+    const { loading } = this.state;
+    if (!loading) {
+      this.terminateWorker();
+    }
   }
 
   private getWorker = (): any => {
     if (this.worker == null) {
       this.worker = new RenderImageWorker();
+      this.worker.onmessage = this.handleWorkerMessage;
     }
 
     return this.worker;
+  };
+
+  private terminateWorker = (): void => {
+    if (this.worker == null) return;
+
+    this.worker.terminate();
+    this.worker = null;
+    console.log('worker terminated');
+  };
+
+  private handleWorkerMessage = (ev: { data: OutgoingMessage }): void => {
+    if (!this.mounted) {
+      this.terminateWorker();
+      return;
+    }
+
+    if (ev.data.success) {
+      const { scale } = ev.data;
+      this.setState(s => ({ ...s, loading: false, scale }));
+    } else {
+      throw ev.data.error;
+    }
   };
 
   private isCanvasTransferred = (): boolean => {
@@ -90,36 +121,33 @@ export default class Canvas extends Component<Props, State> {
   };
 
   private renderImage = ({ image }: { image: string }): void => {
-    const { width, height } = this.props;
-    const baseMessage = {
-      image,
-      width,
-      height,
-    };
-    const worker = this.getWorker();
+    this.setState(
+      s => ({ ...s, loading: true }),
+      () => {
+        const { width, height } = this.props;
+        const baseMessage = {
+          image,
+          width,
+          height,
+        };
+        const worker = this.getWorker();
 
-    worker.onmessage = (ev: { data: OutgoingMessage }): void => {
-      if (ev.data.success) {
-        this.setState({ scale: ev.data.scale });
-      } else {
-        throw ev.data.error;
+        if (this.isCanvasTransferred()) {
+          const message: IncomingData = {
+            ...baseMessage,
+          };
+          this.worker.postMessage(message);
+        } else {
+          const canvas = this.transferCanvas();
+
+          const message: IncomingData = {
+            ...baseMessage,
+            canvas,
+          };
+          worker.postMessage(message, [canvas]);
+        }
       }
-    };
-
-    if (this.isCanvasTransferred()) {
-      const message: IncomingData = {
-        ...baseMessage,
-      };
-      this.worker.postMessage(message);
-    } else {
-      const canvas = this.transferCanvas();
-
-      const message: IncomingData = {
-        ...baseMessage,
-        canvas,
-      };
-      worker.postMessage(message, [canvas]);
-    }
+    );
   };
 
   public render(): ReactNode {
