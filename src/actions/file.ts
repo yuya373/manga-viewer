@@ -71,6 +71,7 @@ function fetchThumbnailFailed({
 }
 
 let readThumbnailWorker: any = null;
+
 function getReadThumbnailWorker(dispatch: ThunkDispatch): any {
   if (readThumbnailWorker == null) {
     readThumbnailWorker = new ReadThumbnailWorker();
@@ -107,7 +108,9 @@ export function fetchThumbnail(path: string): ThunkAction<Promise<void>> {
     });
 
     const worker = getReadThumbnailWorker(dispatch);
-    worker.postMessage({ path });
+    const canvas = document.createElement('canvas');
+    const offscreenCanvas = canvas.transferControlToOffscreen();
+    worker.postMessage({ path, canvas: offscreenCanvas }, [offscreenCanvas]);
   };
 }
 

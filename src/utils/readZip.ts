@@ -15,7 +15,10 @@ function isImageEntry(entry: any): boolean {
   );
 }
 
-function buildImageEntry(zip: any, entry: any): Promise<ImageEntry> {
+function fetchImage(
+  zip: any,
+  entry: any
+): Promise<{ name: string; blob: Blob }> {
   return new Promise((resolve, reject) => {
     const fileType = entry.name.endsWith('png') ? 'png' : 'jpeg';
     zip.stream(entry, (err: Error, stream: any) => {
@@ -46,11 +49,20 @@ function buildImageEntry(zip: any, entry: any): Promise<ImageEntry> {
 
         resolve({
           name: entry.name,
-          url: URL.createObjectURL(blob),
+          blob,
         });
       });
     });
   });
+}
+
+async function buildImageEntry(zip: any, entry: any): Promise<ImageEntry> {
+  const { name, blob } = await fetchImage(zip, entry);
+
+  return {
+    name,
+    url: URL.createObjectURL(blob),
+  };
 }
 
 export function readAllImages(file: string): Promise<Array<ImageEntry>> {
@@ -78,7 +90,7 @@ export function readAllImages(file: string): Promise<Array<ImageEntry>> {
   });
 }
 
-export async function readFirstImage(file: string): Promise<string> {
+export async function readFirstImage(file: string): Promise<Blob | null> {
   return new Promise((resolve, reject) => {
     const zip = new StreamZip({
       file,
@@ -99,13 +111,13 @@ export async function readFirstImage(file: string): Promise<string> {
 
       if (entry == null) {
         zip.close();
-        resolve('');
+        resolve(null);
         return;
       }
 
-      const image = await buildImageEntry(zip, entry);
+      const { blob } = await fetchImage(zip, entry);
       zip.close();
-      resolve(image.url);
+      resolve(blob);
     });
   });
 }
