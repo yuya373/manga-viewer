@@ -2,7 +2,8 @@ import {
   ThunkAction as OrgThunkAction,
   ThunkDispatch as OrgThunkDispatch,
 } from 'redux-thunk';
-import { RootState } from '../reducers';
+import { Action } from 'redux';
+import { RootState } from '../app';
 import { DirectoryActions } from './directory';
 import { HeaderActions } from './header';
 import { FileActions } from './file';
@@ -19,5 +20,17 @@ export type Actions =
   | HeaderActions
   | FileActions
   | FileDialogActions;
-export type ThunkAction<R> = OrgThunkAction<R, RootState, undefined, Actions>;
-export type ThunkDispatch = OrgThunkDispatch<RootState, undefined, Actions>;
+
+export type ThunkAction<R> = OrgThunkAction<
+  R,
+  RootState,
+  undefined,
+  Action<string>
+>;
+export type AppAction<R> = ThunkAction<R>;
+export type ThunkDispatch = OrgThunkDispatch<
+  RootState,
+  undefined,
+  Action<string>
+>;
+export type AppDispatch = ThunkDispatch;

@@ -1,9 +1,10 @@
 import { dirname, basename } from 'path';
+import { PayloadAction } from '@reduxjs/toolkit';
 import { Actions } from '../actions';
 import { Directory, createDirectory } from '../types';
 import { Types } from '../actions/types';
 import { FetchEntriesDoneAction } from '../actions/directory';
-import { DeleteFileDoneAction } from '../actions/file';
+import { deleteFileDone } from '../features/files/filesSlice';
 
 export type DirectoriesState = {
   byPath: { [path: string]: Directory };
@@ -53,9 +54,13 @@ function setIsLoading(
   };
 }
 
+type RemoveFileFromDirectoryPayload = {
+  path: string;
+};
+
 function removeFileFromDirectory(
   state: DirectoriesState,
-  action: DeleteFileDoneAction
+  action: PayloadAction<RemoveFileFromDirectoryPayload>
 ): DirectoriesState {
   const { path } = action.payload;
   const dirName = dirname(path);
@@ -87,8 +92,10 @@ export default function(
       return setDirectory(state, action);
     case Types.FETCH_ENTRIES_FAILED:
       return setIsLoading(state, action.meta.path, false);
-    case Types.DELETE_FILE_DONE:
-      return removeFileFromDirectory(state, action);
+    case deleteFileDone.type:
+      return deleteFileDone.match(action)
+        ? removeFileFromDirectory(state, action)
+        : state;
     default:
       return state;
   }

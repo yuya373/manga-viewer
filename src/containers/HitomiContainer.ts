@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import { RootState } from '../reducers';
+import { RootState } from '../app';
 import Hitomi, { StateProps } from '../components/Hitomi';
 import { urlChanged, scrape } from '../actions/hitomi';
 import { headerTitleChanged, headerHideBackButton } from '../actions/header';

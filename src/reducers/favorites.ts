@@ -1,3 +1,4 @@
+import { PayloadAction } from '@reduxjs/toolkit';
 import { File, Directory } from '../types';
 import { Actions } from '../actions';
 import { Types } from '../actions/types';
@@ -6,7 +7,7 @@ import {
   AddDirectoryToFavoriteAction,
   RemoveFromFavoriteAction,
 } from '../actions/favorite';
-import { DeleteFileDoneAction } from '../actions/file';
+import { deleteFileDone } from '../features/files/filesSlice';
 
 export type FavoritesState = {
   favorites: Array<string>;
@@ -36,9 +37,13 @@ function addToFavorite(
   };
 }
 
+type RemoveFromFavoritePayload = {
+  path: string;
+};
+
 function removeFromFavorite(
   state: FavoritesState,
-  action: RemoveFromFavoriteAction | DeleteFileDoneAction
+  action: RemoveFromFavoriteAction | PayloadAction<RemoveFromFavoritePayload>
 ): FavoritesState {
   const { path } = action.payload;
 
@@ -65,6 +70,8 @@ export default function(
     case Types.REMOVE_FROM_FAVORITE:
       return removeFromFavorite(state, action);
     default:
-      return state;
+      return deleteFileDone.match(action)
+        ? removeFromFavorite(state, action)
+        : state;
   }
 }

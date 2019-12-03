@@ -1,14 +1,14 @@
 import { connect } from 'react-redux';
 import { join } from 'path';
-import { RootState } from '../reducers';
+import { RootState } from '../app';
 import {
   closeFileDialog,
   fileDialogHideAppBar,
   fileDialogDisplayAppBar,
 } from '../actions/fileDialog';
 import FileDialog, { Props } from '../components/FileDialog';
-import { fetchImages } from '../actions/file';
 import { toggleFavorite } from '../actions/favorite';
+import { fetchImages } from '../features/files/filesSlice';
 
 const mapStateToProps = (state: RootState): Props => {
   const { isOpen, name, path, isAppBarHidden } = state.fileDialog;

@@ -1,6 +1,6 @@
 import Store from 'electron-store';
 import { ThunkAction } from '.';
-import { RootState } from '../reducers';
+import { RootState } from '../app';
 
 const store = new Store({
   name: 'RootState',

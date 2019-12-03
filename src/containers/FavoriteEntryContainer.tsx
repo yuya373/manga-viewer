@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import { RootState } from '../reducers';
+import { RootState } from '../app';
 import FavoriteEntry, { StateProps, Props } from '../components/FavoriteEntry';
 
 const mapStateToProps = (state: RootState, ownProps: Props): StateProps => {

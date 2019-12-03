@@ -1,8 +1,8 @@
 import { connect } from 'react-redux';
 import { join } from 'path';
-import { RootState } from '../reducers';
+import { RootState } from '../app';
 import DeleteButton, { StateProps } from '../components/DeleteButton';
-import { deleteFile } from '../actions/file';
+import { deleteFile } from '../features/files/filesSlice';
 
 type OwnProps = {
   path: string;

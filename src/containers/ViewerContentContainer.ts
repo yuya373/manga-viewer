@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import { RootState } from '../reducers';
+import { RootState } from '../app';
 import ViewerContent, { StateProps } from '../components/ViewerContent';
 
 const mapStateToProps = (state: RootState): StateProps => {

@@ -5,7 +5,7 @@ import DirectoryCard, {
   Props,
   DispatchProps,
 } from '../components/DirectoryCard';
-import { RootState } from '../reducers';
+import { RootState } from '../app';
 import { toggleDirectoryFavorite } from '../actions/favorite';
 
 const mapStateToProps = (state: RootState, ownProps: Props): StateProps => {

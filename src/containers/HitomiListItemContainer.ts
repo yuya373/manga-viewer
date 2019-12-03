@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import { RootState } from '../reducers';
+import { RootState } from '../app';
 import HitomiListItem, { StateProps } from '../components/HitomiListItem';
 import { openFileDialog } from '../actions/fileDialog';
 

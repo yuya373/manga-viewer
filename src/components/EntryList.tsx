@@ -10,7 +10,7 @@ import { join } from 'path';
 import { fetchEntries } from '../actions/directory';
 import { deserializePath, serializePath } from '../utils';
 import { headerTitleChanged, headerDisplayBackButton } from '../actions/header';
-import { RootState } from '../reducers';
+import { RootState } from '../app';
 import FileCardContainer from '../containers/FileCardContainer';
 import DirectoryCardContainer from '../containers/DirectoryCardContainer';
 import useWindowDimension from '../hooks/useWindowDimension';

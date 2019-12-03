@@ -1,4 +1,5 @@
 import { join } from 'path';
+import { PayloadAction } from '@reduxjs/toolkit';
 import { Actions } from '../actions';
 import { Types } from '../actions/types';
 import {
@@ -7,7 +8,7 @@ import {
   HitomiScrapeFailedAction,
 } from '../actions/hitomi';
 import { File } from '../types';
-import { DeleteFileDoneAction } from '../actions/file';
+import { deleteFileDone } from '../features/files/filesSlice';
 
 export type HitomiState = {
   url: string;
@@ -150,9 +151,13 @@ function scrapeFailed(
   return s;
 }
 
+type DeleteFileByPathPayload = {
+  path: string;
+};
+
 function deleteFileByPath(
   state: HitomiState,
-  action: DeleteFileDoneAction
+  action: PayloadAction<DeleteFileByPathPayload>
 ): HitomiState {
   const { path } = action.payload;
   const url = Object.keys(state.fileByUrl).find(e => {
@@ -183,9 +188,9 @@ export default function(
       return scrapeDone(state, action);
     case Types.HITOMI_SCRAPE_FAILED:
       return scrapeFailed(state, action);
-    case Types.DELETE_FILE_DONE:
-      return deleteFileByPath(state, action);
     default:
-      return state;
+      return deleteFileDone.match(action)
+        ? deleteFileByPath(state, action)
+        : state;
   }
 }

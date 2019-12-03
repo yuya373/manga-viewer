@@ -5,12 +5,12 @@ import * as os from 'os';
 import { createMuiTheme } from '@material-ui/core';
 import { ThemeProvider } from '@material-ui/styles';
 import { join } from 'path';
-import Header from './components/Header';
-import EntryList from './components/EntryList';
-import { serializePath } from './utils';
-import FileDialogContainer from './containers/FileDialogContainer';
-import FavoriteListContainer from './containers/FavoriteListContainer';
-import HitomiContainer from './containers/HitomiContainer';
+import Header from '../components/Header';
+import EntryList from '../components/EntryList';
+import { serializePath } from '../utils';
+import FileDialogContainer from '../containers/FileDialogContainer';
+import FavoriteListContainer from '../containers/FavoriteListContainer';
+import HitomiContainer from '../containers/HitomiContainer';
 import ErrorBoundary from './ErrorBoundary';
 
 const homedir = os.homedir();

@@ -1,4 +1,5 @@
 import { join } from 'path';
+import { PayloadAction } from '@reduxjs/toolkit';
 import { Actions } from '../actions';
 import { Types } from '../actions/types';
 import {
@@ -6,9 +7,9 @@ import {
   DisplayPrevPageAction,
   ViewerPerPageChangedAction,
 } from '../actions/viewer';
-import { FetchImagesDoneAction } from '../actions/file';
 import { File } from '../types';
 import { FileDialogOpenAction } from '../actions/fileDialog';
+import { fetchImagesDone, deleteFileDone } from '../features/files/filesSlice';
 
 export type ViewerState = {
   index: number;
@@ -27,7 +28,7 @@ const initialState: ViewerState = {
 function setImagesToDisplay(
   state: ViewerState,
   action:
-    | FetchImagesDoneAction
+    | PayloadAction<{ imagesToDisplay: Array<string> }>
     | DisplayNextPageAction
     | DisplayPrevPageAction
     | ViewerPerPageChangedAction
@@ -69,8 +70,6 @@ export default function(
   action: Actions
 ): ViewerState {
   switch (action.type) {
-    case Types.FETCH_IMAGES_DONE:
-      return setImagesToDisplay(state, action);
     case Types.DISPLAY_NEXT_PAGE:
     case Types.DISPLAY_PREV_PAGE:
       return setIndex(setImagesToDisplay(state, action), action);
@@ -96,14 +95,20 @@ export default function(
         ...state,
         index: 0,
       };
-    case Types.DELETE_FILE_DONE:
-      return {
-        ...state,
-        files: state.files.filter(
-          e => join(e.path, e.name) !== action.payload.path
-        ),
-      };
     default:
+      if (fetchImagesDone.match(action)) {
+        return setImagesToDisplay(state, action);
+      }
+
+      if (deleteFileDone.match(action)) {
+        return {
+          ...state,
+          files: state.files.filter(
+            e => join(e.path, e.name) !== action.payload.path
+          ),
+        };
+      }
+
       return state;
   }
 }

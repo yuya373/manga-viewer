@@ -3,7 +3,7 @@ import FavoriteList, {
   StateProps,
   DispatchProps,
 } from '../components/FavoriteList';
-import { RootState } from '../reducers';
+import { RootState } from '../app';
 import { headerTitleChanged, headerHideBackButton } from '../actions/header';
 
 const mapStateToProps = (state: RootState): StateProps => {

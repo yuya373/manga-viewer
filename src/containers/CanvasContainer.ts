@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import { RootState } from '../reducers';
+import { RootState } from '../app';
 import Canvas from '../components/Canvas';
 
 type OwnProps = {

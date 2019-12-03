@@ -10,7 +10,7 @@ import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { RouteComponentProps } from 'react-router';
 import * as os from 'os';
 import { join } from 'path';
-import { RootState } from '../reducers';
+import { RootState } from '../app';
 import Drawer from './Drawer';
 import { serializePath } from '../utils';
 
