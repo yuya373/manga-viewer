@@ -25,7 +25,8 @@ function setDirectory(
   delete isLoading[path];
 
   const byPath = { ...state.byPath };
-  const directory: Directory = byPath[path] || createDirectory({ entry: path });
+  const directory: Directory =
+    { ...byPath[path] } || createDirectory({ entry: path });
   directory.entries = action.payload.entries;
   byPath[path] = directory;
 
