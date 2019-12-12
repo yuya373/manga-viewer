@@ -32,22 +32,13 @@ export const useStyles = makeStyles((theme: Theme) =>
       display: 'flex',
       flexDirection: 'row',
       flexWrap: 'wrap',
+      padding: theme.spacing(4),
     },
     item: {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      padding: 8,
-      width: '25%',
-      [theme.breakpoints.down('lg')]: {
-        width: '33%',
-      },
-      [theme.breakpoints.down('md')]: {
-        width: '50%',
-      },
-      [theme.breakpoints.down('sm')]: {
-        width: '100%',
-      },
+      padding: theme.spacing(2),
     },
   })
 );
