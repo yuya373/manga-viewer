@@ -1,11 +1,9 @@
 import React, { Component, ReactNode } from 'react';
 import { CircularProgress, Grid } from '@material-ui/core';
-import RenderImageWorker, {
-  OutgoingMessage,
-  IncomingData,
-} from '../workers/renderImage.worker';
+import { OutgoingMessage, IncomingData } from '../workers/renderImage.worker';
 
 interface Props {
+  worker: any;
   image: string;
   width: number;
   height: number;
@@ -21,8 +19,6 @@ export default class Canvas extends Component<Props, State> {
   private canvas = React.createRef<HTMLCanvasElement>();
 
   private offscreenCanvas: OffscreenCanvas | null = null;
-
-  private worker: any | null = null;
 
   private mounted = false;
 
@@ -75,32 +71,19 @@ export default class Canvas extends Component<Props, State> {
   public componentWillUnmount(): void {
     this.offscreenCanvas = null;
     this.mounted = false;
-    const { loading } = this.state;
-    if (!loading) {
-      this.terminateWorker();
-    }
+    const { worker } = this.props;
+    worker.onmessage = null;
   }
 
   private getWorker = (): any => {
-    if (this.worker == null) {
-      this.worker = new RenderImageWorker();
-      this.worker.onmessage = this.handleWorkerMessage;
-    }
+    const { worker } = this.props;
+    worker.onmessage = this.handleWorkerMessage;
 
-    return this.worker;
-  };
-
-  private terminateWorker = (): void => {
-    if (this.worker == null) return;
-
-    this.worker.terminate();
-    this.worker = null;
-    console.log('worker terminated');
+    return worker;
   };
 
   private handleWorkerMessage = (ev: { data: OutgoingMessage }): void => {
     if (!this.mounted) {
-      this.terminateWorker();
       return;
     }
 
@@ -141,7 +124,7 @@ export default class Canvas extends Component<Props, State> {
           const message: IncomingData = {
             ...baseMessage,
           };
-          this.worker.postMessage(message);
+          worker.postMessage(message);
         } else {
           const canvas = this.transferCanvas();
 

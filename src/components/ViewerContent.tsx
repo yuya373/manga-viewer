@@ -1,6 +1,9 @@
 import React from 'react';
 import { Grid } from '@material-ui/core';
 import CanvasContainer from '../containers/CanvasContainer';
+import RenderImageWorker from '../workers/renderImage.worker';
+
+const workers = [new RenderImageWorker(), new RenderImageWorker()];
 
 export type StateProps = {
   imageCount: number;
@@ -38,7 +41,12 @@ const ViewerContent: React.FC<Props & StateProps> = ({
           alignItems="center"
           justify={justify}
         >
-          <CanvasContainer i={i} width={width} height={height} />
+          <CanvasContainer
+            i={i}
+            worker={workers[i]}
+            width={width}
+            height={height}
+          />
         </Grid>
       </Grid>
     );

@@ -18,19 +18,13 @@ export type OutgoingMessage =
       error: Error;
     };
 
-let canvas: OffscreenCanvas | null = null;
+let canvas: OffscreenCanvas | null | undefined = null;
 
 ctx.addEventListener('message', async ev => {
   const { data }: { data: IncomingData } = ev;
   const { image, width, height } = data;
 
-  if (canvas == null) {
-    if (data.canvas == null) {
-      throw new Error('failed to get canvas');
-    }
-
-    canvas = data.canvas;
-  } else {
+  if (data.canvas == null && canvas) {
     const canvasCtx = canvas.getContext('2d', {
       alpha: false,
     });
@@ -45,6 +39,12 @@ ctx.addEventListener('message', async ev => {
       // @ts-ignore
       canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
     }
+  }
+  if (data.canvas) {
+    canvas = data.canvas;
+  }
+  if (canvas == null) {
+    throw new Error('failed to get canvas');
   }
 
   try {
