@@ -171,12 +171,11 @@ export function scrape(): ThunkAction<Promise<void>> {
       const title: string = await page.evaluate(
         `document.querySelector("title").text`
       );
-      const imageSrcs: Array<string> = await page.evaluate(
+      const imageUrls: Array<string> = await page.evaluate(
         `galleryinfo.map(e => url_from_url_from_hash(${id}, e))`
       );
       await page.close();
 
-      const imageUrls = imageSrcs.map(e => `https:${e}`);
       console.log('title', title, 'imageUrls', imageUrls.length);
 
       const data: IncomingData = {
