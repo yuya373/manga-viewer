@@ -167,6 +167,7 @@ export function scrape(): ThunkAction<Promise<void>> {
       });
       const readerUrl = `${origin}/reader/${fileName}`;
       await page.goto(readerUrl);
+      await page.waitForFunction(`window.galleryinfo`);
       const id: string = await page.evaluate(`galleryinfo.id`);
       const title: string = await page.evaluate(
         `document.querySelector("title").text`
