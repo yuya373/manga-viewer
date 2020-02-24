@@ -167,12 +167,12 @@ export function scrape(): ThunkAction<Promise<void>> {
       });
       const readerUrl = `${origin}/reader/${fileName}`;
       await page.goto(readerUrl);
-      const id: string = await page.evaluate(`galleryid`);
+      const id: string = await page.evaluate(`galleryinfo.id`);
       const title: string = await page.evaluate(
         `document.querySelector("title").text`
       );
       const imageUrls: Array<string> = await page.evaluate(
-        `galleryinfo.map(e => url_from_url_from_hash(${id}, e))`
+        `galleryinfo.files.map(e => url_from_url_from_hash(${id}, e))`
       );
       await page.close();
 
