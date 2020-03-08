@@ -13,7 +13,7 @@ export type OutgoingMessage =
   | { success: true; payload: { url: string; location: string } }
   | {
       success: false;
-      payload: { url: string; location: string; error: string };
+      payload: { url: string; location: string; error: Error };
     };
 
 let p: Promise<void> = Promise.resolve();
@@ -34,14 +34,19 @@ ctx.addEventListener('message', async ev => {
         });
       })
       .catch(error => {
-        ctx.postMessage({
+        const msg: OutgoingMessage = {
           success: false,
           payload: {
             url,
             location,
-            error: error.message,
+            error: {
+              name: error.name,
+              message: error.message,
+              stack: error.stack,
+            },
           },
-        });
+        };
+        ctx.postMessage(msg);
       });
   });
 });

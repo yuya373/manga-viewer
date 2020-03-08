@@ -119,7 +119,7 @@ function getArchiveWorker(dispatch: ThunkDispatch): any {
         dispatch(
           scrapeFailed({
             url: data.payload.url,
-            error: new Error(data.payload.error),
+            error: data.payload.error,
           })
         );
       }
