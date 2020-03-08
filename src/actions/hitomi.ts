@@ -78,7 +78,11 @@ const scrapeFailed = ({
   type: Types.HITOMI_SCRAPE_FAILED,
   payload: {
     url,
-    error,
+    error: {
+      name: error.name,
+      message: error.message,
+      stack: error.stack,
+    },
   },
 });
 
