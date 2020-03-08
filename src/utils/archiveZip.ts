@@ -3,13 +3,16 @@
 import archiver from 'archiver';
 import { basename } from 'path';
 import { createWriteStream } from 'fs';
+import { cpus } from 'os';
 
-function splitPerTen(imageUrls: Array<string>): Array<Array<string>> {
+const cpuCount = cpus().length;
+
+function splitPerCpuCount(imageUrls: Array<string>): Array<Array<string>> {
   const urls: Array<Array<string>> = [];
 
   urls.push(
     imageUrls.reduce((a: Array<string>, e, i) => {
-      if ((i + 1) % 10 === 0) {
+      if ((i + 1) % cpuCount === 0) {
         a.push(e);
         urls.push(a);
         return [];
@@ -42,17 +45,18 @@ async function fetchImageBuffer(
 }
 
 async function fetchImageBuffers(
-  urls: Array<Array<string>>
+  urls: Array<Array<string>>,
+  totalImageCount: number
 ): Promise<Array<{ buffer: ArrayBuffer; name: string }>> {
   return urls.reduce(
     async (a: Promise<Array<{ buffer: ArrayBuffer; name: string }>>, e, i) =>
       (await a).concat(
         await Promise.all(
           e.map(async (url, j) => {
-            const n = i * 10 + j;
-            console.log('Fetch Image Started', n, url);
+            const n = i * cpuCount + j;
+            console.log(`Fetch Image Started [${n}/${totalImageCount}] ${url}`);
             const { buffer, name } = await fetchImageBuffer(url);
-            console.log('Fetch Image Done', n, url);
+            console.log(`Fetch Image Done [${n}/${totalImageCount}] ${url}`);
 
             return {
               buffer,
@@ -84,8 +88,9 @@ export function archive(
     zip.on('error', reject);
     zip.pipe(output);
 
-    const urls = splitPerTen(imageUrls);
-    fetchImageBuffers(urls)
+    const totalImageCount = imageUrls.length;
+    const urls = splitPerCpuCount(imageUrls);
+    fetchImageBuffers(urls, totalImageCount)
       .then(imageBuffers => {
         imageBuffers.forEach(e => {
           const buffer = Buffer.from(new Uint8Array(e.buffer));
