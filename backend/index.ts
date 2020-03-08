@@ -1,4 +1,4 @@
-import { app, BrowserWindow, session, RequestHeaders } from 'electron';
+import { app, BrowserWindow, session } from 'electron';
 import { join } from 'path';
 import installExtension, {
   REACT_DEVELOPER_TOOLS,
@@ -42,7 +42,7 @@ function setup() {
   if (session.defaultSession) {
     session.defaultSession.webRequest.onBeforeSendHeaders(
       (details, callback) => {
-        const headers: RequestHeaders = {
+        const headers = {
           ...details.requestHeaders,
         };
 
