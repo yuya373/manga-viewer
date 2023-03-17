@@ -14,14 +14,15 @@ const paths = [
   'google-chrome-beta',
   'google-chrome-unstable',
   '/usr/bin/google-chrome',
+  '/usr/bin/google-chrome-stable',
 
   // Windows
   'chrome',
   'chrome.exe', // in case PATHEXT is misconfigured
   // eslint-disable-next-line no-useless-escape
-  `C:\Program Files (x86)\Google\Chrome\Application\chrome.exe`,
+  `C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe`,
   // eslint-disable-next-line no-useless-escape
-  `C:\Program Files\Google\Chrome\Application\chrome.exe`,
+  `C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe`,
 ];
 
 export async function findChromium(): Promise<string> {

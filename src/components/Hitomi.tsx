@@ -5,6 +5,9 @@ import Container from '@material-ui/core/Container';
 import TextField from '@material-ui/core/TextField';
 import List from '@material-ui/core/List';
 import HitomiListItemContainer from '../containers/HitomiListItemContainer';
+import IconButton from '@material-ui/core/IconButton';
+import FileCopyIcon from '@material-ui/icons/FileCopy';
+import { clipboard } from 'electron';
 
 const useStyles = makeStyles((theme: Theme) => ({
   container: {
@@ -59,6 +62,11 @@ const Hitomi: React.FC<StateProps & DispatchProps> = ({
     e.preventDefault();
     onScrapeClicked();
   };
+  const handlePaste = () => {
+    const text = clipboard.readText();
+    onUrlChanged(text);
+    onScrapeClicked();
+  };
 
   const list =
     urls.length > 0 ? (
@@ -82,6 +90,9 @@ const Hitomi: React.FC<StateProps & DispatchProps> = ({
             value={url}
           />
         </form>
+      <IconButton onClick={handlePaste}>
+      <FileCopyIcon />
+      </IconButton>
       </Container>
       <Container className={classes.listContainer} maxWidth="md">
         {list}

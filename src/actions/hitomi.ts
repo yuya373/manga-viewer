@@ -1,6 +1,6 @@
 import { Action } from 'redux';
 import puppeteer, { Browser } from 'puppeteer';
-import { basename } from 'path';
+import { basename, join } from 'path';
 import { Types } from './types';
 import { ThunkAction, Actions, ThunkDispatch } from '.';
 import { findChromium } from '../utils/findChromium';
@@ -178,16 +178,31 @@ export function scrape(): ThunkAction<Promise<void>> {
       const title: string = await (page.evaluate(
         `document.querySelector("title").text`
       ) as Promise<string>);
-      const imageUrls: Array<string> = await (page.evaluate(
-        `galleryinfo.files.map(e => url_from_url_from_hash(${id}, e))`
-      ) as Promise<Array<string>>);
+      const imageUrls: Array<{
+        url: string;
+        name: string;
+      }> = await (page.evaluate(
+        `
+         galleryinfo.files.map(e => {
+           const dir = e.haswebp ? 'webp' : e.hasavif ? 'avif' : undefined;
+           const base = e.haswebp ? 'a' : undefined;
+           return {
+             url: url_from_url_from_hash(${id}, e, dir, undefined, base),
+             name: e.name,
+           };
+         })
+        `
+      ) as Promise<Array<{ url: string; name: string }>>);
       await page.close();
 
       console.log('title', title, 'imageUrls', imageUrls.length);
-
+      const normalizedTitle = title.replace(/<|>|:|"|\/|\\|\||\?|\*/gi, '_');
       const data: IncomingData = {
         url: rawUrl,
-        location: `${process.env.REACT_APP_ARCHIVE_DIR}/${title}-${id}.zip`,
+        location: join(
+          process.env.REACT_APP_ARCHIVE_DIR as string,
+          `${normalizedTitle}-${id}.zip`
+        ),
         imageUrls,
       };
 

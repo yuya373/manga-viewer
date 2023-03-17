@@ -46,7 +46,10 @@
     "lint:fix": "eslint --fix './src/**/*.{js,ts,tsx}'",
     "package": "NODE_ENV=production run-s build package:*",
     "package:copy": "cp ./package.json ./build/package.json",
-    "package:electron": "electron-packager build MangaViewer --platform=darwin --arc=x64 --overwrite=true --out=release"
+    "package:electron": "electron-packager build MangaViewer --platform=darwin --arc=x64 --overwrite=true --out=release",
+    "package-win": "NODE_ENV=production run-s build package-win:*",
+    "package-win:copy": "cp ./package.json ./build/package.json",
+    "package-win:electron": "electron-packager build MangaViewer --platform=win32 --arc=x64 --overwrite=true --out=release"
   },
   "browserslist": {
     "production": [
