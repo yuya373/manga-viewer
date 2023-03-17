@@ -230,7 +230,7 @@ export function deleteFile(path: string): AppAction<Promise<void>> {
       }
       dispatch(actions.deleteFileDone({ path }));
     } catch (error) {
-      dispatch(actions.deleteFileFailed({ path, error }));
+      dispatch(actions.deleteFileFailed({ path, error: error as Error }));
     }
   };
 }

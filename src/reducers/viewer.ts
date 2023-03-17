@@ -76,8 +76,8 @@ export default function(
     case Types.FILE_DIALOG_OPEN:
       return {
         ...initialState,
-        perPage: state.perPage,
         ...setFiles(state, action),
+        perPage: state.perPage,
       };
     case Types.FILE_DIALOG_CLOSE:
       return {

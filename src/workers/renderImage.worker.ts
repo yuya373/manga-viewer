@@ -91,7 +91,7 @@ ctx.addEventListener('message', async ev => {
   } catch (error) {
     const message: OutgoingMessage = {
       success: false,
-      error,
+      error: error as Error,
     };
     ctx.postMessage(message);
   }

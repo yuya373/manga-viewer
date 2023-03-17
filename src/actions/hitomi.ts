@@ -1,14 +1,13 @@
 import { Action } from 'redux';
-import puppeteer, { Browser } from 'puppeteer';
-import { basename, join } from 'path';
+import { join } from 'path';
 import { Types } from './types';
-import { ThunkAction, Actions, ThunkDispatch } from '.';
-import { findChromium } from '../utils/findChromium';
+import { ThunkAction, ThunkDispatch } from '.';
 import ArchiveImagesWorker, {
   IncomingData,
   OutgoingMessage,
 } from '../workers/archiveImages.worker';
 import { createFile, File } from '../types';
+import { ipcRenderer } from 'electron';
 
 export interface HitomiUrlChangedAction extends Action {
   type: Types.HITOMI_URL_CHANGED;
@@ -86,23 +85,6 @@ const scrapeFailed = ({
   },
 });
 
-let browser: Browser | null = null;
-
-async function getBrowser(): Promise<Browser> {
-  if (browser == null) {
-    const executablePath = await findChromium();
-    browser = await puppeteer.launch({
-      executablePath,
-    });
-    browser.on('disconnected', () => {
-      console.error('disconnected');
-      browser = null;
-    });
-  }
-
-  return browser;
-}
-
 let archiveWorker: any = null;
 
 function getArchiveWorker(dispatch: ThunkDispatch): any {
@@ -135,83 +117,37 @@ export function scrape(): ThunkAction<Promise<void>> {
     if (isScraping[rawUrl]) return;
 
     try {
-      let url;
-      try {
-        url = new URL(rawUrl);
-      } catch (error) {
-        // TODO: handle error
-        return;
-      }
-
       dispatch(scrapeStarted(rawUrl));
 
-      const b = await getBrowser();
-      const { pathname, origin } = url;
-      const fileNames = basename(pathname).split('-');
-      const fileName = fileNames[fileNames.length - 1];
-      console.log('fileName', fileName);
-      const page = await b.newPage();
-      page.on('error', error => {
-        console.error('error', error);
-        dispatch(
-          scrapeFailed({
-            url: rawUrl,
-            error,
-          })
-        );
-      });
-      page.on('pageerror', error => {
-        console.error('pageerror', error);
-        dispatch(
-          scrapeFailed({
-            url: rawUrl,
-            error,
-          })
-        );
-      });
-      const readerUrl = `${origin}/reader/${fileName}`;
-      await page.goto(readerUrl);
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      const id: string = await (page.evaluate(`galleryinfo.id`) as Promise<
-        string
-      >);
-      const title: string = await (page.evaluate(
-        `document.querySelector("title").text`
-      ) as Promise<string>);
-      const imageUrls: Array<{
-        url: string;
-        name: string;
-      }> = await (page.evaluate(
-        `
-         galleryinfo.files.map(e => {
-           const dir = e.haswebp ? 'webp' : e.hasavif ? 'avif' : undefined;
-           const base = e.haswebp ? 'a' : undefined;
-           return {
-             url: url_from_url_from_hash(${id}, e, dir, undefined, base),
-             name: e.name,
-           };
-         })
-        `
-      ) as Promise<Array<{ url: string; name: string }>>);
-      await page.close();
+      ipcRenderer.on('getPageDetailResult', (ev, result: { id: string, title: string; imageUrls: Array<{ url: string; name: string }>, error?: Error }) => {
+        console.log('getPageDetailResult', result);
+        const { id, title, imageUrls, error } = result;
 
-      console.log('title', title, 'imageUrls', imageUrls.length);
-      const normalizedTitle = title.replace(/<|>|:|"|\/|\\|\||\?|\*/gi, '_');
-      const data: IncomingData = {
-        url: rawUrl,
-        location: join(
+        if (error) {
+          dispatch(scrapeFailed({ url: rawUrl, error: error as Error }));
+          return;
+        }
+
+        const normalizedTitle = title.replace(/<|>|:|"|\/|\\|\||\?|\*|\s/gi, '_');
+        const location = join(
           process.env.REACT_APP_ARCHIVE_DIR as string,
           `${normalizedTitle}-${id}.zip`
-        ),
-        imageUrls,
-      };
+        );
+        console.log('title', title, 'imageUrls', imageUrls.length, 'location', location);
+        const data: IncomingData = {
+          url: rawUrl,
+          location,
+          imageUrls,
+        };
 
-      const worker = getArchiveWorker(dispatch);
-      worker.postMessage(data);
+        const worker = getArchiveWorker(dispatch);
+        worker.postMessage(data);
+      });
+      ipcRenderer.send('getPageDetail', rawUrl);
     } catch (error) {
       // TODO: handle error
       console.error(error);
-      dispatch(scrapeFailed({ url: rawUrl, error }));
+      dispatch(scrapeFailed({ url: rawUrl, error: error as Error }));
     }
   };
 }

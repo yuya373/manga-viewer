@@ -1,10 +1,11 @@
-import { app, BrowserWindow, session } from 'electron';
+import { app, BrowserWindow, session, ipcMain, } from 'electron';
 import { join } from 'path';
 import installExtension, {
   REACT_DEVELOPER_TOOLS,
   REDUX_DEVTOOLS,
 } from 'electron-devtools-installer';
 import unhandled from 'electron-unhandled';
+import { getPageDetail } from './getPageDetail';
 
 unhandled();
 
@@ -18,6 +19,7 @@ function createWindow() {
     width: 800,
     height: 600,
     webPreferences: {
+      contextIsolation: false,
       nodeIntegration: true,
       nodeIntegrationInWorker: true,
       webSecurity: false,
@@ -37,6 +39,12 @@ function setup() {
       console.error
     );
   }
+  ipcMain.on('getPageDetail', async (ev, args) => {
+    ev.sender.send(
+      'getPageDetailResult',
+      await getPageDetail(args),
+    );
+  });
   createWindow();
 
   if (session.defaultSession) {

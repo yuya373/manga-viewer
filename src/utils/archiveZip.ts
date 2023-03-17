@@ -113,7 +113,12 @@ export function archive(
     output.on('end', onEnd);
     output.on('close', onEnd);
 
-    zip.on('error', reject);
+    const onError = (err: any) => {
+      console.error('zip failed', err);
+      return reject(err);
+    };
+
+    zip.on('error', onError);
     zip.pipe(output);
 
     const totalImageCount = imageUrls.length;

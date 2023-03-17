@@ -10,6 +10,11 @@ module.exports = override(
       test: /\.worker\.ts$/,
       use: [{ loader: 'worker-loader' }],
     });
+    // NOTE: パッケージすると動かない
+    config.externals = {
+      // 'puppeteer': 'require("puppeteer")',
+      // 'puppeteer-core': 'require("puppeteer-core")',
+    };
     return config;
   },
   addWebpackAlias({
