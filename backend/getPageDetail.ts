@@ -20,14 +20,20 @@ async function getBrowser(): Promise<Browser> {
   return browser;
 }
 
-export const getPageDetail = async (str: string) => {
+export const getPageDetail = async (str: string): Promise<{
+  id: string;
+  title: string;
+  imageUrls: Array<{ url: string; name: string }>;
+  url: string;
+} |
+  { error: Error }> => {
   let url;
   try {
     url = new URL(str);
   } catch (error) {
     console.error('Failed to initialize URL:', str, error);
     return {
-      error,
+      error: error as Error,
     };
   }
   const b = await getBrowser();
@@ -37,7 +43,7 @@ export const getPageDetail = async (str: string) => {
   console.log('fileName', fileName);
   const page = await b.newPage();
   console.log('newPageCreated');
-  let pageError;
+  let pageError: Error | undefined;
   page.on('error', error => {
     console.error('error', error);
     pageError = error;
@@ -71,13 +77,16 @@ export const getPageDetail = async (str: string) => {
   ) as Promise<Array<{ url: string; name: string }>>);
   await page.close();
 
+  if (pageError) {
+    console.error(pageError);
+  }
   console.log('getPageDetailFinished', { title, imageUrls, pageError });
-
 
   return {
     id,
     title,
     imageUrls,
+    url: str,
     error: pageError,
   };
 };

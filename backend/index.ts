@@ -1,4 +1,4 @@
-import { app, BrowserWindow, session, ipcMain, } from 'electron';
+import { app, BrowserWindow, session, ipcMain, IpcMainInvokeEvent } from 'electron';
 import { join } from 'path';
 import installExtension, {
   REACT_DEVELOPER_TOOLS,
@@ -33,18 +33,27 @@ function createWindow() {
   }
 }
 
+const getPageDetailHandler = async (
+  ev: IpcMainInvokeEvent,
+  args: string
+): Promise<{
+  id: string;
+  title: string;
+  imageUrls: Array<{ url: string; name: string }>;
+  url: string;
+} |
+  { error: Error }> => {
+  const result = await getPageDetail(args);
+  return result;
+};
+
 function setup() {
   if (!isProduction) {
     installExtension([REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS]).catch(
       console.error
     );
   }
-  ipcMain.on('getPageDetail', async (ev, args) => {
-    ev.sender.send(
-      'getPageDetailResult',
-      await getPageDetail(args),
-    );
-  });
+  ipcMain.handle('getPageDetail', getPageDetailHandler);
   createWindow();
 
   if (session.defaultSession) {

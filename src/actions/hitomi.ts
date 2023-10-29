@@ -1,5 +1,6 @@
 import { Action } from 'redux';
 import { join } from 'path';
+import { ipcRenderer } from 'electron';
 import { Types } from './types';
 import { ThunkAction, ThunkDispatch } from '.';
 import ArchiveImagesWorker, {
@@ -7,7 +8,6 @@ import ArchiveImagesWorker, {
   OutgoingMessage,
 } from '../workers/archiveImages.worker';
 import { createFile, File } from '../types';
-import { ipcRenderer } from 'electron';
 
 export interface HitomiUrlChangedAction extends Action {
   type: Types.HITOMI_URL_CHANGED;
@@ -111,6 +111,14 @@ function getArchiveWorker(dispatch: ThunkDispatch): any {
   return archiveWorker;
 }
 
+type GetPageDetailResult = {
+  id: string;
+  title: string;
+  imageUrls: Array<{ url: string; name: string }>;
+  url: string;
+  error?: Error;
+};
+
 export function scrape(): ThunkAction<Promise<void>> {
   return async (dispatch, getState) => {
     const { url: rawUrl, isScraping } = getState().hitomi;
@@ -118,32 +126,39 @@ export function scrape(): ThunkAction<Promise<void>> {
 
     try {
       dispatch(scrapeStarted(rawUrl));
+      console.log('getPageDetail', rawUrl);
 
-      ipcRenderer.on('getPageDetailResult', (ev, result: { id: string, title: string; imageUrls: Array<{ url: string; name: string }>, error?: Error }) => {
-        console.log('getPageDetailResult', result);
-        const { id, title, imageUrls, error } = result;
+      const result: GetPageDetailResult = await ipcRenderer.invoke(
+        'getPageDetail',
+        rawUrl
+      );
+      if (result.error) {
+        dispatch(scrapeFailed({ url: rawUrl, error: result.error }));
+        return;
+      }
+      const { id, title, imageUrls, url } = result;
 
-        if (error) {
-          dispatch(scrapeFailed({ url: rawUrl, error: error as Error }));
-          return;
-        }
+      const normalizedTitle = title.replace(/<|>|:|"|\/|\\|\||\?|\*|\s/gi, '_');
+      const location = join(
+        process.env.REACT_APP_ARCHIVE_DIR as string,
+        `${normalizedTitle}-${id}.zip`
+      );
+      console.log(
+        'title',
+        title,
+        'imageUrls',
+        imageUrls.length,
+        'location',
+        location
+      );
+      const data: IncomingData = {
+        url,
+        location,
+        imageUrls,
+      };
 
-        const normalizedTitle = title.replace(/<|>|:|"|\/|\\|\||\?|\*|\s/gi, '_');
-        const location = join(
-          process.env.REACT_APP_ARCHIVE_DIR as string,
-          `${normalizedTitle}-${id}.zip`
-        );
-        console.log('title', title, 'imageUrls', imageUrls.length, 'location', location);
-        const data: IncomingData = {
-          url: rawUrl,
-          location,
-          imageUrls,
-        };
-
-        const worker = getArchiveWorker(dispatch);
-        worker.postMessage(data);
-      });
-      ipcRenderer.send('getPageDetail', rawUrl);
+      const worker = getArchiveWorker(dispatch);
+      worker.postMessage(data);
     } catch (error) {
       // TODO: handle error
       console.error(error);
