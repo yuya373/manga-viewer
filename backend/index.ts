@@ -1,4 +1,10 @@
-import { app, BrowserWindow, session, ipcMain, IpcMainInvokeEvent } from 'electron';
+import {
+  app,
+  BrowserWindow,
+  session,
+  ipcMain,
+  IpcMainInvokeEvent,
+} from 'electron';
 import { join } from 'path';
 import installExtension, {
   REACT_DEVELOPER_TOOLS,
@@ -36,13 +42,15 @@ function createWindow() {
 const getPageDetailHandler = async (
   ev: IpcMainInvokeEvent,
   args: string
-): Promise<{
-  id: string;
-  title: string;
-  imageUrls: Array<{ url: string; name: string }>;
-  url: string;
-} |
-  { error: Error }> => {
+): Promise<
+  | {
+      id: string;
+      title: string;
+      imageUrls: Array<{ url: string; name: string }>;
+      url: string;
+    }
+  | { error: Error }
+> => {
   const result = await getPageDetail(args);
   return result;
 };

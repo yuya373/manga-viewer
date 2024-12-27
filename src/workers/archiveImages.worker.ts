@@ -6,7 +6,7 @@ const ctx: Worker = self as any;
 export type IncomingData = {
   url: string;
   location: string;
-  imageUrls: Array<{ name: string; url: string; }>;
+  imageUrls: Array<{ name: string; url: string }>;
 };
 
 export type OutgoingMessage =

@@ -106,18 +106,24 @@ export function archive(
     const output = createWriteStream(location);
     const zip = archiver('zip');
 
-    const onEnd = () => {
+    const onClose = () => {
       console.log('Archive Finished', location);
       resolve();
     };
+    output.on('close', onClose);
+    const onEnd = () => {
+      console.log('data has been drained');
+    };
     output.on('end', onEnd);
-    output.on('close', onEnd);
 
     const onError = (err: any) => {
       console.error('zip failed', err);
       return reject(err);
     };
 
+    zip.on('warning', (err: any) => {
+      console.error('zip warning', err);
+    });
     zip.on('error', onError);
     zip.pipe(output);
 

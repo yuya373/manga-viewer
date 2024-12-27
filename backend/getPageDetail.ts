@@ -20,13 +20,17 @@ async function getBrowser(): Promise<Browser> {
   return browser;
 }
 
-export const getPageDetail = async (str: string): Promise<{
-  id: string;
-  title: string;
-  imageUrls: Array<{ url: string; name: string }>;
-  url: string;
-} |
-  { error: Error }> => {
+export const getPageDetail = async (
+  str: string
+): Promise<
+  | {
+      id: string;
+      title: string;
+      imageUrls: Array<{ url: string; name: string }>;
+      url: string;
+    }
+  | { error: Error }
+> => {
   let url;
   try {
     url = new URL(str);
@@ -65,15 +69,13 @@ export const getPageDetail = async (str: string): Promise<{
     name: string;
   }> = await (page.evaluate(
     `
-         galleryinfo.files.map(e => {
-           const dir = e.haswebp ? 'webp' : e.hasavif ? 'avif' : undefined;
-           const base = e.haswebp ? 'a' : undefined;
-           return {
-             url: url_from_url_from_hash(${id}, e, dir, undefined, base),
-             name: e.name,
-           };
-         })
-        `
+      galleryinfo.files.map(e => {
+        return {
+          url: url_from_url_from_hash(${id}, e, 'webp', undefined, 'a'),
+          name: e.name.replace(/[^.]*$/, 'webp'),
+        };
+      })
+    `
   ) as Promise<Array<{ url: string; name: string }>>);
   await page.close();
 
