@@ -71,7 +71,7 @@ export const getPageDetail = async (
     `
       galleryinfo.files.map(e => {
         return {
-          url: url_from_url_from_hash(${id}, e, 'webp', undefined, 'a'),
+          url: url_from_url_from_hash(${id}, e, 'webp'),
           name: e.name.replace(/[^.]*$/, 'webp'),
         };
       })

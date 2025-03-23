@@ -71,14 +71,12 @@ function setup() {
           ...details.requestHeaders,
         };
 
-        const urlParts = `${process.env.REACT_APP_ARCHIVE_URL_PARTS}`;
-        const referer = `${process.env.REACT_APP_ARCHIVE_URL_REFER}`;
-
-        if (details.url.includes(urlParts)) {
-          // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-          // @ts-ignore
-          headers.Referer = referer;
-        }
+        headers.Referer = `${process.env.REACT_APP_ARCHIVE_URL_REFER}/`;
+        headers.Origin = process.env.REACT_APP_ARCHIVE_URL_REFER || '';
+        headers.UserAgent = process.env.REACT_APP_ARCHIVE_USER_AGENT || '';
+        headers.AcceptEncoding = 'gzip, deflate, br, zstd';
+        headers.CacheControl = 'no-cache';
+        console.log('headers', headers);
 
         callback({ requestHeaders: headers });
       }
